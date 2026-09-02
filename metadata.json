@@ -1,0 +1,6 @@
+{
+  "name": "오크밸리리조트 제휴사 임직원 전용 예약 시스템",
+  "description": "오크밸리리조트 제휴 임직원 전용 패키지 예약, 오픈카드 보증, 예약 조회 및 영업사원/마스터 관리자 대시보드, 정산 및 자동 환불 관리 시스템",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
