@@ -223,9 +223,10 @@ export const BookingLookupModal: React.FC<BookingLookupModalProps> = ({
                 {results.map((res) => {
                   const todayStr = new Date().toISOString().split('T')[0];
                   const isCancelled = res.status === 'cancelled';
-                  const isCompleted = !isCancelled && (res.checkIn < todayStr || res.status === 'completed');
-                  const isPending = !isCancelled && !isCompleted && res.status === 'pending';
-                  const isConfirmed = !isCancelled && !isCompleted && (res.status === 'confirmed' || res.status === 'checked_in');
+                  const isCancelRequested = res.status === 'cancel_requested';
+                  const isCompleted = !isCancelled && !isCancelRequested && (res.checkIn < todayStr || res.status === 'completed');
+                  const isPending = !isCancelled && !isCancelRequested && !isCompleted && res.status === 'pending';
+                  const isConfirmed = !isCancelled && !isCancelRequested && !isCompleted && (res.status === 'confirmed' || res.status === 'checked_in');
                   const cancelInfo = getReservationCancellationFeeInfo(res, seasonPeriods, seasonalCancellationRules);
 
                   return (
@@ -260,6 +261,12 @@ export const BookingLookupModal: React.FC<BookingLookupModalProps> = ({
                         <span className="text-xs font-extrabold text-purple-900 bg-purple-100 px-2.5 py-1 rounded-full border border-purple-300 flex items-center gap-1 shadow-xs">
                           <CheckCircle2 className="w-3.5 h-3.5 text-purple-700" />
                           <span>투숙 완료</span>
+                        </span>
+                      )}
+                      {isCancelRequested && (
+                        <span className="text-xs font-bold text-amber-800 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300 flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>취소 접수 대기</span>
                         </span>
                       )}
                       {isCancelled && (
@@ -320,11 +327,11 @@ export const BookingLookupModal: React.FC<BookingLookupModalProps> = ({
                       </div>
                     </div>
 
-                    {/* Open Card Status */}
+                    {/* Payment Info */}
                     <div className="bg-stone-50 p-3 rounded-xl text-xs flex items-center justify-between text-stone-600">
                       <div className="flex items-center gap-1.5 font-medium">
                         <ShieldCheck className="w-4 h-4 text-emerald-600" />
-                        <span>오픈카드 보증: {res.guaranteeCard.cardType} ({res.guaranteeCard.cardNumberMasked})</span>
+                        <span>결제 방식: 현장 후불 결제 (체크인 시 리조트 프론트 결제)</span>
                       </div>
                     </div>
 
@@ -346,8 +353,14 @@ export const BookingLookupModal: React.FC<BookingLookupModalProps> = ({
                           onClick={() => setCancellingRes(res)}
                           className="min-h-[44px] px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 flex items-center justify-center transition-colors active:scale-98 cursor-pointer"
                         >
-                          예약 취소
+                          예약 취소 요청
                         </button>
+                      )}
+
+                      {res.status === 'cancel_requested' && (
+                        <span className="text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">
+                          취소 접수 검토중 (대기)
+                        </span>
                       )}
                     </div>
                   </div>

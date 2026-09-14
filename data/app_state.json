@@ -1,0 +1,5201 @@
+{
+  "state": {
+    "partners": [
+      {
+        "salesAgentId": "81d53ae1-72b1-4c10-9615-75b7aee4e8a6",
+        "contactEmail": "contact@partner.com",
+        "contactPhone": "02-5555-0000",
+        "name": "오크밸리",
+        "logoUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80",
+        "active": true,
+        "code": "OAK2026",
+        "salesAgentName": "박지윤",
+        "id": "partner-1789367229398",
+        "discountRate": 25,
+        "createdAt": "2026-09-14"
+      }
+    ],
+    "packages": [
+      {
+        "description": "신선한 강원도 로컬 식재료로 차려낸 프리미엄 라이브 셰프 모닝 뷔페 2인이 포함된 시그니처 패키지입니다.",
+        "partnerId": "ALL",
+        "categoryLabel": "조식패키지",
+        "imageUrl": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&w=800&q=80",
+        "name": "[조식 패키지] 오크뷰 모닝 뷔페 2인 패키지",
+        "id": "pkg-breakfast",
+        "category": "BREAKFAST",
+        "inclusions": [
+          "선택 객실 1박 숙박",
+          "오크뷰 라이브 모닝 뷔페 2인 식사권 (성인 2인)",
+          "어린이 뷔페 이용 시 30% 현장 할인",
+          "아메리카노 2잔 커피 쿠폰 (라운지 바)"
+        ],
+        "partnerCode": "ALL",
+        "active": true,
+        "roomTypeIds": [
+          "room-golf-31",
+          "room-golf-48"
+        ],
+        "basePrice": 189000,
+        "highlightBadge": "조식포함",
+        "maxOccupancy": 6
+      },
+      {
+        "id": "pkg-aqua-sauna",
+        "highlightBadge": "힐링&스파",
+        "maxOccupancy": 6,
+        "partnerId": "ALL",
+        "category": "AQUA_SAUNA",
+        "partnerCode": "ALL",
+        "roomTypeIds": [
+          "room-golf-31",
+          "room-caravan"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80",
+        "active": true,
+        "categoryLabel": "아쿠아&사우나",
+        "name": "[아쿠아 & 사우나] 아쿠아가든 & 천연 사우나 패키지",
+        "inclusions": [
+          "선택 객실 1박 숙박",
+          "아쿠아가든 온수풀 올데이 올패스 2인",
+          "치악산 암반수 사우나 2인 이용권",
+          "비치타월 & 로브 대여 서비스"
+        ],
+        "description": "실내외 온수 풀장 아쿠아가든과 피로를 말끔히 풀어주는 치악산 암반수 천연 사우나 이용권이 포함되어 있습니다.",
+        "basePrice": 205000
+      },
+      {
+        "id": "pkg-bbq-dining",
+        "name": "[야외 BBQ] 밸리 테라스 숯불 바비큐 2~3인 다이닝 패키지",
+        "maxOccupancy": 8,
+        "categoryLabel": "BBQ 야외다이닝",
+        "basePrice": 249000,
+        "description": "별빛 가득한 오크밸리리조트 잔디 광장에서 즐기는 최고급 한우/한돈 모듬 바비큐 세트 세팅 포함 상품입니다.",
+        "inclusions": [
+          "선택 객실 1박 숙박",
+          "밸리 테라스 BBQ 플래터 (국산 한돈 삼겹/목살 500g + 훈제소시지 + 수제맥주 2잔 + 야채/모듬구이)",
+          "야외 숯불 그릴 세팅 및 정리 포함",
+          "음료/주류 10% 할인권"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80",
+        "partnerId": "ALL",
+        "category": "BBQ_DINING",
+        "active": true,
+        "highlightBadge": "디너세트",
+        "partnerCode": "ALL"
+      }
+    ],
+    "packageCategories": [
+      {
+        "description": "객실 단품 전용 기본 숙박 상품",
+        "key": "ROOM_ONLY",
+        "label": "룸온리"
+      },
+      {
+        "key": "BREAKFAST",
+        "description": "신선한 뷔페 조식이 포함된 다이닝 결합 상품",
+        "label": "조식 패키지"
+      },
+      {
+        "description": "온천수 워터파크 및 사우나 이용권 결합 상품",
+        "key": "AQUA_SAUNA",
+        "label": "아쿠아&사우나"
+      },
+      {
+        "label": "BBQ 야외다이닝",
+        "description": "더 뷰 야외 바비큐 가든 전용 다이닝 패키지",
+        "key": "BBQ_DINING"
+      },
+      {
+        "label": "골프 패키지",
+        "key": "GOLF_PACKAGE",
+        "description": "36홀 챔피언십 골프 그린피 우대 결합 상품"
+      },
+      {
+        "label": "펫 프리미엄 패키지",
+        "description": "반려동물 동반 객실 및 어메니티 증정 패키지",
+        "key": "PET_PACKAGE"
+      },
+      {
+        "label": "스파 & 웰니스",
+        "description": "아로마 힐링 스파 및 지압 트리트먼트 결합",
+        "key": "SPA_WELLNESS"
+      }
+    ],
+    "roomTypes": [],
+    "mediaAssets": [
+      {
+        "title": "골프빌리지 스위트 거실",
+        "category": "객실",
+        "url": "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+        "uploadedAt": "2026-08-01",
+        "id": "media-101",
+        "sizeKb": 340
+      },
+      {
+        "id": "media-102",
+        "uploadedAt": "2026-08-02",
+        "sizeKb": 420,
+        "url": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&w=1200&q=80",
+        "category": "객실",
+        "title": "노블카운티 펜트하우스 마스터룸"
+      },
+      {
+        "title": "사우스콘도 로열스위트 전경",
+        "url": "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
+        "category": "객실",
+        "id": "media-103",
+        "uploadedAt": "2026-08-03",
+        "sizeKb": 510
+      },
+      {
+        "uploadedAt": "2026-08-04",
+        "sizeKb": 610,
+        "category": "부대시설",
+        "url": "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80",
+        "id": "media-104",
+        "title": "아쿠아 가든 워터파크 풀"
+      },
+      {
+        "title": "오크밸리리조트 36홀 골프클럽 그린",
+        "category": "부대시설",
+        "uploadedAt": "2026-08-05",
+        "url": "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1200&q=80",
+        "id": "media-105",
+        "sizeKb": 480
+      },
+      {
+        "sizeKb": 390,
+        "id": "media-106",
+        "category": "패키지",
+        "title": "더 뷰 야외 바비큐 파티 가든",
+        "url": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+        "uploadedAt": "2026-08-05"
+      }
+    ],
+    "cancellationRules": [
+      {
+        "maxDays": 999,
+        "minDays": 7,
+        "description": "위약금 0% (전액 취소/환불)",
+        "id": "rule-7d",
+        "penaltyRate": 0,
+        "label": "입실 7일 전까지"
+      },
+      {
+        "label": "입실 3~6일 전",
+        "penaltyRate": 20,
+        "description": "위약금 20% 부과",
+        "maxDays": 6,
+        "id": "rule-3d",
+        "minDays": 3
+      },
+      {
+        "penaltyRate": 50,
+        "minDays": 1,
+        "label": "입실 1~2일 전",
+        "description": "위약금 50% 부과",
+        "id": "rule-1d",
+        "maxDays": 2
+      },
+      {
+        "penaltyRate": 100,
+        "minDays": 0,
+        "maxDays": 0,
+        "label": "당일 취소 및 노쇼",
+        "id": "rule-0d",
+        "description": "위약금 100% 부과 (환불 불가)"
+      }
+    ],
+    "seasonPeriods": [
+      {
+        "endDate": "2026-08-25",
+        "startDate": "2026-07-15",
+        "name": "여름 썸머 하이시즌 (성수기)",
+        "id": "sp-summer-2026"
+      },
+      {
+        "endDate": "2027-01-05",
+        "name": "겨울 연말/신년 하이시즌 (성수기)",
+        "id": "sp-winter-2026",
+        "startDate": "2026-12-20"
+      }
+    ],
+    "seasonalCancellationRules": [
+      {
+        "label": "입실 10일 전까지",
+        "description": "비수기 무료 취소, 성수기 10% 위약금",
+        "offPeakWeekdayRate": 0,
+        "minDays": 10,
+        "peakSeasonRate": 10,
+        "id": "sc-10d",
+        "offPeakWeekendRate": 0
+      },
+      {
+        "offPeakWeekendRate": 10,
+        "offPeakWeekdayRate": 0,
+        "minDays": 7,
+        "description": "비수기주중 무료, 주말 10%, 성수기 20%",
+        "label": "입실 7~9일 전",
+        "id": "sc-7d",
+        "peakSeasonRate": 20
+      },
+      {
+        "peakSeasonRate": 30,
+        "offPeakWeekdayRate": 10,
+        "offPeakWeekendRate": 20,
+        "description": "비수기주중 10%, 주말 20%, 성수기 30%",
+        "label": "입실 5~6일 전",
+        "id": "sc-5d",
+        "minDays": 5
+      },
+      {
+        "id": "sc-3d",
+        "minDays": 3,
+        "offPeakWeekendRate": 30,
+        "offPeakWeekdayRate": 20,
+        "label": "입실 3~4일 전",
+        "peakSeasonRate": 50,
+        "description": "비수기주중 20%, 주말 30%, 성수기 50%"
+      },
+      {
+        "offPeakWeekdayRate": 50,
+        "label": "입실 1~2일 전",
+        "description": "비수기주중 50%, 주말 70%, 성수기 80%",
+        "peakSeasonRate": 80,
+        "offPeakWeekendRate": 70,
+        "id": "sc-1d",
+        "minDays": 1
+      },
+      {
+        "description": "전구간 위약금 100% (환불 불가)",
+        "label": "당일 취소 및 노쇼",
+        "offPeakWeekdayRate": 100,
+        "peakSeasonRate": 100,
+        "minDays": 0,
+        "id": "sc-0d",
+        "offPeakWeekendRate": 100
+      }
+    ],
+    "auditLogs": [
+      {
+        "actionSummary": "[골프/객실 통합 패키지] 다중 원천 객실 바인딩 수정",
+        "timestamp": "2026-08-06 01:20:00",
+        "id": "log-101",
+        "details": "연결 객실: 골프빌리지 31평, 48평, 글램핑 카라반, 뮤지엄 펜트하우스 4개 추가 연동",
+        "actionType": "PACKAGE",
+        "actorRole": "master",
+        "actorName": "최마스터 총괄이사"
+      },
+      {
+        "actionType": "RATE",
+        "actionSummary": "삼성 임직원 8월 요금 일괄 등록",
+        "timestamp": "2026-08-05 18:45:12",
+        "actorName": "김영업 대리",
+        "actorRole": "sales_agent",
+        "id": "log-102",
+        "details": "2026-08-10 ~ 2026-08-20 기간 일일 185,000원, 재고 5실 변경"
+      },
+      {
+        "timestamp": "2026-08-05 15:10:33",
+        "details": "이영업 과장 (SA-1002) 백오피스 접근 권한 승인 완료",
+        "id": "log-103",
+        "actionSummary": "영업사원 승인 처리 완료",
+        "actorRole": "master",
+        "actionType": "USER_APPROVAL",
+        "actorName": "최마스터 총괄이사"
+      },
+      {
+        "actionSummary": "성수기 / 비수기 구간별 위약율 개정",
+        "actionType": "CANCELLATION",
+        "timestamp": "2026-08-04 11:30:05",
+        "actorRole": "master",
+        "actorName": "최마스터 총괄이사",
+        "id": "log-104",
+        "details": "여름 썸머 하이시즌 (2026-07-15 ~ 08-25) 위약율 3단계 매트릭스 재설정"
+      }
+    ],
+    "dailyRates": [
+      {
+        "date": "2026-08-05",
+        "originalPrice": 210000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-05",
+        "stock": 7,
+        "price": 145000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "originalPrice": 210000,
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-06",
+        "packageId": "pkg-room-only",
+        "price": 145000,
+        "stock": 7,
+        "status": "available",
+        "date": "2026-08-06",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-08-07",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 283000,
+        "stock": 4,
+        "price": 195000,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-07"
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-08",
+        "date": "2026-08-08",
+        "stock": 3,
+        "price": 195000,
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 283000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "originalPrice": 210000,
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-09",
+        "price": 145000,
+        "stock": 5,
+        "date": "2026-08-09",
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-10",
+        "date": "2026-08-10",
+        "originalPrice": 210000,
+        "stock": 5,
+        "price": 145000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "stock": 3,
+        "price": 145000,
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-11",
+        "date": "2026-08-11",
+        "originalPrice": 210000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "status": "available",
+        "date": "2026-08-12",
+        "packageId": "pkg-room-only",
+        "stock": 6,
+        "price": 145000,
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 210000,
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-12"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "price": 145000,
+        "stock": 3,
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-13",
+        "status": "available",
+        "originalPrice": 210000,
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-13"
+      },
+      {
+        "originalPrice": 283000,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-14",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-14",
+        "roomTypeId": "room-golf-31",
+        "price": 195000,
+        "stock": 6,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-15",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-15",
+        "packageId": "pkg-room-only",
+        "originalPrice": 283000,
+        "stock": 7,
+        "price": 195000,
+        "roomTypeId": "room-golf-31",
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-16",
+        "date": "2026-08-16",
+        "stock": 3,
+        "price": 145000,
+        "originalPrice": 210000,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-17",
+        "originalPrice": 210000,
+        "packageId": "pkg-room-only",
+        "stock": 5,
+        "price": 145000,
+        "date": "2026-08-17",
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-18",
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-room-only",
+        "stock": 6,
+        "price": 145000,
+        "originalPrice": 210000,
+        "status": "available",
+        "date": "2026-08-18"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-room-only",
+        "date": "2026-08-19",
+        "price": 145000,
+        "stock": 5,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-19",
+        "originalPrice": 210000
+      },
+      {
+        "stock": 4,
+        "price": 145000,
+        "originalPrice": 210000,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "date": "2026-08-20",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-20"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-21",
+        "roomTypeId": "room-golf-31",
+        "stock": 7,
+        "price": 195000,
+        "status": "available",
+        "date": "2026-08-21",
+        "originalPrice": 283000
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-22",
+        "status": "available",
+        "stock": 3,
+        "price": 195000,
+        "originalPrice": 283000,
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-22",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-23",
+        "status": "available",
+        "date": "2026-08-23",
+        "packageId": "pkg-room-only",
+        "stock": 7,
+        "price": 145000,
+        "originalPrice": 210000,
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "date": "2026-08-24",
+        "status": "available",
+        "price": 145000,
+        "stock": 3,
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 210000,
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-24"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-room-only",
+        "originalPrice": 210000,
+        "price": 145000,
+        "stock": 7,
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-25",
+        "date": "2026-08-25"
+      },
+      {
+        "originalPrice": 210000,
+        "date": "2026-08-26",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-26",
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "stock": 6,
+        "price": 145000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-08-27",
+        "roomTypeId": "room-golf-31",
+        "price": 145000,
+        "stock": 3,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-27",
+        "originalPrice": 210000
+      },
+      {
+        "originalPrice": 283000,
+        "status": "available",
+        "packageId": "pkg-room-only",
+        "price": 195000,
+        "stock": 3,
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-28",
+        "date": "2026-08-28",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "date": "2026-08-29",
+        "packageId": "pkg-room-only",
+        "originalPrice": 283000,
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-29",
+        "stock": 5,
+        "price": 195000,
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-30",
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-30",
+        "stock": 6,
+        "price": 145000,
+        "status": "available",
+        "originalPrice": 210000
+      },
+      {
+        "originalPrice": 210000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-31-2026-08-31",
+        "date": "2026-08-31",
+        "stock": 4,
+        "price": 145000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "date": "2026-09-01",
+        "id": "rate-pkg-room-only-room-golf-31-2026-09-01",
+        "originalPrice": 210000,
+        "roomTypeId": "room-golf-31",
+        "price": 145000,
+        "stock": 3,
+        "status": "available",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "stock": 5,
+        "price": 145000,
+        "date": "2026-09-02",
+        "originalPrice": 210000,
+        "id": "rate-pkg-room-only-room-golf-31-2026-09-02"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "originalPrice": 210000,
+        "date": "2026-09-03",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-room-only-room-golf-31-2026-09-03",
+        "stock": 4,
+        "price": 145000,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "stock": 7,
+        "price": 232000,
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-05",
+        "date": "2026-08-05",
+        "originalPrice": 336000
+      },
+      {
+        "date": "2026-08-06",
+        "originalPrice": 336000,
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-06",
+        "price": 232000,
+        "stock": 3
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-08-07",
+        "price": 282000,
+        "stock": 4,
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-07",
+        "originalPrice": 409000
+      },
+      {
+        "status": "available",
+        "stock": 4,
+        "price": 282000,
+        "packageId": "pkg-room-only",
+        "originalPrice": 409000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-08",
+        "date": "2026-08-08",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "originalPrice": 336000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-09",
+        "date": "2026-08-09",
+        "stock": 5,
+        "price": 232000,
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-room-only",
+        "status": "available"
+      },
+      {
+        "date": "2026-08-10",
+        "originalPrice": 336000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-10",
+        "packageId": "pkg-room-only",
+        "price": 232000,
+        "stock": 4,
+        "roomTypeId": "room-golf-48",
+        "status": "available"
+      },
+      {
+        "stock": 4,
+        "price": 232000,
+        "status": "available",
+        "originalPrice": 336000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-11",
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-11"
+      },
+      {
+        "originalPrice": 336000,
+        "roomTypeId": "room-golf-48",
+        "stock": 5,
+        "price": 232000,
+        "date": "2026-08-12",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-12",
+        "status": "available",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "price": 232000,
+        "stock": 7,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "originalPrice": 336000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-13",
+        "date": "2026-08-13",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "price": 282000,
+        "stock": 5,
+        "originalPrice": 409000,
+        "date": "2026-08-14",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-14"
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-15",
+        "date": "2026-08-15",
+        "price": 282000,
+        "stock": 5,
+        "originalPrice": 409000,
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "date": "2026-08-16",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 336000,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-16",
+        "packageId": "pkg-room-only",
+        "stock": 4,
+        "price": 232000
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-17",
+        "status": "available",
+        "date": "2026-08-17",
+        "packageId": "pkg-room-only",
+        "originalPrice": 336000,
+        "roomTypeId": "room-golf-48",
+        "stock": 3,
+        "price": 232000
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 336000,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-18",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-18",
+        "stock": 6,
+        "price": 232000
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-19",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "price": 232000,
+        "stock": 5,
+        "packageId": "pkg-room-only",
+        "originalPrice": 336000,
+        "date": "2026-08-19"
+      },
+      {
+        "price": 232000,
+        "stock": 4,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-20",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-20",
+        "originalPrice": 336000,
+        "status": "available",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-21",
+        "price": 282000,
+        "stock": 3,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-21",
+        "packageId": "pkg-room-only",
+        "originalPrice": 409000
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-22",
+        "status": "available",
+        "originalPrice": 409000,
+        "stock": 4,
+        "price": 282000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-22",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-23",
+        "price": 232000,
+        "stock": 3,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 336000,
+        "date": "2026-08-23"
+      },
+      {
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-24",
+        "packageId": "pkg-room-only",
+        "price": 232000,
+        "stock": 6,
+        "date": "2026-08-24",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 336000
+      },
+      {
+        "stock": 6,
+        "price": 232000,
+        "originalPrice": 336000,
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-25",
+        "packageId": "pkg-room-only",
+        "date": "2026-08-25"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-26",
+        "stock": 6,
+        "price": 232000,
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-26",
+        "status": "available",
+        "originalPrice": 336000
+      },
+      {
+        "packageId": "pkg-room-only",
+        "price": 232000,
+        "stock": 4,
+        "originalPrice": 336000,
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-27",
+        "date": "2026-08-27"
+      },
+      {
+        "date": "2026-08-28",
+        "packageId": "pkg-room-only",
+        "originalPrice": 409000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-28",
+        "status": "available",
+        "price": 282000,
+        "stock": 3
+      },
+      {
+        "date": "2026-08-29",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-29",
+        "originalPrice": 409000,
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-golf-48",
+        "price": 282000,
+        "stock": 4,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-08-30",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-30",
+        "originalPrice": 336000,
+        "roomTypeId": "room-golf-48",
+        "stock": 6,
+        "price": 232000
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-room-only",
+        "date": "2026-08-31",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-golf-48-2026-08-31",
+        "originalPrice": 336000,
+        "price": 232000,
+        "stock": 3
+      },
+      {
+        "originalPrice": 336000,
+        "packageId": "pkg-room-only",
+        "date": "2026-09-01",
+        "id": "rate-pkg-room-only-room-golf-48-2026-09-01",
+        "roomTypeId": "room-golf-48",
+        "stock": 6,
+        "status": "available",
+        "price": 232000
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-golf-48-2026-09-02",
+        "stock": 5,
+        "originalPrice": 336000,
+        "price": 232000,
+        "date": "2026-09-02",
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "stock": 5,
+        "price": 232000,
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-golf-48-2026-09-03",
+        "originalPrice": 336000,
+        "date": "2026-09-03"
+      },
+      {
+        "originalPrice": 232000,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-05",
+        "roomTypeId": "room-caravan",
+        "price": 160000,
+        "stock": 3,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "date": "2026-08-05"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "originalPrice": 232000,
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-06",
+        "stock": 4,
+        "price": 160000,
+        "date": "2026-08-06"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-07",
+        "originalPrice": 305000,
+        "stock": 4,
+        "price": 210000,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-07"
+      },
+      {
+        "date": "2026-08-08",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-room-only",
+        "originalPrice": 305000,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-08",
+        "stock": 6,
+        "price": 210000,
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "originalPrice": 232000,
+        "stock": 5,
+        "price": 160000,
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-09",
+        "status": "available",
+        "date": "2026-08-09"
+      },
+      {
+        "date": "2026-08-10",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-10",
+        "stock": 7,
+        "price": 160000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "originalPrice": 232000
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-11",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-11",
+        "originalPrice": 232000,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "stock": 6,
+        "price": 160000
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-12",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-12",
+        "packageId": "pkg-room-only",
+        "originalPrice": 232000,
+        "price": 160000,
+        "stock": 6,
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-room-only-room-caravan-2026-08-13",
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "originalPrice": 232000,
+        "date": "2026-08-13",
+        "stock": 4,
+        "price": 160000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 305000,
+        "date": "2026-08-14",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-14",
+        "price": 210000,
+        "stock": 6
+      },
+      {
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-15",
+        "date": "2026-08-15",
+        "stock": 7,
+        "price": 210000,
+        "originalPrice": 305000
+      },
+      {
+        "date": "2026-08-16",
+        "status": "available",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-room-only",
+        "originalPrice": 232000,
+        "stock": 5,
+        "price": 160000,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-16"
+      },
+      {
+        "status": "available",
+        "price": 160000,
+        "stock": 3,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-17",
+        "packageId": "pkg-room-only",
+        "date": "2026-08-17",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 232000
+      },
+      {
+        "date": "2026-08-18",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-room-only",
+        "stock": 5,
+        "price": 160000,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-18",
+        "originalPrice": 232000,
+        "status": "available"
+      },
+      {
+        "originalPrice": 232000,
+        "date": "2026-08-19",
+        "status": "available",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-19",
+        "stock": 5,
+        "packageId": "pkg-room-only",
+        "price": 160000
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "originalPrice": 232000,
+        "date": "2026-08-20",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-20",
+        "packageId": "pkg-room-only",
+        "price": 160000,
+        "stock": 3
+      },
+      {
+        "status": "available",
+        "stock": 7,
+        "price": 210000,
+        "packageId": "pkg-room-only",
+        "originalPrice": 305000,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-21",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-21"
+      },
+      {
+        "originalPrice": 305000,
+        "status": "available",
+        "date": "2026-08-22",
+        "stock": 6,
+        "price": 210000,
+        "id": "rate-pkg-room-only-room-caravan-2026-08-22",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-23",
+        "stock": 7,
+        "price": 160000,
+        "roomTypeId": "room-caravan",
+        "originalPrice": 232000,
+        "date": "2026-08-23"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "originalPrice": 232000,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-24",
+        "roomTypeId": "room-caravan",
+        "price": 160000,
+        "stock": 6,
+        "date": "2026-08-24"
+      },
+      {
+        "originalPrice": 232000,
+        "roomTypeId": "room-caravan",
+        "stock": 5,
+        "date": "2026-08-25",
+        "price": 160000,
+        "status": "available",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-25",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "stock": 4,
+        "originalPrice": 232000,
+        "price": 160000,
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "date": "2026-08-26",
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-26"
+      },
+      {
+        "id": "rate-pkg-room-only-room-caravan-2026-08-27",
+        "date": "2026-08-27",
+        "price": 160000,
+        "stock": 5,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "originalPrice": 232000,
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-28",
+        "price": 210000,
+        "stock": 4,
+        "originalPrice": 305000,
+        "status": "available",
+        "date": "2026-08-28",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "id": "rate-pkg-room-only-room-caravan-2026-08-29",
+        "stock": 6,
+        "price": 210000,
+        "originalPrice": 305000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "date": "2026-08-29"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-30",
+        "status": "available",
+        "originalPrice": 232000,
+        "stock": 3,
+        "price": 160000,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-30"
+      },
+      {
+        "originalPrice": 232000,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-room-only-room-caravan-2026-08-31",
+        "stock": 5,
+        "price": 160000,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-31",
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-09-01",
+        "stock": 7,
+        "price": 160000,
+        "status": "available",
+        "packageId": "pkg-room-only",
+        "originalPrice": 232000,
+        "id": "rate-pkg-room-only-room-caravan-2026-09-01"
+      },
+      {
+        "originalPrice": 232000,
+        "date": "2026-09-02",
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-room-only-room-caravan-2026-09-02",
+        "price": 160000,
+        "stock": 6,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-09-03",
+        "price": 160000,
+        "stock": 6,
+        "status": "available",
+        "originalPrice": 232000,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-room-only-room-caravan-2026-09-03"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-08-05",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 526000,
+        "price": 363000,
+        "stock": 4,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-05",
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-06",
+        "status": "available",
+        "stock": 7,
+        "price": 363000,
+        "originalPrice": 526000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-06",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-07",
+        "date": "2026-08-07",
+        "price": 413000,
+        "stock": 5,
+        "packageId": "pkg-room-only",
+        "originalPrice": 599000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "originalPrice": 599000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-08",
+        "status": "available",
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 6,
+        "price": 413000,
+        "date": "2026-08-08"
+      },
+      {
+        "originalPrice": 526000,
+        "date": "2026-08-09",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-09",
+        "price": 363000,
+        "stock": 4
+      },
+      {
+        "packageId": "pkg-room-only",
+        "date": "2026-08-10",
+        "originalPrice": 526000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-10",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 7,
+        "price": 363000
+      },
+      {
+        "date": "2026-08-11",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 526000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-11",
+        "packageId": "pkg-room-only",
+        "stock": 7,
+        "price": 363000,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "stock": 7,
+        "status": "available",
+        "price": 363000,
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-12",
+        "originalPrice": 526000,
+        "date": "2026-08-12"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-room-only",
+        "stock": 4,
+        "price": 363000,
+        "originalPrice": 526000,
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-13",
+        "date": "2026-08-13"
+      },
+      {
+        "price": 413000,
+        "stock": 4,
+        "originalPrice": 599000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-14",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-14",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-15",
+        "originalPrice": 599000,
+        "date": "2026-08-15",
+        "stock": 7,
+        "price": 413000,
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-16",
+        "status": "available",
+        "originalPrice": 526000,
+        "stock": 7,
+        "price": 363000,
+        "date": "2026-08-16",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "status": "available",
+        "stock": 7,
+        "price": 363000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-17",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-17",
+        "originalPrice": 526000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-18",
+        "stock": 6,
+        "price": 363000,
+        "originalPrice": 526000,
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-18",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-19",
+        "originalPrice": 526000,
+        "status": "available",
+        "price": 363000,
+        "stock": 6,
+        "date": "2026-08-19",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "date": "2026-08-20",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-20",
+        "originalPrice": 526000,
+        "status": "available",
+        "stock": 4,
+        "price": 363000,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "date": "2026-08-21",
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-21",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 599000,
+        "price": 413000,
+        "stock": 7
+      },
+      {
+        "originalPrice": 599000,
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "price": 413000,
+        "stock": 3,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-22",
+        "date": "2026-08-22"
+      },
+      {
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-23",
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-23",
+        "originalPrice": 526000,
+        "status": "available",
+        "price": 363000,
+        "stock": 4,
+        "packageId": "pkg-room-only"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "originalPrice": 526000,
+        "price": 363000,
+        "stock": 7,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-24",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-24"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 7,
+        "price": 363000,
+        "status": "available",
+        "originalPrice": 526000,
+        "packageId": "pkg-room-only",
+        "date": "2026-08-25",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-25"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 526000,
+        "date": "2026-08-26",
+        "status": "available",
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-26",
+        "stock": 4,
+        "price": 363000
+      },
+      {
+        "originalPrice": 526000,
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-room-only",
+        "price": 363000,
+        "stock": 4,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-27",
+        "date": "2026-08-27"
+      },
+      {
+        "stock": 6,
+        "price": 413000,
+        "originalPrice": 599000,
+        "packageId": "pkg-room-only",
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-28",
+        "date": "2026-08-28"
+      },
+      {
+        "originalPrice": 599000,
+        "date": "2026-08-29",
+        "packageId": "pkg-room-only",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-29",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 413000,
+        "stock": 5,
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "date": "2026-08-30",
+        "stock": 4,
+        "price": 363000,
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-30",
+        "packageId": "pkg-room-only",
+        "originalPrice": 526000
+      },
+      {
+        "packageId": "pkg-room-only",
+        "price": 363000,
+        "stock": 4,
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 526000,
+        "status": "available",
+        "date": "2026-08-31",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-08-31"
+      },
+      {
+        "status": "available",
+        "price": 363000,
+        "stock": 6,
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 526000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-09-01",
+        "packageId": "pkg-room-only",
+        "date": "2026-09-01"
+      },
+      {
+        "originalPrice": 526000,
+        "stock": 7,
+        "price": 363000,
+        "date": "2026-09-02",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-09-02",
+        "packageId": "pkg-room-only"
+      },
+      {
+        "packageId": "pkg-room-only",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 7,
+        "price": 363000,
+        "date": "2026-09-03",
+        "originalPrice": 526000,
+        "id": "rate-pkg-room-only-room-museum-penthouse-2026-09-03"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-05",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-05",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 274000,
+        "price": 189000,
+        "stock": 4
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 274000,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-06",
+        "stock": 5,
+        "price": 189000,
+        "date": "2026-08-06",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "date": "2026-08-07",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-07",
+        "originalPrice": 347000,
+        "stock": 7,
+        "price": 239000
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "date": "2026-08-08",
+        "price": 239000,
+        "stock": 3,
+        "originalPrice": 347000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-08",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "status": "available",
+        "originalPrice": 274000,
+        "roomTypeId": "room-golf-31",
+        "price": 189000,
+        "stock": 3,
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-09",
+        "date": "2026-08-09"
+      },
+      {
+        "originalPrice": 274000,
+        "packageId": "pkg-breakfast",
+        "price": 189000,
+        "stock": 6,
+        "date": "2026-08-10",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-10",
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "originalPrice": 274000,
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-11",
+        "status": "available",
+        "stock": 7,
+        "price": 189000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-11",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "date": "2026-08-12",
+        "originalPrice": 274000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-12",
+        "price": 189000,
+        "stock": 5,
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "date": "2026-08-13",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-13",
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "price": 189000,
+        "stock": 7,
+        "originalPrice": 274000
+      },
+      {
+        "status": "available",
+        "price": 239000,
+        "stock": 6,
+        "packageId": "pkg-breakfast",
+        "originalPrice": 347000,
+        "date": "2026-08-14",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-14"
+      },
+      {
+        "date": "2026-08-15",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-15",
+        "price": 239000,
+        "stock": 4,
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 347000,
+        "packageId": "pkg-breakfast",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-16",
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 274000,
+        "stock": 5,
+        "price": 189000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-16"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-17",
+        "stock": 6,
+        "price": 189000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-17",
+        "originalPrice": 274000
+      },
+      {
+        "date": "2026-08-18",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-18",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 274000,
+        "roomTypeId": "room-golf-31",
+        "stock": 6,
+        "price": 189000,
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-19",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 274000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-19",
+        "status": "available",
+        "price": 189000,
+        "stock": 6
+      },
+      {
+        "date": "2026-08-20",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-20",
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 274000,
+        "packageId": "pkg-breakfast",
+        "stock": 4,
+        "price": 189000
+      },
+      {
+        "date": "2026-08-21",
+        "price": 239000,
+        "stock": 5,
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 347000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-21",
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 347000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-22",
+        "price": 239000,
+        "stock": 6,
+        "status": "available",
+        "date": "2026-08-22"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-23",
+        "status": "available",
+        "originalPrice": 274000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-23",
+        "stock": 4,
+        "price": 189000,
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-24",
+        "originalPrice": 274000,
+        "status": "available",
+        "price": 189000,
+        "stock": 7,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-24"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 274000,
+        "stock": 4,
+        "price": 189000,
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-25",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-25"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-26",
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 274000,
+        "price": 189000,
+        "stock": 3,
+        "date": "2026-08-26",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "date": "2026-08-27",
+        "roomTypeId": "room-golf-31",
+        "price": 189000,
+        "stock": 6,
+        "packageId": "pkg-breakfast",
+        "originalPrice": 274000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-27",
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-28",
+        "date": "2026-08-28",
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 347000,
+        "packageId": "pkg-breakfast",
+        "stock": 6,
+        "price": 239000
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 347000,
+        "status": "available",
+        "date": "2026-08-29",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-29",
+        "price": 239000,
+        "stock": 6,
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "price": 189000,
+        "stock": 6,
+        "originalPrice": 274000,
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-30",
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "date": "2026-08-30",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-breakfast",
+        "price": 189000,
+        "stock": 4,
+        "date": "2026-08-31",
+        "originalPrice": 274000,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-08-31"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "price": 189000,
+        "stock": 6,
+        "date": "2026-09-01",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 274000,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-09-01"
+      },
+      {
+        "date": "2026-09-02",
+        "originalPrice": 274000,
+        "price": 189000,
+        "stock": 5,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-09-02",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "date": "2026-09-03",
+        "id": "rate-pkg-breakfast-room-golf-31-2026-09-03",
+        "packageId": "pkg-breakfast",
+        "price": 189000,
+        "originalPrice": 274000,
+        "stock": 3,
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-05",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 438000,
+        "status": "available",
+        "stock": 6,
+        "price": 302000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-05"
+      },
+      {
+        "stock": 3,
+        "price": 302000,
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-06",
+        "originalPrice": 438000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-06",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "status": "available",
+        "date": "2026-08-07",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-07",
+        "price": 352000,
+        "stock": 6,
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 510000
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-08",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 510000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-08",
+        "price": 352000,
+        "stock": 5,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-09",
+        "originalPrice": 438000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-09",
+        "roomTypeId": "room-golf-48",
+        "stock": 4,
+        "price": 302000,
+        "packageId": "pkg-breakfast",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "price": 302000,
+        "stock": 4,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-10",
+        "date": "2026-08-10",
+        "originalPrice": 438000
+      },
+      {
+        "date": "2026-08-11",
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-11",
+        "originalPrice": 438000,
+        "price": 302000,
+        "stock": 6
+      },
+      {
+        "status": "available",
+        "price": 302000,
+        "stock": 4,
+        "originalPrice": 438000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-12",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-12",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-13",
+        "originalPrice": 438000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-13",
+        "price": 302000,
+        "stock": 7,
+        "roomTypeId": "room-golf-48",
+        "status": "available"
+      },
+      {
+        "date": "2026-08-14",
+        "status": "available",
+        "originalPrice": 510000,
+        "packageId": "pkg-breakfast",
+        "stock": 6,
+        "price": 352000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-14"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-15",
+        "price": 352000,
+        "stock": 7,
+        "originalPrice": 510000,
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-15"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-16",
+        "originalPrice": 438000,
+        "date": "2026-08-16",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-breakfast",
+        "stock": 6,
+        "price": 302000
+      },
+      {
+        "date": "2026-08-17",
+        "stock": 5,
+        "price": 302000,
+        "originalPrice": 438000,
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-17",
+        "status": "available",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "date": "2026-08-18",
+        "status": "available",
+        "originalPrice": 438000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-18",
+        "packageId": "pkg-breakfast",
+        "price": 302000,
+        "stock": 5
+      },
+      {
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-19",
+        "stock": 3,
+        "price": 302000,
+        "originalPrice": 438000,
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-19"
+      },
+      {
+        "date": "2026-08-20",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-20",
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "originalPrice": 438000,
+        "price": 302000,
+        "stock": 4,
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "status": "available",
+        "stock": 7,
+        "price": 352000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-21",
+        "originalPrice": 510000,
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-21",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "originalPrice": 510000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-22",
+        "date": "2026-08-22",
+        "stock": 7,
+        "price": 352000,
+        "status": "available"
+      },
+      {
+        "price": 302000,
+        "stock": 5,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-23",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-23",
+        "originalPrice": 438000
+      },
+      {
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "price": 302000,
+        "stock": 6,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-24",
+        "date": "2026-08-24",
+        "originalPrice": 438000,
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-25",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-breakfast",
+        "price": 302000,
+        "stock": 5,
+        "date": "2026-08-25",
+        "status": "available",
+        "originalPrice": 438000
+      },
+      {
+        "date": "2026-08-26",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "stock": 5,
+        "price": 302000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-26",
+        "originalPrice": 438000,
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "status": "available",
+        "stock": 7,
+        "price": 302000,
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 438000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-27",
+        "date": "2026-08-27"
+      },
+      {
+        "originalPrice": 510000,
+        "price": 352000,
+        "stock": 7,
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-28",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-28",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "status": "available",
+        "stock": 4,
+        "price": 352000,
+        "date": "2026-08-29",
+        "originalPrice": 510000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-29",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "price": 302000,
+        "stock": 6,
+        "originalPrice": 438000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "date": "2026-08-30",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-30",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "originalPrice": 438000,
+        "date": "2026-08-31",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-08-31",
+        "status": "available",
+        "price": 302000,
+        "stock": 7,
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "date": "2026-09-01",
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "stock": 6,
+        "price": 302000,
+        "id": "rate-pkg-breakfast-room-golf-48-2026-09-01",
+        "originalPrice": 438000,
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-09-02",
+        "roomTypeId": "room-golf-48",
+        "date": "2026-09-02",
+        "price": 302000,
+        "stock": 3,
+        "status": "available",
+        "originalPrice": 438000
+      },
+      {
+        "originalPrice": 438000,
+        "date": "2026-09-03",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-breakfast-room-golf-48-2026-09-03",
+        "stock": 4,
+        "price": 302000,
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "price": 208000,
+        "stock": 4,
+        "originalPrice": 302000,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-05",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-05"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "price": 208000,
+        "stock": 3,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-06",
+        "date": "2026-08-06",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 302000
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "price": 258000,
+        "stock": 5,
+        "status": "available",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-07",
+        "originalPrice": 374000,
+        "date": "2026-08-07"
+      },
+      {
+        "price": 258000,
+        "stock": 4,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "date": "2026-08-08",
+        "originalPrice": 374000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-08",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-09",
+        "date": "2026-08-09",
+        "originalPrice": 302000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "roomTypeId": "room-caravan",
+        "stock": 4,
+        "price": 208000
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-caravan",
+        "price": 208000,
+        "stock": 5,
+        "originalPrice": 302000,
+        "date": "2026-08-10",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-10"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "price": 208000,
+        "stock": 3,
+        "date": "2026-08-11",
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-11",
+        "originalPrice": 302000
+      },
+      {
+        "price": 208000,
+        "stock": 4,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-12",
+        "date": "2026-08-12",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 302000
+      },
+      {
+        "originalPrice": 302000,
+        "date": "2026-08-13",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-13",
+        "status": "available",
+        "stock": 3,
+        "price": 208000,
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-14",
+        "originalPrice": 374000,
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-14",
+        "status": "available",
+        "price": 258000,
+        "stock": 5
+      },
+      {
+        "date": "2026-08-15",
+        "status": "available",
+        "price": 258000,
+        "stock": 5,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-15",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 374000,
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "originalPrice": 302000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-16",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-16",
+        "stock": 6,
+        "price": 208000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-17",
+        "stock": 7,
+        "price": 208000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-17",
+        "originalPrice": 302000,
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "date": "2026-08-18",
+        "stock": 5,
+        "price": 208000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "originalPrice": 302000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-18",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "status": "available",
+        "price": 208000,
+        "stock": 6,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-19",
+        "originalPrice": 302000,
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-19"
+      },
+      {
+        "date": "2026-08-20",
+        "stock": 4,
+        "price": 208000,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-20",
+        "originalPrice": 302000,
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "date": "2026-08-21",
+        "status": "available",
+        "stock": 6,
+        "price": 258000,
+        "packageId": "pkg-breakfast",
+        "originalPrice": 374000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-21",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "stock": 7,
+        "price": 258000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-22",
+        "date": "2026-08-22",
+        "originalPrice": 374000
+      },
+      {
+        "date": "2026-08-23",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-23",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 302000,
+        "roomTypeId": "room-caravan",
+        "price": 208000,
+        "status": "available",
+        "stock": 3
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-24",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-24",
+        "price": 208000,
+        "stock": 5,
+        "roomTypeId": "room-caravan",
+        "originalPrice": 302000
+      },
+      {
+        "status": "available",
+        "originalPrice": 302000,
+        "stock": 3,
+        "price": 208000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-25",
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-25"
+      },
+      {
+        "date": "2026-08-26",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 302000,
+        "packageId": "pkg-breakfast",
+        "price": 208000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-26",
+        "stock": 4,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-27",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-27",
+        "stock": 3,
+        "price": 208000,
+        "originalPrice": 302000,
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "originalPrice": 374000,
+        "date": "2026-08-28",
+        "roomTypeId": "room-caravan",
+        "stock": 5,
+        "price": 258000,
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-28",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "date": "2026-08-29",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-29",
+        "roomTypeId": "room-caravan",
+        "price": 258000,
+        "stock": 7,
+        "packageId": "pkg-breakfast",
+        "originalPrice": 374000
+      },
+      {
+        "originalPrice": 302000,
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "price": 208000,
+        "stock": 5,
+        "date": "2026-08-30",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-30"
+      },
+      {
+        "originalPrice": 302000,
+        "status": "available",
+        "date": "2026-08-31",
+        "roomTypeId": "room-caravan",
+        "stock": 5,
+        "price": 208000,
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-caravan-2026-08-31"
+      },
+      {
+        "originalPrice": 302000,
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "price": 208000,
+        "stock": 4,
+        "id": "rate-pkg-breakfast-room-caravan-2026-09-01",
+        "date": "2026-09-01",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "originalPrice": 302000,
+        "date": "2026-09-02",
+        "price": 208000,
+        "stock": 4,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-caravan-2026-09-02",
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "price": 208000,
+        "stock": 6,
+        "id": "rate-pkg-breakfast-room-caravan-2026-09-03",
+        "originalPrice": 302000,
+        "packageId": "pkg-breakfast",
+        "date": "2026-09-03"
+      },
+      {
+        "date": "2026-08-05",
+        "packageId": "pkg-breakfast",
+        "stock": 4,
+        "price": 473000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-05",
+        "status": "available",
+        "originalPrice": 686000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "originalPrice": 686000,
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-06",
+        "price": 473000,
+        "stock": 7,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-06",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "date": "2026-08-07",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-07",
+        "stock": 3,
+        "price": 523000,
+        "originalPrice": 758000,
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "originalPrice": 758000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-08",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 523000,
+        "stock": 4,
+        "status": "available",
+        "date": "2026-08-08",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "originalPrice": 686000,
+        "date": "2026-08-09",
+        "stock": 7,
+        "price": 473000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-09",
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "originalPrice": 686000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-10",
+        "date": "2026-08-10",
+        "price": 473000,
+        "stock": 4,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-11",
+        "stock": 3,
+        "price": 473000,
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "originalPrice": 686000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-11"
+      },
+      {
+        "price": 473000,
+        "packageId": "pkg-breakfast",
+        "stock": 5,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-12",
+        "status": "available",
+        "date": "2026-08-12",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 686000
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 7,
+        "price": 473000,
+        "date": "2026-08-13",
+        "originalPrice": 686000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-13"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-14",
+        "stock": 3,
+        "price": 523000,
+        "status": "available",
+        "date": "2026-08-14",
+        "originalPrice": 758000
+      },
+      {
+        "originalPrice": 758000,
+        "date": "2026-08-15",
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-15",
+        "price": 523000,
+        "stock": 4,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "price": 473000,
+        "stock": 4,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-16",
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-16",
+        "originalPrice": 686000
+      },
+      {
+        "price": 473000,
+        "stock": 5,
+        "date": "2026-08-17",
+        "originalPrice": 686000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-17",
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-18",
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "stock": 6,
+        "price": 473000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-18",
+        "originalPrice": 686000
+      },
+      {
+        "date": "2026-08-19",
+        "originalPrice": 686000,
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-19",
+        "price": 473000,
+        "stock": 6,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 686000,
+        "price": 473000,
+        "stock": 6,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-20",
+        "date": "2026-08-20"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-21",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 758000,
+        "price": 523000,
+        "stock": 7,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-21",
+        "status": "available"
+      },
+      {
+        "originalPrice": 758000,
+        "price": 523000,
+        "stock": 4,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-22",
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-breakfast",
+        "date": "2026-08-22",
+        "status": "available"
+      },
+      {
+        "stock": 3,
+        "price": 473000,
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-23",
+        "status": "available",
+        "date": "2026-08-23",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 686000
+      },
+      {
+        "status": "available",
+        "price": 473000,
+        "stock": 6,
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-24",
+        "originalPrice": 686000,
+        "date": "2026-08-24"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-25",
+        "date": "2026-08-25",
+        "packageId": "pkg-breakfast",
+        "stock": 7,
+        "price": 473000,
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "originalPrice": 686000
+      },
+      {
+        "date": "2026-08-26",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 686000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-26",
+        "price": 473000,
+        "stock": 7,
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "price": 473000,
+        "stock": 3,
+        "status": "available",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 686000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-27",
+        "date": "2026-08-27",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "originalPrice": 758000,
+        "price": 523000,
+        "stock": 5,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-28",
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "date": "2026-08-28",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-29",
+        "packageId": "pkg-breakfast",
+        "originalPrice": 758000,
+        "stock": 6,
+        "price": 523000,
+        "date": "2026-08-29",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 4,
+        "price": 473000,
+        "originalPrice": 686000,
+        "packageId": "pkg-breakfast",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-30",
+        "date": "2026-08-30"
+      },
+      {
+        "price": 473000,
+        "stock": 6,
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-08-31",
+        "originalPrice": 686000,
+        "date": "2026-08-31",
+        "status": "available",
+        "packageId": "pkg-breakfast"
+      },
+      {
+        "originalPrice": 686000,
+        "date": "2026-09-01",
+        "packageId": "pkg-breakfast",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 473000,
+        "stock": 3,
+        "status": "available",
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-09-01"
+      },
+      {
+        "date": "2026-09-02",
+        "originalPrice": 686000,
+        "packageId": "pkg-breakfast",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 4,
+        "price": 473000,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-09-02"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "price": 473000,
+        "stock": 4,
+        "id": "rate-pkg-breakfast-room-museum-penthouse-2026-09-03",
+        "packageId": "pkg-breakfast",
+        "date": "2026-09-03",
+        "status": "available",
+        "originalPrice": 686000
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-05",
+        "roomTypeId": "room-golf-31",
+        "stock": 6,
+        "price": 205000,
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "date": "2026-08-05",
+        "originalPrice": 297000
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-06",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-06",
+        "stock": 3,
+        "price": 205000,
+        "originalPrice": 297000,
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 370000,
+        "status": "available",
+        "date": "2026-08-07",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-07",
+        "stock": 7,
+        "price": 255000
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-08",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 7,
+        "price": 255000,
+        "date": "2026-08-08",
+        "originalPrice": 370000
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-09",
+        "originalPrice": 297000,
+        "stock": 6,
+        "price": 205000,
+        "date": "2026-08-09",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "price": 205000,
+        "stock": 5,
+        "status": "available",
+        "originalPrice": 297000,
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-10",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-10",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "date": "2026-08-11",
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-11",
+        "price": 205000,
+        "stock": 7,
+        "originalPrice": 297000
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-12",
+        "originalPrice": 297000,
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-12",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 4,
+        "price": 205000,
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "price": 205000,
+        "stock": 6,
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-13",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-13",
+        "originalPrice": 297000
+      },
+      {
+        "status": "available",
+        "price": 255000,
+        "stock": 3,
+        "originalPrice": 370000,
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-14",
+        "date": "2026-08-14",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "date": "2026-08-15",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "price": 255000,
+        "stock": 4,
+        "originalPrice": 370000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-15"
+      },
+      {
+        "date": "2026-08-16",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-16",
+        "price": 205000,
+        "stock": 6,
+        "originalPrice": 297000,
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-17",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-17",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 297000,
+        "price": 205000,
+        "stock": 7
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-18",
+        "price": 205000,
+        "stock": 4,
+        "originalPrice": 297000,
+        "date": "2026-08-18",
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-19",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-19",
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 297000,
+        "stock": 3,
+        "price": 205000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-20",
+        "originalPrice": 297000,
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-20",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "price": 205000,
+        "stock": 3
+      },
+      {
+        "date": "2026-08-21",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-21",
+        "stock": 3,
+        "price": 255000,
+        "originalPrice": 370000,
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-22",
+        "originalPrice": 370000,
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "price": 255000,
+        "stock": 7,
+        "date": "2026-08-22",
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "stock": 3,
+        "price": 205000,
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-23",
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-23",
+        "originalPrice": 297000,
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-24",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 297000,
+        "price": 205000,
+        "stock": 5,
+        "status": "available",
+        "date": "2026-08-24"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-25",
+        "stock": 4,
+        "price": 205000,
+        "status": "available",
+        "originalPrice": 297000,
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-25",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "date": "2026-08-26",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-26",
+        "price": 205000,
+        "stock": 7,
+        "originalPrice": 297000,
+        "status": "available",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 297000,
+        "stock": 6,
+        "price": 205000,
+        "date": "2026-08-27",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-27"
+      },
+      {
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "stock": 5,
+        "price": 255000,
+        "originalPrice": 370000,
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-28",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-28"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-29",
+        "stock": 6,
+        "price": 255000,
+        "date": "2026-08-29",
+        "status": "available",
+        "originalPrice": 370000
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-31",
+        "stock": 5,
+        "price": 205000,
+        "originalPrice": 297000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-30",
+        "date": "2026-08-30"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 297000,
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-31",
+        "stock": 6,
+        "price": 205000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-08-31"
+      },
+      {
+        "status": "available",
+        "price": 205000,
+        "stock": 6,
+        "originalPrice": 297000,
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-09-01",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-09-01"
+      },
+      {
+        "date": "2026-09-02",
+        "originalPrice": 297000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-09-02",
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-aqua-sauna",
+        "price": 205000,
+        "stock": 3
+      },
+      {
+        "date": "2026-09-03",
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 297000,
+        "id": "rate-pkg-aqua-sauna-room-golf-31-2026-09-03",
+        "stock": 4,
+        "price": 205000,
+        "roomTypeId": "room-golf-31",
+        "status": "available"
+      },
+      {
+        "date": "2026-08-05",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-05",
+        "stock": 6,
+        "price": 328000,
+        "originalPrice": 476000,
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "originalPrice": 476000,
+        "date": "2026-08-06",
+        "price": 328000,
+        "stock": 4,
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-06"
+      },
+      {
+        "price": 378000,
+        "stock": 6,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-07",
+        "date": "2026-08-07",
+        "status": "available",
+        "originalPrice": 548000,
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-08",
+        "stock": 4,
+        "price": 378000,
+        "status": "available",
+        "originalPrice": 548000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-08"
+      },
+      {
+        "date": "2026-08-09",
+        "price": 328000,
+        "stock": 6,
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "originalPrice": 476000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-09"
+      },
+      {
+        "date": "2026-08-10",
+        "stock": 5,
+        "price": 328000,
+        "originalPrice": 476000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-10",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "price": 328000,
+        "stock": 6,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-11",
+        "originalPrice": 476000,
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-11",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "date": "2026-08-12",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-12",
+        "originalPrice": 476000,
+        "price": 328000,
+        "stock": 3
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-13",
+        "date": "2026-08-13",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 476000,
+        "status": "available",
+        "price": 328000,
+        "stock": 4
+      },
+      {
+        "date": "2026-08-14",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 548000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-14",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 6,
+        "price": 378000
+      },
+      {
+        "originalPrice": 548000,
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-15",
+        "date": "2026-08-15",
+        "price": 378000,
+        "stock": 7,
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 476000,
+        "status": "available",
+        "date": "2026-08-16",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-16",
+        "price": 328000,
+        "stock": 7
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-17",
+        "date": "2026-08-17",
+        "originalPrice": 476000,
+        "stock": 6,
+        "price": 328000,
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 476000,
+        "packageId": "pkg-aqua-sauna",
+        "price": 328000,
+        "stock": 5,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-18",
+        "status": "available",
+        "date": "2026-08-18"
+      },
+      {
+        "originalPrice": 476000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-19",
+        "date": "2026-08-19",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "price": 328000,
+        "stock": 7
+      },
+      {
+        "stock": 6,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-20",
+        "price": 328000,
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 476000,
+        "date": "2026-08-20",
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "date": "2026-08-21",
+        "stock": 4,
+        "price": 378000,
+        "originalPrice": 548000,
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-21"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "originalPrice": 548000,
+        "stock": 6,
+        "price": 378000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-22",
+        "date": "2026-08-22",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "date": "2026-08-23",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-23",
+        "price": 328000,
+        "stock": 6,
+        "originalPrice": 476000
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-24",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 3,
+        "price": 328000,
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 476000,
+        "status": "available",
+        "date": "2026-08-24"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "stock": 4,
+        "price": 328000,
+        "originalPrice": 476000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-25",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-25"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "stock": 7,
+        "price": 328000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-26",
+        "date": "2026-08-26",
+        "originalPrice": 476000,
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "status": "available",
+        "stock": 6,
+        "price": 328000,
+        "date": "2026-08-27",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 476000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-27"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-28",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "price": 378000,
+        "stock": 7,
+        "date": "2026-08-28",
+        "originalPrice": 548000
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-29",
+        "status": "available",
+        "stock": 3,
+        "price": 378000,
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-29",
+        "originalPrice": 548000
+      },
+      {
+        "date": "2026-08-30",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-30",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 6,
+        "price": 328000,
+        "status": "available",
+        "originalPrice": 476000
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-08-31",
+        "status": "available",
+        "date": "2026-08-31",
+        "price": 328000,
+        "stock": 4,
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 476000
+      },
+      {
+        "originalPrice": 476000,
+        "date": "2026-09-01",
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 6,
+        "price": 328000,
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-09-01"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "date": "2026-09-02",
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 476000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-09-02",
+        "stock": 3,
+        "price": 328000
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-golf-48-2026-09-03",
+        "originalPrice": 476000,
+        "roomTypeId": "room-golf-48",
+        "price": 328000,
+        "stock": 6,
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-09-03",
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-05",
+        "stock": 4,
+        "price": 226000,
+        "originalPrice": 328000,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-05"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "price": 226000,
+        "stock": 5,
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 328000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-06",
+        "date": "2026-08-06"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 400000,
+        "date": "2026-08-07",
+        "status": "available",
+        "stock": 3,
+        "price": 276000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-07",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "date": "2026-08-08",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-08",
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 400000,
+        "price": 276000,
+        "stock": 6,
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-09",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-09",
+        "status": "available",
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna",
+        "price": 226000,
+        "stock": 5
+      },
+      {
+        "stock": 6,
+        "price": 226000,
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 328000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-10",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-10"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-11",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 6,
+        "originalPrice": 328000,
+        "price": 226000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-11"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "stock": 5,
+        "price": 226000,
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-12",
+        "status": "available",
+        "date": "2026-08-12"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-13",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-13",
+        "status": "available",
+        "originalPrice": 328000,
+        "stock": 6,
+        "roomTypeId": "room-caravan",
+        "price": 226000
+      },
+      {
+        "stock": 3,
+        "price": 276000,
+        "status": "available",
+        "originalPrice": 400000,
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-14",
+        "date": "2026-08-14",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "stock": 3,
+        "price": 276000,
+        "originalPrice": 400000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-15",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-15"
+      },
+      {
+        "date": "2026-08-16",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 5,
+        "price": 226000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-16",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 328000
+      },
+      {
+        "status": "available",
+        "stock": 7,
+        "price": 226000,
+        "originalPrice": 328000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-17",
+        "date": "2026-08-17"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "originalPrice": 328000,
+        "date": "2026-08-18",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-18",
+        "stock": 5,
+        "price": 226000
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "date": "2026-08-19",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-19",
+        "price": 226000,
+        "stock": 4,
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 328000
+      },
+      {
+        "date": "2026-08-20",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 328000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-20",
+        "status": "available",
+        "price": 226000,
+        "stock": 3
+      },
+      {
+        "status": "available",
+        "originalPrice": 400000,
+        "roomTypeId": "room-caravan",
+        "stock": 4,
+        "price": 276000,
+        "date": "2026-08-21",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-21",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "date": "2026-08-22",
+        "originalPrice": 400000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-22",
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-aqua-sauna",
+        "price": 276000,
+        "stock": 5
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "price": 226000,
+        "stock": 6,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-23",
+        "date": "2026-08-23",
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-24",
+        "date": "2026-08-24",
+        "originalPrice": 328000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "price": 226000,
+        "stock": 4
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-25",
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna",
+        "stock": 6,
+        "price": 226000,
+        "date": "2026-08-25",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-26",
+        "originalPrice": 328000,
+        "stock": 5,
+        "price": 226000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-26"
+      },
+      {
+        "status": "available",
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna",
+        "stock": 3,
+        "price": 226000,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-27",
+        "date": "2026-08-27"
+      },
+      {
+        "price": 276000,
+        "stock": 7,
+        "roomTypeId": "room-caravan",
+        "originalPrice": 400000,
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-28",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-28"
+      },
+      {
+        "date": "2026-08-29",
+        "stock": 4,
+        "price": 276000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-29",
+        "status": "available",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 400000,
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-30",
+        "date": "2026-08-30",
+        "stock": 7,
+        "price": 226000,
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "originalPrice": 328000
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-31",
+        "status": "available",
+        "price": 226000,
+        "stock": 4,
+        "originalPrice": 328000,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-08-31"
+      },
+      {
+        "price": 226000,
+        "stock": 7,
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "date": "2026-09-01",
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-09-01"
+      },
+      {
+        "date": "2026-09-02",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 328000,
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-09-02",
+        "price": 226000,
+        "stock": 5,
+        "status": "available",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-caravan-2026-09-03",
+        "stock": 3,
+        "price": 226000,
+        "date": "2026-09-03",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 328000,
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 744000,
+        "price": 513000,
+        "stock": 4,
+        "date": "2026-08-05",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-05"
+      },
+      {
+        "date": "2026-08-06",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-06",
+        "status": "available",
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 5,
+        "price": 513000,
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-07",
+        "stock": 5,
+        "price": 563000,
+        "date": "2026-08-07",
+        "originalPrice": 816000
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-08",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-08",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 563000,
+        "originalPrice": 816000,
+        "stock": 5
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-09",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "date": "2026-08-09",
+        "stock": 5,
+        "price": 513000,
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-10",
+        "date": "2026-08-10",
+        "originalPrice": 744000,
+        "stock": 3,
+        "price": 513000,
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-11",
+        "date": "2026-08-11",
+        "originalPrice": 744000,
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "price": 513000,
+        "stock": 5
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-12",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 744000,
+        "date": "2026-08-12",
+        "price": 513000,
+        "stock": 6
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-13",
+        "status": "available",
+        "price": 513000,
+        "stock": 5,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-13",
+        "originalPrice": 744000,
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 563000,
+        "stock": 6,
+        "originalPrice": 816000,
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-14",
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-14"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-15",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 816000,
+        "price": 563000,
+        "stock": 3,
+        "status": "available",
+        "date": "2026-08-15",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "originalPrice": 744000,
+        "date": "2026-08-16",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-16",
+        "stock": 5,
+        "price": 513000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-17",
+        "originalPrice": 744000,
+        "stock": 3,
+        "price": 513000,
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-17",
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available"
+      },
+      {
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 4,
+        "price": 513000,
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-18",
+        "date": "2026-08-18",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-19",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna",
+        "price": 513000,
+        "stock": 6,
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-19"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-20",
+        "originalPrice": 744000,
+        "price": 513000,
+        "stock": 3,
+        "date": "2026-08-20",
+        "status": "available",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "date": "2026-08-21",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 563000,
+        "stock": 3,
+        "originalPrice": 816000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-21",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "stock": 7,
+        "price": 563000,
+        "originalPrice": 816000,
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-22",
+        "date": "2026-08-22",
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-23",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 4,
+        "price": 513000,
+        "packageId": "pkg-aqua-sauna",
+        "date": "2026-08-23",
+        "originalPrice": 744000
+      },
+      {
+        "status": "available",
+        "price": 513000,
+        "stock": 4,
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-24",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-24"
+      },
+      {
+        "originalPrice": 744000,
+        "price": 513000,
+        "stock": 6,
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-25",
+        "packageId": "pkg-aqua-sauna",
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "date": "2026-08-25"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-26",
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-26",
+        "stock": 6,
+        "price": 513000,
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "date": "2026-08-27",
+        "stock": 4,
+        "price": 513000,
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-27",
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "originalPrice": 816000,
+        "date": "2026-08-28",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-28",
+        "packageId": "pkg-aqua-sauna",
+        "stock": 5,
+        "price": 563000,
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-29",
+        "originalPrice": 816000,
+        "stock": 5,
+        "price": 563000,
+        "date": "2026-08-29",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "date": "2026-08-30",
+        "packageId": "pkg-aqua-sauna",
+        "status": "available",
+        "price": 513000,
+        "stock": 3,
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-30",
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-08-31",
+        "status": "available",
+        "originalPrice": 744000,
+        "stock": 7,
+        "price": 513000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-31"
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-09-01",
+        "date": "2026-09-01",
+        "stock": 7,
+        "price": 513000,
+        "originalPrice": 744000,
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-aqua-sauna"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-09-02",
+        "status": "available",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-09-02",
+        "originalPrice": 744000,
+        "packageId": "pkg-aqua-sauna",
+        "stock": 5,
+        "price": 513000
+      },
+      {
+        "originalPrice": 744000,
+        "date": "2026-09-03",
+        "stock": 3,
+        "price": 513000,
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-aqua-sauna",
+        "id": "rate-pkg-aqua-sauna-room-museum-penthouse-2026-09-03",
+        "status": "available"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-05",
+        "stock": 7,
+        "price": 249000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-05",
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 361000
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-06",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-06",
+        "stock": 3,
+        "price": 249000,
+        "status": "available",
+        "originalPrice": 361000,
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-07",
+        "price": 299000,
+        "stock": 5,
+        "status": "available",
+        "date": "2026-08-07",
+        "originalPrice": 434000
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-08",
+        "stock": 7,
+        "price": 299000,
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-08",
+        "originalPrice": 434000,
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "stock": 7,
+        "price": 249000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "originalPrice": 361000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-09",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-09"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-10",
+        "price": 249000,
+        "stock": 6,
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 361000,
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-10"
+      },
+      {
+        "originalPrice": 361000,
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-11",
+        "stock": 7,
+        "price": 249000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-11",
+        "roomTypeId": "room-golf-31",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 361000,
+        "roomTypeId": "room-golf-31",
+        "date": "2026-08-12",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-12",
+        "price": 249000,
+        "stock": 5,
+        "status": "available"
+      },
+      {
+        "price": 249000,
+        "stock": 6,
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 361000,
+        "date": "2026-08-13",
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-13"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-14",
+        "originalPrice": 434000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "price": 299000,
+        "stock": 6,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-14"
+      },
+      {
+        "stock": 6,
+        "price": 299000,
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 434000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-15",
+        "date": "2026-08-15",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "originalPrice": 361000,
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-16",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-16",
+        "roomTypeId": "room-golf-31",
+        "stock": 5,
+        "price": 249000,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-17",
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-17",
+        "price": 249000,
+        "stock": 7,
+        "originalPrice": 361000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-18",
+        "originalPrice": 361000,
+        "packageId": "pkg-bbq-dining",
+        "stock": 6,
+        "roomTypeId": "room-golf-31",
+        "price": 249000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-18",
+        "status": "available"
+      },
+      {
+        "originalPrice": 361000,
+        "date": "2026-08-19",
+        "stock": 5,
+        "price": 249000,
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-19",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-20",
+        "date": "2026-08-20",
+        "stock": 4,
+        "price": 249000,
+        "originalPrice": 361000
+      },
+      {
+        "status": "available",
+        "stock": 6,
+        "price": 299000,
+        "date": "2026-08-21",
+        "originalPrice": 434000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-21",
+        "roomTypeId": "room-golf-31",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "stock": 4,
+        "price": 299000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 434000,
+        "date": "2026-08-22",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-22"
+      },
+      {
+        "originalPrice": 361000,
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "date": "2026-08-23",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-23",
+        "price": 249000,
+        "stock": 7,
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "stock": 3,
+        "price": 249000,
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "originalPrice": 361000,
+        "date": "2026-08-24",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-24",
+        "roomTypeId": "room-golf-31"
+      },
+      {
+        "stock": 5,
+        "price": 249000,
+        "originalPrice": 361000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-25",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-25"
+      },
+      {
+        "date": "2026-08-26",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "price": 249000,
+        "stock": 6,
+        "originalPrice": 361000,
+        "roomTypeId": "room-golf-31",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-26"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "date": "2026-08-27",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-27",
+        "packageId": "pkg-bbq-dining",
+        "price": 249000,
+        "stock": 6,
+        "originalPrice": 361000
+      },
+      {
+        "status": "available",
+        "roomTypeId": "room-golf-31",
+        "price": 299000,
+        "stock": 3,
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 434000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-28",
+        "date": "2026-08-28"
+      },
+      {
+        "price": 299000,
+        "stock": 3,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-29",
+        "originalPrice": 434000,
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "date": "2026-08-29",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "originalPrice": 361000,
+        "date": "2026-08-30",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-30",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "price": 249000,
+        "stock": 3
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-08-31",
+        "date": "2026-08-31",
+        "status": "available",
+        "originalPrice": 361000,
+        "roomTypeId": "room-golf-31",
+        "stock": 3,
+        "price": 249000,
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "date": "2026-09-01",
+        "roomTypeId": "room-golf-31",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-09-01",
+        "price": 249000,
+        "stock": 4,
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 361000
+      },
+      {
+        "roomTypeId": "room-golf-31",
+        "stock": 6,
+        "price": 249000,
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-09-02",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "date": "2026-09-02",
+        "originalPrice": 361000
+      },
+      {
+        "date": "2026-09-03",
+        "originalPrice": 361000,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-31-2026-09-03",
+        "roomTypeId": "room-golf-31",
+        "stock": 5,
+        "price": 249000,
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "stock": 7,
+        "price": 398000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-05",
+        "originalPrice": 577000,
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-05",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-06",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-06",
+        "price": 398000,
+        "stock": 3,
+        "originalPrice": 577000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-07",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "originalPrice": 650000,
+        "price": 448000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-07",
+        "stock": 7
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-08",
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-golf-48",
+        "stock": 3,
+        "price": 448000,
+        "date": "2026-08-08",
+        "status": "available",
+        "originalPrice": 650000
+      },
+      {
+        "stock": 5,
+        "price": 398000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-09",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 577000,
+        "date": "2026-08-09",
+        "status": "available",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "status": "available",
+        "price": 398000,
+        "stock": 5,
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-10",
+        "date": "2026-08-10",
+        "originalPrice": 577000
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-11",
+        "roomTypeId": "room-golf-48",
+        "packageId": "pkg-bbq-dining",
+        "stock": 5,
+        "price": 398000,
+        "originalPrice": 577000,
+        "date": "2026-08-11"
+      },
+      {
+        "date": "2026-08-12",
+        "price": 398000,
+        "stock": 4,
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-12",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 577000
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "price": 398000,
+        "stock": 4,
+        "date": "2026-08-13",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-13",
+        "originalPrice": 577000
+      },
+      {
+        "date": "2026-08-14",
+        "price": 448000,
+        "stock": 4,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-14",
+        "originalPrice": 650000,
+        "status": "available",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "stock": 6,
+        "price": 448000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-15",
+        "originalPrice": 650000,
+        "status": "available",
+        "date": "2026-08-15",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-16",
+        "status": "available",
+        "price": 398000,
+        "stock": 5,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-16",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 577000
+      },
+      {
+        "stock": 7,
+        "price": 398000,
+        "date": "2026-08-17",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "originalPrice": 577000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-17",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "price": 398000,
+        "originalPrice": 577000,
+        "stock": 6,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-18",
+        "status": "available",
+        "date": "2026-08-18"
+      },
+      {
+        "roomTypeId": "room-golf-48",
+        "date": "2026-08-19",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-19",
+        "packageId": "pkg-bbq-dining",
+        "stock": 6,
+        "price": 398000,
+        "originalPrice": 577000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-20",
+        "status": "available",
+        "originalPrice": 577000,
+        "packageId": "pkg-bbq-dining",
+        "price": 398000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-20",
+        "stock": 7,
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "date": "2026-08-21",
+        "originalPrice": 650000,
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-21",
+        "price": 448000,
+        "stock": 5,
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "originalPrice": 650000,
+        "status": "available",
+        "price": 448000,
+        "stock": 5,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-22",
+        "date": "2026-08-22",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "date": "2026-08-23",
+        "price": 398000,
+        "stock": 3,
+        "originalPrice": 577000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-23",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-24",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "originalPrice": 577000,
+        "stock": 7,
+        "price": 398000,
+        "date": "2026-08-24"
+      },
+      {
+        "date": "2026-08-25",
+        "status": "available",
+        "originalPrice": 577000,
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-25",
+        "stock": 3,
+        "price": 398000,
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "originalPrice": 577000,
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-26",
+        "roomTypeId": "room-golf-48",
+        "price": 398000,
+        "stock": 3,
+        "date": "2026-08-26",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "price": 398000,
+        "roomTypeId": "room-golf-48",
+        "stock": 5,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-27",
+        "status": "available",
+        "originalPrice": 577000,
+        "date": "2026-08-27",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-28",
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-golf-48",
+        "status": "available",
+        "originalPrice": 650000,
+        "price": 448000,
+        "stock": 7,
+        "date": "2026-08-28"
+      },
+      {
+        "stock": 7,
+        "price": 448000,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-29",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 650000,
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-29"
+      },
+      {
+        "originalPrice": 577000,
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-30",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-30",
+        "roomTypeId": "room-golf-48",
+        "price": 398000,
+        "stock": 7,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-31",
+        "originalPrice": 577000,
+        "packageId": "pkg-bbq-dining",
+        "price": 398000,
+        "stock": 6,
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-08-31"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-09-01",
+        "status": "available",
+        "originalPrice": 577000,
+        "price": 398000,
+        "stock": 5,
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-09-01",
+        "roomTypeId": "room-golf-48"
+      },
+      {
+        "price": 398000,
+        "status": "available",
+        "stock": 7,
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-09-02",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-09-02",
+        "roomTypeId": "room-golf-48",
+        "originalPrice": 577000
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-golf-48-2026-09-03",
+        "originalPrice": 577000,
+        "stock": 6,
+        "price": 398000,
+        "status": "available",
+        "roomTypeId": "room-golf-48",
+        "date": "2026-09-03"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-05",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 397000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-05",
+        "status": "available",
+        "stock": 5,
+        "price": 274000
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-06",
+        "price": 274000,
+        "stock": 5,
+        "originalPrice": 397000,
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-06",
+        "status": "available",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-07",
+        "status": "available",
+        "stock": 6,
+        "price": 324000,
+        "originalPrice": 470000,
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-07"
+      },
+      {
+        "date": "2026-08-08",
+        "stock": 6,
+        "price": 324000,
+        "roomTypeId": "room-caravan",
+        "originalPrice": 470000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-08",
+        "packageId": "pkg-bbq-dining",
+        "status": "available"
+      },
+      {
+        "date": "2026-08-09",
+        "originalPrice": 397000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-09",
+        "price": 274000,
+        "stock": 3,
+        "status": "available"
+      },
+      {
+        "originalPrice": 397000,
+        "price": 274000,
+        "stock": 5,
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-10",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-10"
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-11",
+        "originalPrice": 397000,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-11",
+        "price": 274000,
+        "stock": 4,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "date": "2026-08-12",
+        "stock": 4,
+        "price": 274000,
+        "originalPrice": 397000,
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-12"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-13",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-13",
+        "originalPrice": 397000,
+        "price": 274000,
+        "stock": 7,
+        "status": "available",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "date": "2026-08-14",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-14",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 470000,
+        "packageId": "pkg-bbq-dining",
+        "price": 324000,
+        "stock": 7
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-15",
+        "originalPrice": 470000,
+        "packageId": "pkg-bbq-dining",
+        "stock": 4,
+        "price": 324000,
+        "status": "available",
+        "date": "2026-08-15",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "status": "available",
+        "price": 274000,
+        "stock": 4,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-16",
+        "date": "2026-08-16",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 397000,
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "price": 274000,
+        "stock": 4,
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-17",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-17",
+        "originalPrice": 397000
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "price": 274000,
+        "stock": 6,
+        "originalPrice": 397000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-18",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-18"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 397000,
+        "date": "2026-08-19",
+        "stock": 5,
+        "price": 274000,
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-19",
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "status": "available",
+        "stock": 3,
+        "price": 274000,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-20",
+        "date": "2026-08-20",
+        "originalPrice": 397000
+      },
+      {
+        "status": "available",
+        "stock": 3,
+        "price": 324000,
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-21",
+        "date": "2026-08-21",
+        "originalPrice": 470000
+      },
+      {
+        "status": "available",
+        "price": 324000,
+        "stock": 3,
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-caravan",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-22",
+        "originalPrice": 470000,
+        "date": "2026-08-22"
+      },
+      {
+        "date": "2026-08-23",
+        "price": 274000,
+        "stock": 3,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 397000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-23",
+        "status": "available"
+      },
+      {
+        "date": "2026-08-24",
+        "roomTypeId": "room-caravan",
+        "originalPrice": 397000,
+        "stock": 6,
+        "price": 274000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-24",
+        "status": "available",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-caravan",
+        "stock": 4,
+        "originalPrice": 397000,
+        "price": 274000,
+        "date": "2026-08-25",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-25"
+      },
+      {
+        "originalPrice": 397000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-26",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-26",
+        "status": "available",
+        "price": 274000,
+        "stock": 7,
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "status": "available",
+        "stock": 3,
+        "price": 274000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-27",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-27",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 397000
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-28",
+        "date": "2026-08-28",
+        "originalPrice": 470000,
+        "price": 324000,
+        "stock": 4,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-bbq-dining",
+        "status": "available"
+      },
+      {
+        "status": "available",
+        "originalPrice": 470000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-29",
+        "price": 324000,
+        "stock": 7,
+        "roomTypeId": "room-caravan",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-29"
+      },
+      {
+        "stock": 6,
+        "price": 274000,
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-30",
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-30",
+        "originalPrice": 397000
+      },
+      {
+        "roomTypeId": "room-caravan",
+        "date": "2026-08-31",
+        "originalPrice": 397000,
+        "stock": 4,
+        "price": 274000,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-08-31",
+        "status": "available"
+      },
+      {
+        "originalPrice": 397000,
+        "stock": 7,
+        "price": 274000,
+        "date": "2026-09-01",
+        "roomTypeId": "room-caravan",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-09-01",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 397000,
+        "status": "available",
+        "date": "2026-09-02",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-09-02",
+        "price": 274000,
+        "stock": 4,
+        "roomTypeId": "room-caravan"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-09-03",
+        "id": "rate-pkg-bbq-dining-room-caravan-2026-09-03",
+        "roomTypeId": "room-caravan",
+        "price": 274000,
+        "stock": 7,
+        "originalPrice": 397000,
+        "status": "available"
+      },
+      {
+        "date": "2026-08-05",
+        "originalPrice": 903000,
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-05",
+        "packageId": "pkg-bbq-dining",
+        "stock": 3,
+        "price": 623000
+      },
+      {
+        "status": "available",
+        "price": 623000,
+        "stock": 7,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-06",
+        "date": "2026-08-06",
+        "originalPrice": 903000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "date": "2026-08-07",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-07",
+        "originalPrice": 976000,
+        "packageId": "pkg-bbq-dining",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 673000,
+        "stock": 4
+      },
+      {
+        "date": "2026-08-08",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-08",
+        "stock": 6,
+        "price": 673000,
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 976000
+      },
+      {
+        "status": "available",
+        "date": "2026-08-09",
+        "originalPrice": 903000,
+        "price": 623000,
+        "stock": 6,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-09",
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-10",
+        "originalPrice": 903000,
+        "date": "2026-08-10",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 623000,
+        "stock": 6,
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-11",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-11",
+        "price": 623000,
+        "stock": 6,
+        "originalPrice": 903000,
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-12",
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 903000,
+        "stock": 3,
+        "price": 623000,
+        "date": "2026-08-12"
+      },
+      {
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-13",
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 623000,
+        "stock": 5,
+        "originalPrice": 903000,
+        "date": "2026-08-13"
+      },
+      {
+        "price": 673000,
+        "stock": 5,
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available",
+        "originalPrice": 976000,
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-14",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-14"
+      },
+      {
+        "status": "available",
+        "price": 673000,
+        "stock": 5,
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 976000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-15",
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-15"
+      },
+      {
+        "date": "2026-08-16",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 903000,
+        "price": 623000,
+        "stock": 3,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-16"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-17",
+        "price": 623000,
+        "stock": 6,
+        "originalPrice": 903000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-17",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-18",
+        "status": "available",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-18",
+        "price": 623000,
+        "stock": 5,
+        "originalPrice": 903000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-19",
+        "date": "2026-08-19",
+        "status": "available",
+        "price": 623000,
+        "stock": 7,
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 903000,
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "originalPrice": 903000,
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-20",
+        "stock": 5,
+        "price": 623000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-20",
+        "status": "available",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-21",
+        "price": 673000,
+        "stock": 7,
+        "status": "available",
+        "originalPrice": 976000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-21"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 976000,
+        "date": "2026-08-22",
+        "price": 673000,
+        "stock": 3,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-22",
+        "packageId": "pkg-bbq-dining",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "date": "2026-08-23",
+        "originalPrice": 903000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-23",
+        "stock": 5,
+        "price": 623000,
+        "roomTypeId": "room-museum-penthouse",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 903000,
+        "stock": 6,
+        "price": 623000,
+        "date": "2026-08-24",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-24",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-25",
+        "date": "2026-08-25",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 903000,
+        "stock": 4,
+        "price": 623000,
+        "status": "available"
+      },
+      {
+        "stock": 4,
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-museum-penthouse",
+        "price": 623000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-26",
+        "originalPrice": 903000,
+        "date": "2026-08-26",
+        "status": "available"
+      },
+      {
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 903000,
+        "status": "available",
+        "date": "2026-08-27",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-27",
+        "stock": 6,
+        "price": 623000
+      },
+      {
+        "roomTypeId": "room-museum-penthouse",
+        "date": "2026-08-28",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-28",
+        "originalPrice": 976000,
+        "packageId": "pkg-bbq-dining",
+        "price": 673000,
+        "stock": 5,
+        "status": "available"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-29",
+        "packageId": "pkg-bbq-dining",
+        "originalPrice": 976000,
+        "roomTypeId": "room-museum-penthouse",
+        "price": 673000,
+        "stock": 3,
+        "date": "2026-08-29",
+        "status": "available"
+      },
+      {
+        "price": 623000,
+        "stock": 5,
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-30",
+        "originalPrice": 903000,
+        "date": "2026-08-30",
+        "status": "available",
+        "roomTypeId": "room-museum-penthouse"
+      },
+      {
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-08-31",
+        "status": "available",
+        "packageId": "pkg-bbq-dining",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 903000,
+        "price": 623000,
+        "stock": 4,
+        "date": "2026-08-31"
+      },
+      {
+        "date": "2026-09-01",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-09-01",
+        "roomTypeId": "room-museum-penthouse",
+        "stock": 6,
+        "price": 623000,
+        "originalPrice": 903000,
+        "status": "available",
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "date": "2026-09-02",
+        "roomTypeId": "room-museum-penthouse",
+        "originalPrice": 903000,
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-09-02",
+        "status": "available",
+        "price": 623000,
+        "stock": 6,
+        "packageId": "pkg-bbq-dining"
+      },
+      {
+        "status": "available",
+        "date": "2026-09-03",
+        "price": 623000,
+        "stock": 6,
+        "roomTypeId": "room-museum-penthouse",
+        "packageId": "pkg-bbq-dining",
+        "id": "rate-pkg-bbq-dining-room-museum-penthouse-2026-09-03",
+        "originalPrice": 903000
+      }
+    ],
+    "reservations": [],
+    "adminUsers": [
+      {
+        "email": "master@oakvalley.co.kr",
+        "createdAt": "2026-01-01T09:00:00Z",
+        "approved": true,
+        "role": "master",
+        "password": "1234",
+        "phone": "010-9999-8888",
+        "employeeId": "master",
+        "id": "admin-master-1",
+        "name": "최마스터 총괄이사"
+      }
+    ],
+    "notificationLogs": [],
+    "settlements": [],
+    "roleSettings": {
+      "reservation_staff": {
+        "canManageRooms": false,
+        "canManageCancellation": false,
+        "canManageRates": false,
+        "canViewUnmaskedCard": true,
+        "canManagePartners": false,
+        "canConfirmReservations": true,
+        "canManagePackages": false
+      },
+      "sales_agent": {
+        "canViewUnmaskedCard": false,
+        "canManageRates": true,
+        "canManagePartners": true,
+        "canManagePackages": true,
+        "canManageRooms": true,
+        "canManageCancellation": false,
+        "canConfirmReservations": false
+      }
+    },
+    "specialDays": [
+      {
+        "name": "광복절 공휴일",
+        "id": "sd-1",
+        "notes": "광복절 연휴 특수 요금 지정일",
+        "date": "2026-08-15",
+        "customPriceMultiplier": 1.25,
+        "category": "holiday"
+      },
+      {
+        "name": "추석 연휴 시작일",
+        "customPriceMultiplier": 1.3,
+        "notes": "추석 명절 특별 요금 지정일",
+        "id": "sd-2",
+        "date": "2026-09-24",
+        "category": "holiday"
+      },
+      {
+        "name": "추석 당일",
+        "id": "sd-3",
+        "notes": "추석 명절 피크 성수기 지정일",
+        "customPriceMultiplier": 1.35,
+        "date": "2026-09-25",
+        "category": "holiday"
+      },
+      {
+        "date": "2026-10-03",
+        "customPriceMultiplier": 1.2,
+        "notes": "가을 단풍 성수기 공휴일",
+        "name": "개천절",
+        "id": "sd-4",
+        "category": "holiday"
+      },
+      {
+        "customPriceMultiplier": 1.3,
+        "date": "2026-12-25",
+        "category": "special_rate",
+        "notes": "연말 크리스마스 특수일",
+        "id": "sd-5",
+        "name": "크리스마스"
+      }
+    ],
+    "notificationEmail": "master@oakvalley.co.kr"
+  },
+  "updatedAt": "2026-09-14T07:55:09.386Z"
+}

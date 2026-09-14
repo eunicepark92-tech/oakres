@@ -5,6 +5,8 @@ import helmet from 'helmet';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { executeServerMigration } from './server/serverMigrationService';
 
 dotenv.config();
 
@@ -49,6 +51,31 @@ function getGeminiClient(): GoogleGenAI {
     });
   }
   return aiClient;
+}
+
+let supabaseAdminClient: SupabaseClient | null = null;
+
+function getSupabaseAdminClient(): SupabaseClient {
+  if (!supabaseAdminClient) {
+    const rawUrl = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim();
+    const supabaseUrl = rawUrl.replace(/\/rest\/v1\/?$/, '').replace(/\/+$/, '');
+    const serviceRoleKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+
+    if (!supabaseUrl) {
+      throw new Error('SUPABASE_URL (또는 VITE_SUPABASE_URL) 서버 환경변수가 구성되지 않았습니다.');
+    }
+    if (!serviceRoleKey) {
+      throw new Error('SUPABASE_SERVICE_ROLE_KEY 서버 전용 환경변수가 구성되지 않았습니다. Settings 메뉴의 Secrets 패널에서 등록해 주세요.');
+    }
+
+    supabaseAdminClient = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+  }
+  return supabaseAdminClient;
 }
 
 async function startServer() {
@@ -159,6 +186,16 @@ async function startServer() {
       console.error('[API State Save Error] Status:', 500);
       return res.status(500).json({ ok: false, error: 'Failed to save server state' });
     }
+  });
+
+  // 6.5. Migration Endpoint Disabled
+  app.post('/api/migrate', (_req, res) => {
+    return res.status(410).json({
+      ok: false,
+      success: false,
+      error: '기존 627건 예시 데이터 마이그레이션 기능은 비활성화되었습니다. 운영 데이터는 관리자 화면에서 직접 등록하십시오.',
+      code: 'MIGRATION_DISABLED',
+    });
   });
 
   // 7. Gemini Proxy Endpoint (/api/generate)

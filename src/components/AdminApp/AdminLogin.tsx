@@ -1,65 +1,36 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { KeyRound, UserPlus, ShieldCheck, UserCheck, ArrowRight, Building2, User } from 'lucide-react';
+import { KeyRound, ShieldCheck, ArrowRight, User, Loader2, Info } from 'lucide-react';
 
 export const AdminLogin: React.FC = () => {
-  const { loginAdmin, registerSalesAgent, adminUsers } = useApp();
+  const { loginAdmin } = useApp();
 
   const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
 
   // Login Form
-  const [loginId, setLoginId] = useState('');
+  const [loginEmail, setLoginEmail] = useState('');
   const [loginPw, setLoginPw] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Signup Form
-  const [regName, setRegName] = useState('');
-  const [regEmailPrefix, setRegEmailPrefix] = useState('');
-  const [regPhone, setRegPhone] = useState('');
-  const [regEmployeeId, setRegEmployeeId] = useState('');
-  const [regSuccessMsg, setRegSuccessMsg] = useState('');
-  const [regErrorMsg, setRegErrorMsg] = useState('');
-
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return;
+
     setLoginError('');
-    const res = loginAdmin(loginId, loginPw);
-    if (!res.success && res.message) {
-      setLoginError(res.message);
+    setIsLoading(true);
+
+    try {
+      const res = await loginAdmin(loginEmail, loginPw);
+      if (!res.success && res.message) {
+        setLoginError(res.message);
+      }
+    } catch (err: any) {
+      setLoginError('로그인 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  const handleRegisterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setRegErrorMsg('');
-    setRegSuccessMsg('');
-
-    const fullEmail = `${regEmailPrefix.trim().replace(/@.*/, '')}@hdc-resort.com`;
-
-    if (!regName.trim() || !regEmailPrefix.trim() || !regEmployeeId.trim()) {
-      setRegErrorMsg('모든 필수 항목을 입력해주세요.');
-      return;
-    }
-
-    const res = registerSalesAgent({
-      name: regName,
-      email: fullEmail,
-      phone: regPhone,
-      employeeId: regEmployeeId,
-    });
-
-    if (res.success) {
-      setRegSuccessMsg('영업사원 가입 신청이 성공적으로 접수되었습니다. 마스터 승인 후 로그인 가능합니다.');
-      setRegName('');
-      setRegEmailPrefix('');
-      setRegPhone('');
-      setRegEmployeeId('');
-    } else {
-      setRegErrorMsg(res.message || '가입 신청 중 오류가 발생했습니다.');
-    }
-  };
-
-  const pendingAgentsCount = adminUsers.filter((u) => u.role === 'sales_agent' && !u.approved).length;
 
   return (
     <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center px-4 py-8 sm:py-12 bg-[#F8F7F2] dark:bg-[#121214] transition-colors">
@@ -76,6 +47,7 @@ export const AdminLogin: React.FC = () => {
 
           <div className="flex bg-black/40 p-1 rounded-xl mt-5 sm:mt-6 border border-white/10">
             <button
+              type="button"
               onClick={() => setActiveTab('login')}
               className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all cursor-pointer ${
                 activeTab === 'login'
@@ -86,6 +58,7 @@ export const AdminLogin: React.FC = () => {
               관리자 로그인
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab('register')}
               className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                 activeTab === 'register'
@@ -93,13 +66,7 @@ export const AdminLogin: React.FC = () => {
                   : 'text-stone-300 hover:text-white'
               }`}
             >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>영업사원 가입 신청</span>
-              {pendingAgentsCount > 0 && (
-                <span className="bg-rose-500 text-white text-[10px] px-1.5 py-0.2 rounded-full">
-                  {pendingAgentsCount}
-                </span>
-              )}
+              <span>계정 신청 안내</span>
             </button>
           </div>
         </div>
@@ -110,16 +77,17 @@ export const AdminLogin: React.FC = () => {
             <form onSubmit={handleLoginSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
-                  사번 또는 이메일
+                  관리자 계정 이메일
                 </label>
                 <div className="relative">
                   <input
-                    type="text"
+                    type="email"
                     required
-                    value={loginId}
-                    onChange={(e) => setLoginId(e.target.value)}
-                    placeholder="사번 또는 사내 이메일 입력"
-                    className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/40 transition-colors"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="예: master@oakvalley.co.kr"
+                    disabled={isLoading}
+                    className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/40 transition-colors disabled:opacity-50"
                   />
                   <User className="w-4 h-4 text-stone-400 absolute right-3.5 top-3.5" />
                 </div>
@@ -136,7 +104,8 @@ export const AdminLogin: React.FC = () => {
                     value={loginPw}
                     onChange={(e) => setLoginPw(e.target.value)}
                     placeholder="비밀번호 입력"
-                    className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/40 transition-colors"
+                    disabled={isLoading}
+                    className="w-full px-4 py-3 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/40 transition-colors disabled:opacity-50"
                   />
                   <KeyRound className="w-4 h-4 text-stone-400 absolute right-3.5 top-3.5" />
                 </div>
@@ -150,99 +119,50 @@ export const AdminLogin: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-3.5 bg-oak-green hover:bg-oak-dark text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
+                disabled={isLoading}
+                className="w-full py-3.5 bg-oak-green hover:bg-oak-dark text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <span>관리자 로그인</span>
-                <ArrowRight className="w-4 h-4 text-oak-gold" />
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 text-oak-gold animate-spin" />
+                    <span>인증 확인 중...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>관리자 로그인</span>
+                    <ArrowRight className="w-4 h-4 text-oak-gold" />
+                  </>
+                )}
               </button>
             </form>
           </div>
         )}
 
-        {/* Tab 2: Sales Agent Sign-up Form */}
+        {/* Tab 2: Sales Agent Sign-up Guide */}
         {activeTab === 'register' && (
           <div className="p-6 sm:p-8 space-y-6">
-            <form onSubmit={handleRegisterSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
-                  영업사원 사번 (Employee ID) <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={regEmployeeId}
-                  onChange={(e) => setRegEmployeeId(e.target.value.toUpperCase())}
-                  placeholder="예: SALE-101"
-                  className="w-full px-3.5 py-2.5 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-bold text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/30"
-                />
+            <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 rounded-2xl p-6 text-center space-y-3">
+              <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 rounded-full flex items-center justify-center mx-auto">
+                <Info className="w-6 h-6" />
               </div>
-
-              <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
-                  성명 <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                  placeholder="홍길동"
-                  className="w-full px-3.5 py-2.5 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-medium text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/30"
-                />
+              <h3 className="text-base font-extrabold text-stone-900 dark:text-white">
+                관리자 계정 생성 안내
+              </h3>
+              <p className="text-xs text-stone-600 dark:text-stone-300 leading-relaxed max-w-md mx-auto">
+                보안 정책에 따라 관리자 및 영업사원 계정은 마스터 총괄 관리자에게 직접 계정 생성을 요청해 주세요.
+              </p>
+              <div className="pt-2 text-xs font-bold text-oak-green dark:text-oak-gold">
+                총괄 문의: master@oakvalley.co.kr
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
-                  사내 이메일 주소 <span className="text-rose-500">*</span>
-                </label>
-                <div className="flex items-center bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-oak-green/30">
-                  <input
-                    type="text"
-                    required
-                    value={regEmailPrefix}
-                    onChange={(e) => setRegEmailPrefix(e.target.value.replace(/@.*/, ''))}
-                    placeholder="sales"
-                    className="flex-1 px-3.5 py-2.5 bg-transparent text-sm font-medium text-stone-900 dark:text-white focus:outline-none"
-                  />
-                  <span className="px-3.5 py-2.5 bg-stone-200/80 dark:bg-stone-700 text-stone-700 dark:text-stone-200 font-mono text-xs font-bold border-l border-stone-300 dark:border-stone-600 shrink-0">
-                    @hdc-resort.com
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
-                  연락처
-                </label>
-                <input
-                  type="tel"
-                  value={regPhone}
-                  onChange={(e) => setRegPhone(e.target.value)}
-                  placeholder="010-1234-5678"
-                  className="w-full px-3.5 py-2.5 bg-stone-50 dark:bg-stone-800/80 border border-stone-300 dark:border-stone-700 rounded-xl text-sm font-medium text-stone-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-oak-green/30"
-                />
-              </div>
-
-              {regSuccessMsg && (
-                <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-xl text-xs font-bold flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span>{regSuccessMsg}</span>
-                </div>
-              )}
-
-              {regErrorMsg && (
-                <p className="text-xs text-rose-600 dark:text-rose-400 font-bold bg-rose-50 dark:bg-rose-950/40 p-3 rounded-xl border border-rose-200 dark:border-rose-800">
-                  {regErrorMsg}
-                </p>
-              )}
-
-              <button
-                type="submit"
-                className="w-full py-3.5 bg-oak-green hover:bg-oak-dark text-white font-extrabold text-sm rounded-xl shadow-md transition-all cursor-pointer active:scale-[0.99]"
-              >
-                가입 신청하기 (마스터 승인 대기)
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={() => setActiveTab('login')}
+              className="w-full py-3 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-200 font-bold text-xs rounded-xl transition-all cursor-pointer"
+            >
+              로그인 화면으로 돌아가기
+            </button>
           </div>
         )}
 

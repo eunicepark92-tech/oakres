@@ -49,13 +49,6 @@ export const MasterAgentApprovals: React.FC = () => {
     resDefault: boolean;
   }[] = [
     {
-      key: 'canViewUnmaskedCard',
-      label: '💳 고객 카드번호 마스킹 해제 (원본 조회)',
-      description: '오픈카드 보증 카드번호 원본(Full Number)을 마스킹 없이 전체 열람할 수 있는 권한입니다.',
-      salesDefault: false,
-      resDefault: true,
-    },
-    {
       key: 'canManagePackages',
       label: '🎁 패키지 및 요금 상품 등록/수정/삭제',
       description: '제휴사 단독 우대 패키지 상품을 새로 등록하고 포함사항 및 기본 요금을 수정합니다.',
@@ -215,8 +208,8 @@ export const MasterAgentApprovals: React.FC = () => {
             </thead>
             <tbody className="divide-y divide-stone-100 font-medium">
               {permissionItems.map((item) => {
-                const salesAllowed = roleSettings.sales_agent[item.key];
-                const resAllowed = roleSettings.reservation_staff[item.key];
+                const salesAllowed = Boolean(roleSettings?.sales_agent?.[item.key]);
+                const resAllowed = Boolean(roleSettings?.reservation_staff?.[item.key]);
 
                 return (
                   <tr key={item.key} className="hover:bg-stone-50/80 transition-colors">
@@ -253,11 +246,6 @@ export const MasterAgentApprovals: React.FC = () => {
                             </>
                           )}
                         </button>
-                        {item.key === 'canViewUnmaskedCard' && !salesAllowed && (
-                          <span className="text-[10px] text-amber-800 bg-amber-100 font-bold px-1.5 py-0.5 rounded border border-amber-300">
-                            🔒 마스킹 유지 필수
-                          </span>
-                        )}
                         {item.key === 'canManagePackages' && salesAllowed && (
                           <span className="text-[10px] text-blue-800 bg-blue-100 font-bold px-1.5 py-0.5 rounded border border-blue-300">
                             ✨ 패키지 등록 가능
@@ -294,11 +282,6 @@ export const MasterAgentApprovals: React.FC = () => {
                             </>
                           )}
                         </button>
-                        {item.key === 'canViewUnmaskedCard' && resAllowed && (
-                          <span className="text-[10px] text-emerald-800 bg-emerald-100 font-bold px-1.5 py-0.5 rounded border border-emerald-300">
-                            💳 카드 원본조회 허용
-                          </span>
-                        )}
                         {item.key === 'canManagePackages' && !resAllowed && (
                           <span className="text-[10px] text-stone-600 bg-stone-100 font-bold px-1.5 py-0.5 rounded border border-stone-200">
                             🔒 패키지 등록 제한
@@ -456,7 +439,7 @@ export const MasterAgentApprovals: React.FC = () => {
                   <td className="p-3">
                     <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                       <Lock className="w-3 h-3 text-emerald-600" />
-                      <span>{u.password && u.password !== '1234' ? '변경됨 (사용자 지정)' : '기본값 (1234)'}</span>
+                      <span>인증 계정 (보안)</span>
                     </span>
                   </td>
                   <td className="p-3 text-right">
@@ -549,36 +532,36 @@ export const MasterAgentApprovals: React.FC = () => {
                 <span className="font-mono text-stone-700">{resettingUser.email}</span>
               </div>
               <div className="flex justify-between items-center pt-1 border-t border-stone-200">
-                <span className="text-stone-500 font-semibold">현재 비밀번호:</span>
+                <span className="text-stone-500 font-semibold">비밀번호 상태:</span>
                 <span className="font-mono font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded border border-amber-200 text-[11px]">
-                  {resettingUser.password || '1234'}
+                  Supabase Auth 연동 완료
                 </span>
               </div>
             </div>
 
-            {/* Option 1: Quick Reset to Default '1234' */}
+            {/* Option 1: Quick Reset to Temporary Password */}
             <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-extrabold text-xs text-amber-950 flex items-center gap-1.5">
                     <RefreshCw className="w-4 h-4 text-amber-700" />
-                    <span>옵션 1. 기본 비밀번호(1234)로 즉시 초기화</span>
+                    <span>옵션 1. 임시 비밀번호(oak2026!)로 즉시 초기화</span>
                   </h4>
                   <p className="text-[11px] text-amber-800 mt-0.5">
-                    해당 직원의 비밀번호를 시스템 초기값인 <strong>'1234'</strong>로 즉시 복원합니다.
+                    해당 직원의 비밀번호를 임시 보안 비밀번호 <strong>'oak2026!'</strong>로 초기화합니다.
                   </p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => {
-                  resetAdminUserPassword(resettingUser.id, '1234');
+                  resetAdminUserPassword(resettingUser.id, 'oak2026!');
                   setResettingUser(null);
                 }}
                 className="w-full mt-2 py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-extrabold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>'1234'로 즉시 초기화 실행</span>
+                <span>'oak2026!'로 임시 초기화 실행</span>
               </button>
             </div>
 
@@ -640,7 +623,7 @@ export const MasterAgentApprovals: React.FC = () => {
                     <Sparkles className="w-3 h-3 text-amber-500" />
                     <span>추천 비밀번호:</span>
                   </span>
-                  {['oak2026!', 'hdc-resort1234', 'welcome2026', 'pass7788'].map((suggested) => (
+                  {['oak2026!', 'hdc-resort2026!', 'welcome2026', 'pass7788'].map((suggested) => (
                     <button
                       key={suggested}
                       type="button"

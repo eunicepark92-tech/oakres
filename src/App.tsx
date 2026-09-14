@@ -92,8 +92,14 @@ export function App() {
 
   // Page change auto-scroll to top
   React.useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [activeMode, userStep, adminTab, currentPartner?.id, currentAdmin?.id]);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeMode, userStep, adminTab, currentPartner?.id, currentAdmin?.id, isLookupOpen, completedReservation]);
 
   // Clear user flow & booking state whenever partner session changes (logout or login as another partner)
   React.useEffect(() => {

@@ -2,7 +2,6 @@ import { Partner, Package, RoomType, DailyRate, Reservation, AdminUser, Notifica
 
 export const DEFAULT_ROLE_SETTINGS: SystemRoleSettings = {
   sales_agent: {
-    canViewUnmaskedCard: false,     // 영업사원은 고객의 카드번호를 마스킹된 상태로만 유지 (보안 상 해제 불허)
     canManagePackages: true,       // 영업사원은 패키지 및 요금 등록/수정 권한 있음
     canManagePartners: true,       // 영업사원은 담당 제휴사 관리 가능
     canManageRooms: true,          // 영업사원은 객실 타입 연결 가능
@@ -11,7 +10,6 @@ export const DEFAULT_ROLE_SETTINGS: SystemRoleSettings = {
     canConfirmReservations: false, // 예약 승인은 예약실 전용
   },
   reservation_staff: {
-    canViewUnmaskedCard: true,      // 예약실 직원은 고객의 카드번호 원본 조회 가능 (오픈카드 실결제 보증 확인)
     canManagePackages: false,      // 예약실 직원은 패키지 요금 등록 권한 없음 (영업 전용)
     canManagePartners: false,      // 예약실 직원은 제휴사 등록 권한 없음
     canManageRooms: false,         // 예약실 직원은 객실 타입 수정 권한 없음
@@ -31,7 +29,6 @@ export const INITIAL_ADMIN_USERS: AdminUser[] = [
     approved: true,
     createdAt: '2026-01-01T09:00:00Z',
     phone: '010-9999-8888',
-    password: '1234',
   },
 ];
 

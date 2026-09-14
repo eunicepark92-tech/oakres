@@ -7,6 +7,26 @@ import {
   subscribeToFirebaseAppState,
 } from '../services/firebaseDb';
 import {
+  supabase,
+  isSupabaseConfigured,
+  checkSupabaseConnection,
+} from '../services/supabaseClient';
+import {
+  fetchAllFromSupabase,
+  upsertProductInSupabase,
+  deleteProductFromSupabase,
+  upsertPartnerInSupabase,
+  deletePartnerFromSupabase,
+  upsertDailyRateInSupabase,
+  upsertDailyRatesBatchInSupabase,
+  upsertReservationInSupabase,
+  saveOperationNoticeInSupabase,
+  upsertAdminUserInSupabase,
+  deleteAdminUserFromSupabase,
+  insertAuditLogInSupabase,
+  subscribeToSupabaseRealtime,
+} from '../services/supabaseDb';
+import {
   syncAllReservationsToSheet,
   syncSingleReservationToSheet,
   saveAuditLogToDrive,
@@ -115,17 +135,16 @@ interface AppContextType {
   resetRolePermissions: () => void;
   hasPermission: (permissionKey: keyof RolePermissions) => boolean;
 
-  loginAdmin: (idOrEmail: string, pass: string) => { success: boolean; user?: AdminUser; message?: string };
-  logoutAdmin: () => void;
+  loginAdmin: (email: string, pass: string) => Promise<{ success: boolean; user?: AdminUser; message?: string }>;
+  logoutAdmin: () => Promise<void>;
   registerSalesAgent: (data: { name: string; email: string; phone: string; employeeId: string; role?: UserRole }) => { success: boolean; message: string };
   approveSalesAgent: (agentId: string) => void;
   rejectSalesAgent: (agentId: string) => void;
   deleteAdminUser: (adminId: string) => void;
   updateAdminRole: (adminId: string, newRole: UserRole) => void;
   updateAdminProfile: (adminId: string, data: { name?: string; phone?: string; employeeId?: string }) => void;
-  changeAdminPassword: (adminId: string, currentPass: string, newPass: string) => boolean;
+  changeAdminPassword: (adminId: string, currentPass: string, newPass: string) => Promise<boolean>;
   resetAdminUserPassword: (adminId: string, customNewPass?: string) => boolean;
-  resetMasterPasswordToDefault: () => void;
 
   // Partner Management by Admin
   addPartner: (partnerData: { name: string; code: string; logoUrl: string; contactEmail?: string; contactPhone?: string; discountRate?: number }) => Partner;
@@ -190,7 +209,6 @@ interface AppContextType {
     bookerPhone: string;
     bookerEmail: string;
     specialRequests?: string;
-    guaranteeCard: Reservation['guaranteeCard'];
   }) => Reservation;
 
   cancelReservation: (reservationId: string, reason: string) => { success: boolean; reservation?: Reservation; message?: string };
@@ -221,6 +239,11 @@ interface AppContextType {
   darkMode: boolean;
   toggleDarkMode: () => void;
 
+  // Supabase Persistence Engine
+  isSupabaseActive: boolean;
+  supabaseStatusMessage: string;
+  recheckSupabase: () => Promise<void>;
+
   // Reset Storage helper
   resetToDefaultData: () => void;
 }
@@ -228,12 +251,168 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 const LOCAL_STORAGE_KEY = 'OAKVALLEY_CLEAN_MASTER_V2026_09_RESET_DONE';
-const SCHEMA_VERSION = 'v2026_09_clean_master_reset_v3';
+const SCHEMA_VERSION = 'v2026_09_clean_master_reset_v4';
+
+interface AdminUserRow {
+  user_id: string;
+  email: string;
+  name: string;
+  role: string;
+  employee_id: string | null;
+  approved: boolean;
+  phone: string | null;
+}
+
+function mapAdminRowToAdminUser(adminRow: AdminUserRow): AdminUser {
+  return {
+    id: adminRow.user_id,
+    userId: adminRow.user_id,
+    email: adminRow.email,
+    name: adminRow.name,
+    role: adminRow.role as any,
+    employeeId: adminRow.employee_id || '',
+    approved: Boolean(adminRow.approved),
+    phone: adminRow.phone || '',
+    createdAt: new Date().toISOString(),
+  };
+}
+
+async function fetchAdminUserByUserId(userId: string): Promise<{
+  adminUser: AdminUser | null;
+  error: { code?: string; message?: string; details?: string } | null;
+}> {
+  if (!supabase || !isSupabaseConfigured) {
+    return { adminUser: null, error: { message: 'Supabase client is not configured' } };
+  }
+
+  const { data: adminRow, error: adminError } = await supabase
+    .from('admin_users')
+    .select('user_id, email, name, role, employee_id, approved, phone')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (adminError) {
+    console.error('[Admin Query Error]', {
+      code: adminError.code,
+      message: adminError.message,
+      details: adminError.details,
+    });
+    return {
+      adminUser: null,
+      error: {
+        code: adminError.code,
+        message: adminError.message,
+        details: adminError.details,
+      },
+    };
+  }
+
+  if (!adminRow) {
+    return { adminUser: null, error: null };
+  }
+
+  return { adminUser: mapAdminRowToAdminUser(adminRow as AdminUserRow), error: null };
+}
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeMode, setActiveMode] = useState<'user' | 'admin'>('user');
   const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
   const [currentAdmin, setCurrentAdmin] = useState<AdminUser | null>(null);
+
+  // Active Admin User ID reference to prevent duplicate queries or race conditions
+  const activeAdminUserIdRef = useRef<string | null>(null);
+
+  // Supabase Auth Session Initialization & Synchronization
+  useEffect(() => {
+    if (!supabase || !isSupabaseConfigured) return;
+
+    let isMounted = true;
+    let isFetching = false;
+
+    const syncAdminFromSession = async (authUserId: string) => {
+      if (isFetching) return;
+      isFetching = true;
+      activeAdminUserIdRef.current = authUserId;
+
+      try {
+        const { adminUser, error: queryError } = await fetchAdminUserByUserId(authUserId);
+
+        if (!isMounted) return;
+
+        if (queryError) {
+          // 조회 오류 발생 시 콘솔에 이미 상세가 기록되었으며, 세션을 함부로 초기화하지 않음
+          return;
+        }
+
+        if (!adminUser) {
+          activeAdminUserIdRef.current = null;
+          await supabase.auth.signOut();
+          if (isMounted) setCurrentAdmin(null);
+          return;
+        }
+
+        if (adminUser.approved) {
+          setCurrentAdmin(adminUser);
+        } else {
+          activeAdminUserIdRef.current = null;
+          await supabase.auth.signOut();
+          if (isMounted) setCurrentAdmin(null);
+        }
+      } catch (err) {
+        console.error('[Supabase Auth Session Restore Error]', err);
+      } finally {
+        isFetching = false;
+      }
+    };
+
+    const restoreAdminSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session?.user) {
+          if (isMounted) {
+            activeAdminUserIdRef.current = null;
+            setCurrentAdmin(null);
+          }
+          return;
+        }
+
+        if (activeAdminUserIdRef.current !== session.user.id) {
+          await syncAdminFromSession(session.user.id);
+        }
+      } catch (err) {
+        console.error('[Supabase Auth Session Restore Error]', err);
+      }
+    };
+
+    restoreAdminSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
+
+      if (event === 'SIGNED_OUT' || !session?.user) {
+        activeAdminUserIdRef.current = null;
+        setCurrentAdmin(null);
+        return;
+      }
+
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        const authUserId = session.user.id;
+        if (activeAdminUserIdRef.current === authUserId) {
+          return;
+        }
+        await syncAdminFromSession(authUserId);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Supabase Database Connection State
+  const [isSupabaseActive, setIsSupabaseActive] = useState<boolean>(false);
+  const [supabaseStatusMessage, setSupabaseStatusMessage] = useState<string>('Supabase 연결 확인 중...');
 
   // Dark Mode state with persistence & html class toggle
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -429,85 +608,86 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }, 100);
   }, []);
 
-  // 1. Initial State Load & Realtime Subscription via Firebase Firestore
+  // Helper to recheck Supabase connection manually or from UI
+  const recheckSupabase = useCallback(async () => {
+    const health = await checkSupabaseConnection();
+    setIsSupabaseActive(health.ok);
+    setSupabaseStatusMessage(health.message);
+    if (health.ok) {
+      const fresh = await fetchAllFromSupabase();
+      if (fresh) {
+        applyStateData(fresh);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(fresh));
+      }
+    }
+  }, [applyStateData]);
+
+  // 1. Initial State Load: Supabase (Primary) -> Local Cache -> One-time Baseline
   useEffect(() => {
     let isMounted = true;
 
     async function initializeSharedState() {
-      const initialRates = generateInitialDailyRates();
-      const defaultFreshState = {
-        partners: INITIAL_PARTNERS,
-        packages: INITIAL_PACKAGES,
-        packageCategories: INITIAL_PACKAGE_CATEGORIES,
-        roomTypes: INITIAL_ROOM_TYPES,
-        mediaAssets: INITIAL_MEDIA_ASSETS,
-        cancellationRules: DEFAULT_CANCELLATION_RULES,
-        seasonPeriods: DEFAULT_SEASON_PERIODS,
-        seasonalCancellationRules: DEFAULT_SEASONAL_CANCELLATION_RULES,
-        auditLogs: INITIAL_AUDIT_LOGS,
-        dailyRates: initialRates,
-        reservations: INITIAL_RESERVATIONS,
-        adminUsers: INITIAL_ADMIN_USERS,
-        notificationLogs: INITIAL_NOTIFICATIONS,
-        settlements: INITIAL_SETTLEMENTS,
-        roleSettings: DEFAULT_ROLE_SETTINGS,
-        specialDays: DEFAULT_SPECIAL_DAYS,
-        notificationEmail: 'master@oakvalley.co.kr',
-        version: SCHEMA_VERSION,
-        _cleanResetDone: true,
-      };
+      // 1-A. Check Supabase connection
+      try {
+        const supabaseHealth = await checkSupabaseConnection();
+        if (isMounted) {
+          setIsSupabaseActive(supabaseHealth.ok);
+          setSupabaseStatusMessage(supabaseHealth.message);
+        }
 
-      const enforceWipeAndSave = async () => {
-        if (!isMounted) return;
-        applyStateData(defaultFreshState);
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(defaultFreshState));
-        const timestamp = new Date().toISOString();
-        lastSyncedTimestampRef.current = timestamp;
-        isLoadedFromServerRef.current = true;
-        await saveFirebaseAppState(defaultFreshState).catch(() => {});
-        await fetch('/api/app-state', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ state: defaultFreshState, updatedAt: timestamp }),
-        }).catch(() => {});
-      };
+        if (supabaseHealth.ok) {
+          const initialRates = generateInitialDailyRates();
+          const supabaseData = await fetchAllFromSupabase();
+          if (supabaseData && isMounted) {
+            applyStateData({
+              partners: supabaseData.partners || [],
+              packages: supabaseData.packages || [],
+              packageCategories: supabaseData.packageCategories || [],
+              roomTypes: supabaseData.roomTypes || [],
+              dailyRates: supabaseData.dailyRates || [],
+              reservations: supabaseData.reservations || [],
+              adminUsers: supabaseData.adminUsers.length > 0 ? supabaseData.adminUsers : INITIAL_ADMIN_USERS,
+              auditLogs: supabaseData.auditLogs || [],
+              seasonPeriods: supabaseData.seasonPeriods || [],
+              seasonalCancellationRules: supabaseData.seasonalCancellationRules || [],
+              cancellationRules: supabaseData.cancellationRules || [],
+              specialDays: supabaseData.specialDays || [],
+              roleSettings: supabaseData.roleSettings || DEFAULT_ROLE_SETTINGS,
+              notificationEmail: supabaseData.notificationEmail || 'master@oakvalley.co.kr',
+            });
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(supabaseData));
+            isLoadedFromServerRef.current = true;
+            return;
+          }
+        }
+      } catch (sbErr) {
+        console.warn('[Supabase Init Warning]', sbErr);
+      }
 
-      // 1-A. Try Firebase Firestore first
+      // 1-B. Try Firebase Firestore fallback if Supabase not ready
       try {
         const firestoreData = await getFirebaseAppState();
         if (firestoreData && firestoreData.state && isMounted) {
-          const state = firestoreData.state;
-          // Check if state is old dirty state
-          if (state.version !== SCHEMA_VERSION || !state._cleanResetDone || (state.reservations && state.reservations.length > 0 && !state._userExplicitKeep)) {
-            await enforceWipeAndSave();
-            return;
-          }
-          applyStateData(state);
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+          applyStateData(firestoreData.state);
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(firestoreData.state));
           lastSyncedTimestampRef.current = firestoreData.updatedAt || new Date().toISOString();
           isLoadedFromServerRef.current = true;
           return;
         }
       } catch {
-        // Continue to server endpoint fallback
+        // Continue to server endpoint
       }
 
-      // 1-B. Fallback to /api/app-state
+      // 1-C. Fallback to /api/app-state
       try {
         const res = await fetch('/api/app-state');
         if (res.ok) {
           const json = await res.json();
           if (json.ok && json.data && isMounted) {
-            const state = json.data;
-            if (state.version !== SCHEMA_VERSION || !state._cleanResetDone || (state.reservations && state.reservations.length > 0 && !state._userExplicitKeep)) {
-              await enforceWipeAndSave();
-              return;
-            }
-            applyStateData(state);
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+            applyStateData(json.data);
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(json.data));
             lastSyncedTimestampRef.current = json.updatedAt || new Date().toISOString();
             isLoadedFromServerRef.current = true;
-            saveFirebaseAppState(state).catch(() => {});
             return;
           }
         }
@@ -515,22 +695,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Fallback to local storage
       }
 
-      // 1-C. Check localStorage if offline
+      // 1-D. Check localStorage if offline
       const savedState = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedState) {
         try {
           const parsed = JSON.parse(savedState);
-          if (parsed && parsed.version === SCHEMA_VERSION && parsed._cleanResetDone) {
-            if (isMounted) {
-              applyStateData(parsed);
-              isLoadedFromServerRef.current = true;
-            }
-            saveFirebaseAppState(parsed).catch(() => {});
-            fetch('/api/app-state', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ state: parsed, updatedAt: new Date().toISOString() }),
-            }).catch(() => {});
+          if (parsed && isMounted) {
+            applyStateData(parsed);
+            isLoadedFromServerRef.current = true;
             return;
           }
         } catch {
@@ -538,18 +710,48 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
       }
 
-      // 1-D. Default Clean State (Master only, 0 reservations, 0 partners)
+      // 1-E. Initial fresh default baseline (never wipe subsequent modifications)
       if (isMounted) {
-        await enforceWipeAndSave();
+        const freshState = {
+          partners: INITIAL_PARTNERS,
+          packages: INITIAL_PACKAGES,
+          packageCategories: INITIAL_PACKAGE_CATEGORIES,
+          roomTypes: INITIAL_ROOM_TYPES,
+          mediaAssets: INITIAL_MEDIA_ASSETS,
+          cancellationRules: DEFAULT_CANCELLATION_RULES,
+          seasonPeriods: DEFAULT_SEASON_PERIODS,
+          seasonalCancellationRules: DEFAULT_SEASONAL_CANCELLATION_RULES,
+          auditLogs: INITIAL_AUDIT_LOGS,
+          dailyRates: generateInitialDailyRates(),
+          reservations: INITIAL_RESERVATIONS,
+          adminUsers: INITIAL_ADMIN_USERS,
+          notificationLogs: INITIAL_NOTIFICATIONS,
+          settlements: INITIAL_SETTLEMENTS,
+          roleSettings: DEFAULT_ROLE_SETTINGS,
+          specialDays: DEFAULT_SPECIAL_DAYS,
+          notificationEmail: 'master@oakvalley.co.kr',
+        };
+        applyStateData(freshState);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(freshState));
+        isLoadedFromServerRef.current = true;
       }
     }
 
     initializeSharedState();
 
-    // Setup Firestore Real-time Listener for instant cross-device updates
+    // Setup Supabase Real-time Listener for instant cross-device updates
+    const unsubscribeSupabase = subscribeToSupabaseRealtime(async () => {
+      if (!isMounted) return;
+      const fresh = await fetchAllFromSupabase();
+      if (fresh && isMounted) {
+        applyStateData(fresh);
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(fresh));
+      }
+    });
+
+    // Setup Firestore Real-time Listener as secondary fallback
     const unsubscribeFirestore = subscribeToFirebaseAppState((remoteState, updatedAt) => {
       if (!isMounted || !remoteState) return;
-      if (remoteState.version !== SCHEMA_VERSION || !remoteState._cleanResetDone) return;
       if (!lastSyncedTimestampRef.current || new Date(updatedAt).getTime() > new Date(lastSyncedTimestampRef.current).getTime()) {
         applyStateData(remoteState);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(remoteState));
@@ -559,6 +761,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     return () => {
       isMounted = false;
+      unsubscribeSupabase();
       if (unsubscribeFirestore) unsubscribeFirestore();
     };
   }, [applyStateData]);
@@ -756,81 +959,119 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('제휴사 접속이 종료되었습니다.', 'info');
   };
 
-  // Admin Login
-  const loginAdmin = (idOrEmail: string, pass: string) => {
-    const query = idOrEmail.trim().toLowerCase();
-    
-    // Master Login
-    if (query === 'master' || query === 'master-001' || query === 'master@oakvalley.co.kr' || query === 'master@hdc-resort.com') {
-      const masterUser = adminUsers.find((u) => u.role === 'master') || INITIAL_ADMIN_USERS[0];
-      const expectedPass = masterUser.password || '1234';
-      if (pass !== expectedPass) {
-        return { success: false, message: '비밀번호가 올바르지 않습니다.' };
-      }
-      setCurrentAdmin(masterUser);
-      showToast(`[마스터] ${masterUser.name}님으로 관리자 접속되었습니다.`, 'success');
-      return { success: true, user: masterUser };
+  // Admin Login via Supabase Auth
+  const loginAdmin = async (
+    email: string,
+    pass: string
+  ): Promise<{ success: boolean; user?: AdminUser; message?: string }> => {
+    if (!email || !email.trim() || !pass) {
+      return { success: false, message: '관리자 계정 이메일과 비밀번호를 모두 입력해주세요.' };
     }
 
-    // Reservation Staff & Sales Agent login
-    const foundUser = adminUsers.find(
-      (u) => (u.employeeId.toLowerCase() === query || u.email.toLowerCase() === query)
-    );
+    if (!supabase || !isSupabaseConfigured) {
+      return { success: false, message: '인증 서버가 설정되지 않았습니다. 관리자에게 문의하세요.' };
+    }
 
-    if (foundUser) {
-      if (!foundUser.approved) {
+    try {
+      // 1. signInWithPassword 성공 후 반환되는 authData.user.id 사용
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: pass,
+      });
+
+      if (authError) {
+        console.warn('[Supabase Auth Failed]', authError.message);
+        if (authError.message.includes('Invalid login credentials')) {
+          return { success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' };
+        }
+        if (authError.message.includes('Email not confirmed')) {
+          return { success: false, message: '이메일 인증이 완료되지 않은 계정입니다.' };
+        }
+        return { success: false, message: '로그인에 실패했습니다. 입력 정보를 확인해주세요.' };
+      }
+
+      if (!authData.user) {
+        return { success: false, message: '인증 사용자 정보를 찾을 수 없습니다.' };
+      }
+
+      const authUserId = authData.user.id;
+
+      // 2. admin_users 조회: public.admin_users, 조건 user_id = authData.user.id, maybeSingle()
+      const { data: adminRow, error: adminError } = await supabase
+        .from('admin_users')
+        .select('user_id, email, name, role, employee_id, approved, phone')
+        .eq('user_id', authUserId)
+        .maybeSingle();
+
+      // 5. adminError가 발생한 경우와 adminRow가 없는 경우를 명확하게 구분
+      if (adminError) {
+        console.error('[Admin Query Error]', {
+          code: adminError.code,
+          message: adminError.message,
+          details: adminError.details,
+        });
+        return {
+          success: false,
+          message: '관리자 계정 정보 조회 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+        };
+      }
+
+      if (!adminRow) {
+        await supabase.auth.signOut();
+        return {
+          success: false,
+          message: '등록된 관리자 정보가 없습니다. 마스터 관리자에게 계정 등록을 요청하세요.',
+        };
+      }
+
+      if (!adminRow.approved) {
+        await supabase.auth.signOut();
         return {
           success: false,
           message: '마스터 관리자의 가입 승인이 진행 중입니다. 승인 후 접속 가능합니다.',
         };
       }
 
-      // Password check
-      const expectedPass = foundUser.password || '1234';
-      if (pass !== expectedPass) {
-        return { success: false, message: '비밀번호가 올바르지 않습니다.' };
+      // 4. 조회 결과를 AdminUser 타입으로 명시적으로 변환
+      const loggedUser: AdminUser = mapAdminRowToAdminUser(adminRow as AdminUserRow);
+
+      // 7. onAuthStateChange 콜백과의 중복 실행 방지
+      activeAdminUserIdRef.current = loggedUser.id;
+      setCurrentAdmin(loggedUser);
+
+      const roleBadge =
+        loggedUser.role === 'master'
+          ? '마스터 총괄'
+          : loggedUser.role === 'reservation_staff'
+          ? '예약실 담당'
+          : '영업사원';
+
+      showToast(`[${roleBadge}] ${loggedUser.name}님으로 관리자 접속되었습니다.`, 'success');
+      return { success: true, user: loggedUser };
+    } catch (err: any) {
+      console.error('[Admin Login Exception]', err);
+      return { success: false, message: '로그인 처리 중 시스템 오류가 발생했습니다.' };
+    }
+  };
+
+  const logoutAdmin = async (): Promise<void> => {
+    try {
+      activeAdminUserIdRef.current = null;
+      if (supabase && isSupabaseConfigured) {
+        await supabase.auth.signOut();
       }
-
-      const roleBadge = foundUser.role === 'reservation_staff' ? '예약실 담당' : '영업사원';
-      setCurrentAdmin(foundUser);
-      showToast(`[${roleBadge}] ${foundUser.name}님으로 접속되었습니다.`, 'success');
-      return { success: true, user: foundUser };
+    } catch (err) {
+      console.error('[Admin Logout Error]', err);
+    } finally {
+      activeAdminUserIdRef.current = null;
+      setCurrentAdmin(null);
+      showToast('관리자 세션이 종료되었습니다.', 'info');
     }
-
-    return { success: false, message: '사번/이메일 또는 비밀번호가 올바르지 않습니다.' };
   };
 
-  const logoutAdmin = () => {
-    setCurrentAdmin(null);
-    showToast('관리자 세션이 종료되었습니다.', 'info');
-  };
-
-  const registerSalesAgent = (data: { name: string; email: string; phone: string; employeeId: string; role?: UserRole }) => {
-    const existing = adminUsers.find(
-      (u) => u.employeeId === data.employeeId || u.email === data.email
-    );
-    if (existing) {
-      return { success: false, message: '이미 등록된 사번 또는 이메일입니다.' };
-    }
-
-    const assignedRole = data.role || 'sales_agent';
-
-    const newUser: AdminUser = {
-      id: `admin-${assignedRole}-${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      employeeId: data.employeeId.toUpperCase(),
-      role: assignedRole,
-      approved: false, // Requires Master Approval!
-      createdAt: new Date().toISOString(),
-      password: '1234',
-    };
-
-    setAdminUsers((prev) => [...prev, newUser]);
-    const roleTitle = assignedRole === 'reservation_staff' ? '예약실 담당자' : '영업사원';
-    showToast(`${roleTitle} 가입 신청이 완료되었습니다. 마스터 승인을 기다려주세요.`, 'info');
-    return { success: true, message: '가입 신청 완료' };
+  const registerSalesAgent = (_data: { name: string; email: string; phone: string; employeeId: string; role?: UserRole }) => {
+    showToast('보안 정책에 따라 관리자 계정은 마스터 총괄 관리자에게 생성을 요청해야 합니다.', 'info');
+    return { success: false, message: '관리자에게 계정 생성을 요청해 주세요.' };
   };
 
   const approveSalesAgent = (agentId: string) => {
@@ -930,64 +1171,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('내 계정 프로필 정보가 수정되었습니다.', 'success');
   };
 
-  const changeAdminPassword = (adminId: string, currentPass: string, newPass: string): boolean => {
-    const user = adminUsers.find((u) => u.id === adminId);
-    if (!user) {
-      showToast('계정을 찾을 수 없습니다.', 'error');
+  const changeAdminPassword = async (adminId: string, _currentPass: string, newPass: string): Promise<boolean> => {
+    if (!supabase || !isSupabaseConfigured) {
+      showToast('인증 서버가 설정되지 않았습니다.', 'error');
       return false;
     }
 
-    const expectedPass = user.password || '1234';
-    if (currentPass !== expectedPass) {
-      showToast('현재 비밀번호가 일치하지 않습니다.', 'error');
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPass });
+      if (error) {
+        console.warn('[Change Admin Password Error]', error);
+        showToast('비밀번호 변경에 실패했습니다. (최소 6자리 이상 필요)', 'error');
+        return false;
+      }
+      showToast('비밀번호가 안전하게 변경되었습니다.', 'success');
+      return true;
+    } catch (err) {
+      showToast('비밀번호 변경 중 오류가 발생했습니다.', 'error');
       return false;
     }
-
-    setAdminUsers((prev) =>
-      prev.map((u) => (u.id === adminId ? { ...u, password: newPass } : u))
-    );
-    if (currentAdmin && currentAdmin.id === adminId) {
-      setCurrentAdmin((prev) => (prev ? { ...prev, password: newPass } : null));
-    }
-    showToast('비밀번호가 성공적으로 변경되었습니다.', 'success');
-    return true;
   };
 
-  const resetAdminUserPassword = (adminId: string, customNewPass?: string): boolean => {
+  const resetAdminUserPassword = (adminId: string, _customNewPass?: string): boolean => {
     const user = adminUsers.find((u) => u.id === adminId);
     if (!user) {
       showToast('해당 관리자 계정을 찾을 수 없습니다.', 'error');
       return false;
     }
 
-    const newPassword = customNewPass && customNewPass.trim() ? customNewPass.trim() : '1234';
-
-    setAdminUsers((prev) =>
-      prev.map((u) => (u.id === adminId ? { ...u, password: newPassword } : u))
-    );
-
-    if (currentAdmin && currentAdmin.id === adminId) {
-      setCurrentAdmin((prev) => (prev ? { ...prev, password: newPassword } : null));
-    }
-
     addAuditLog(
       'USER_APPROVAL',
-      `관리자 계정 비밀번호 강제 재설정/초기화 (${user.name} / ${user.employeeId})`,
-      `재설정 방식: ${customNewPass ? `새 비밀번호 직접 지정 (${newPassword})` : '기본 비밀번호(1234) 초기화'}`
+      `관리자 계정 비밀번호 재설정 요청 (${user.name} / ${user.employeeId})`,
+      'Supabase Auth 대시보드 또는 이메일 재설정 링크를 통해 안전하게 처리'
     );
 
-    showToast(`[${user.name}] 님의 비밀번호가 '${newPassword}'(으)로 재설정되었습니다.`, 'success');
+    showToast(`[${user.name}] 관리자 비밀번호 재설정은 Supabase Auth 대시보드 또는 이메일 링크를 통해 진행해주세요.`, 'info');
     return true;
-  };
-
-  const resetMasterPasswordToDefault = () => {
-    setAdminUsers((prev) =>
-      prev.map((u) => (u.role === 'master' ? { ...u, password: '1234' } : u))
-    );
-    if (currentAdmin && currentAdmin.role === 'master') {
-      setCurrentAdmin((prev) => (prev ? { ...prev, password: '1234' } : null));
-    }
-    showToast('마스터 계정 비밀번호가 기본값(1234)으로 초기화되었습니다.', 'success');
   };
 
   // Partner Management
@@ -1009,19 +1228,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: new Date().toISOString().split('T')[0],
       active: true,
       contactEmail: partnerData.contactEmail || 'contact@partner.com',
-      contactPhone: partnerData.contactPhone || '02-1234-5678',
+      contactPhone: partnerData.contactPhone || '02-5555-0000',
       discountRate: partnerData.discountRate || 30,
     };
 
     setPartners((prev) => [...prev, newPartner]);
+    upsertPartnerInSupabase(newPartner).catch(() => {});
     showToast(`신규 제휴사 [${newPartner.name} / ${newPartner.code}] 등록이 완료되었습니다.`, 'success');
     return newPartner;
   };
 
   const updatePartner = (partnerId: string, partnerData: Partial<Partner>) => {
-    setPartners((prev) =>
-      prev.map((p) => (p.id === partnerId ? { ...p, ...partnerData } : p))
-    );
+    setPartners((prev) => {
+      const updated = prev.map((p) => (p.id === partnerId ? { ...p, ...partnerData } : p));
+      const target = updated.find((p) => p.id === partnerId);
+      if (target) {
+        upsertPartnerInSupabase(target).catch(() => {});
+      }
+      return updated;
+    });
     addAuditLog(
       'PARTNER',
       `제휴사 정보 수정 (${partnerData.name || '제휴사'})`,
@@ -1033,6 +1258,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const deletePartner = (partnerId: string) => {
     const target = partners.find((p) => p.id === partnerId);
     setPartners((prev) => prev.filter((p) => p.id !== partnerId));
+    deletePartnerFromSupabase(partnerId).catch(() => {});
     showToast(`제휴사 [${target?.name || ''}]가 삭제되었습니다.`, 'info');
   };
 
@@ -1042,20 +1268,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ...roomData,
       id: `room-custom-${Date.now()}`,
     };
-    setRoomTypes((prev) => [newRoom, ...prev]);
+    setRoomTypes((prev) => {
+      const updated = [newRoom, ...prev];
+      saveOperationNoticeInSupabase('room_types', 'ROOM_TYPES', updated, '객실 타입 목록').catch(() => {});
+      return updated;
+    });
     showToast(`신규 원천 객실 [${newRoom.name}]이(가) 등록되었습니다.`, 'success');
     return newRoom;
   };
 
   const updateRoomType = (id: string, roomData: Partial<RoomType>) => {
-    setRoomTypes((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, ...roomData } : r))
-    );
+    setRoomTypes((prev) => {
+      const updated = prev.map((r) => (r.id === id ? { ...r, ...roomData } : r));
+      saveOperationNoticeInSupabase('room_types', 'ROOM_TYPES', updated, '객실 타입 목록').catch(() => {});
+      return updated;
+    });
     showToast('원천 객실 정보가 수정되었습니다.', 'success');
   };
 
   const deleteRoomType = (id: string) => {
-    setRoomTypes((prev) => prev.filter((r) => r.id !== id));
+    setRoomTypes((prev) => {
+      const updated = prev.filter((r) => r.id !== id);
+      saveOperationNoticeInSupabase('room_types', 'ROOM_TYPES', updated, '객실 타입 목록').catch(() => {});
+      return updated;
+    });
     showToast('원천 객실이 삭제되었습니다.', 'info');
   };
 
@@ -1094,11 +1330,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Cancellation Rules Management
   const updateCancellationRules = (newRules: CancellationRule[]) => {
     setCancellationRules(newRules);
+    saveOperationNoticeInSupabase('cancellation_rules', 'CANCELLATION', newRules, '기본 취소 규정').catch(() => {});
     showToast('취소 위약금 구간 규정이 업데이트되었습니다.', 'success');
   };
 
   const resetCancellationRulesToDefault = () => {
     setCancellationRules(DEFAULT_CANCELLATION_RULES);
+    saveOperationNoticeInSupabase('cancellation_rules', 'CANCELLATION', DEFAULT_CANCELLATION_RULES, '기본 취소 규정').catch(() => {});
     showToast('취소 위약금 규정이 기본 표준값으로 초기화되었습니다.', 'info');
   };
 
@@ -1114,15 +1352,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
     const newCat: CategoryItem = { key: trimmedKey, label: label.trim(), description: description?.trim() };
-    setPackageCategories((prev) => [...prev, newCat]);
+    setPackageCategories((prev) => {
+      const updated = [...prev, newCat];
+      saveOperationNoticeInSupabase('package_categories', 'CATEGORIES', updated, '패키지 카테고리 목록').catch(() => {});
+      return updated;
+    });
     addAuditLog('PACKAGE', `신규 카테고리 [${label.trim()} (${trimmedKey})] 등록`, `설명: ${description || '없음'}`);
     showToast(`새 카테고리 [${label.trim()}]가 등록되었습니다.`, 'success');
   };
 
   const updatePackageCategory = (key: string, newLabel: string, newDescription?: string) => {
-    setPackageCategories((prev) =>
-      prev.map((c) => (c.key === key ? { ...c, label: newLabel.trim(), description: newDescription?.trim() } : c))
-    );
+    setPackageCategories((prev) => {
+      const updated = prev.map((c) => (c.key === key ? { ...c, label: newLabel.trim(), description: newDescription?.trim() } : c));
+      saveOperationNoticeInSupabase('package_categories', 'CATEGORIES', updated, '패키지 카테고리 목록').catch(() => {});
+      return updated;
+    });
     setPackages((prev) =>
       prev.map((p) => (p.category === key ? { ...p, categoryLabel: newLabel.trim() } : p))
     );
@@ -1137,7 +1381,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
     const cat = packageCategories.find((c) => c.key === key);
-    setPackageCategories((prev) => prev.filter((c) => c.key !== key));
+    setPackageCategories((prev) => {
+      const updated = prev.filter((c) => c.key !== key);
+      saveOperationNoticeInSupabase('package_categories', 'CATEGORIES', updated, '패키지 카테고리 목록').catch(() => {});
+      return updated;
+    });
     addAuditLog('PACKAGE', `카테고리 [${cat?.label || key}] 삭제`, '');
     showToast(`카테고리가 삭제되었습니다.`, 'info');
   };
@@ -1149,19 +1397,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `pkg-${Date.now()}`,
     };
     setPackages((prev) => [...prev, newPkg]);
+    upsertProductInSupabase(newPkg).catch(() => {});
     showToast(`패키지 [${newPkg.name}]가 성공적으로 등록되었습니다.`, 'success');
     return newPkg;
   };
 
   const updatePackage = (packageId: string, pkgData: Partial<Package>) => {
-    setPackages((prev) =>
-      prev.map((p) => (p.id === packageId ? { ...p, ...pkgData } : p))
-    );
+    setPackages((prev) => {
+      const updated = prev.map((p) => (p.id === packageId ? { ...p, ...pkgData } : p));
+      const target = updated.find((p) => p.id === packageId);
+      if (target) {
+        upsertProductInSupabase(target).catch(() => {});
+      }
+      return updated;
+    });
     showToast('패키지 정보가 수정되었습니다.', 'success');
   };
 
   const deletePackage = (packageId: string) => {
     setPackages((prev) => prev.filter((p) => p.id !== packageId));
+    deleteProductFromSupabase(packageId).catch(() => {});
     showToast('패키지가 삭제되었습니다.', 'info');
   };
 
@@ -1173,35 +1428,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     price: number,
     stock: number
   ) => {
+    let targetRate: DailyRate;
     setDailyRates((prev) => {
       const existingIdx = prev.findIndex(
         (r) => r.packageId === packageId && r.roomTypeId === roomTypeId && r.date === date
       );
       if (existingIdx >= 0) {
         const updated = [...prev];
-        updated[existingIdx] = {
+        targetRate = {
           ...updated[existingIdx],
           price,
           stock,
           status: stock > 0 ? 'available' : 'soldout',
         };
+        updated[existingIdx] = targetRate;
         return updated;
       } else {
-        return [
-          ...prev,
-          {
-            id: `rate-${packageId}-${roomTypeId}-${date}`,
-            packageId,
-            roomTypeId,
-            date,
-            price,
-            originalPrice: Math.round((price * 1.4) / 1000) * 1000,
-            stock,
-            status: stock > 0 ? 'available' : 'soldout',
-          },
-        ];
+        targetRate = {
+          id: `rate-${packageId}-${roomTypeId}-${date}`,
+          packageId,
+          roomTypeId,
+          date,
+          price,
+          originalPrice: Math.round((price * 1.4) / 1000) * 1000,
+          stock,
+          status: stock > 0 ? 'available' : 'soldout',
+        };
+        return [...prev, targetRate];
       }
     });
+    if (targetRate!) {
+      upsertDailyRateInSupabase(targetRate).catch(() => {});
+    }
     showToast(`${date} 요금/재고가 수정되었습니다.`, 'success');
   };
 
@@ -1230,6 +1488,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
       cur.setDate(cur.getDate() + 1);
     }
+
+    const modifiedRates: DailyRate[] = [];
 
     setDailyRates((prev) => {
       const rateMap = new Map<string, DailyRate>(prev.map((r) => [`${r.packageId}_${r.roomTypeId}_${r.date}`, r]));
@@ -1277,7 +1537,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
 
         if (shouldApply) {
-          rateMap.set(key, {
+          const item: DailyRate = {
             id: existing?.id || `rate-${packageId}-${roomTypeId}-${dStr}`,
             packageId,
             roomTypeId,
@@ -1286,12 +1546,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             originalPrice: Math.round((applyPrice * 1.4) / 1000) * 1000,
             stock: applyStock,
             status: applyStock > 0 ? 'available' : 'soldout',
-          });
+          };
+          rateMap.set(key, item);
+          modifiedRates.push(item);
         }
       });
 
       return Array.from(rateMap.values());
     });
+
+    if (modifiedRates.length > 0) {
+      upsertDailyRatesBatchInSupabase(modifiedRates).catch(() => {});
+    }
 
     const breakdownMsg = dayBreakdown?.useDifferentiated ? ' (주중/금/토 차등 적용)' : '';
     showToast(`${startDate} ~ ${endDate} 일괄 요금/재고 수정이 완료되었습니다.${breakdownMsg}`, 'success');
@@ -1300,6 +1566,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const batchUpdateDailyRates = (
     updates: { packageId: string; roomTypeId: string; date: string; price: number; stock: number }[]
   ) => {
+    const updatedRates: DailyRate[] = [];
     setDailyRates((prev) => {
       const rateMap = new Map<string, DailyRate>(
         prev.map((r) => [`${r.packageId}_${r.roomTypeId}_${r.date}`, r])
@@ -1309,7 +1576,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const key = `${item.packageId}_${item.roomTypeId}_${item.date}`;
         const existing = rateMap.get(key);
 
-        rateMap.set(key, {
+        const newRate: DailyRate = {
           id: existing?.id || `rate-${item.packageId}-${item.roomTypeId}-${item.date}`,
           packageId: item.packageId,
           roomTypeId: item.roomTypeId,
@@ -1318,11 +1585,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           originalPrice: Math.round((item.price * 1.4) / 1000) * 1000,
           stock: item.stock,
           status: item.stock > 0 ? 'available' : 'soldout',
-        });
+        };
+        rateMap.set(key, newRate);
+        updatedRates.push(newRate);
       });
 
       return Array.from(rateMap.values());
     });
+
+    if (updatedRates.length > 0) {
+      upsertDailyRatesBatchInSupabase(updatedRates).catch(() => {});
+    }
 
     showToast(`엑셀 일괄 업로드 완료: 총 ${updates.length}건의 요금/재고 데이터가 동기화되었습니다.`, 'success');
   };
@@ -1346,8 +1619,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     bookerPhone: string;
     bookerEmail: string;
     specialRequests?: string;
-    guaranteeCard: Reservation['guaranteeCard'];
   }): Reservation => {
+    // Inventory Verification: Prevent overbooking and negative stock
+    const [sY, sM, sD] = data.checkIn.split('-').map(Number);
+    const curDateCheck = new Date(sY, sM - 1, sD, 12, 0, 0);
+
+    for (let i = 0; i < data.nights; i++) {
+      const y = curDateCheck.getFullYear();
+      const m = String(curDateCheck.getMonth() + 1).padStart(2, '0');
+      const d = String(curDateCheck.getDate()).padStart(2, '0');
+      const dateStr = `${y}-${m}-${d}`;
+
+      const matchedRate = dailyRates.find(
+        (r) => r.roomTypeId === data.roomTypeId && r.date === dateStr
+      );
+
+      if (matchedRate && matchedRate.stock < data.roomCount) {
+        showToast(`선택하신 날짜(${dateStr})의 잔여 객실(${matchedRate.stock}실)이 부족하여 예약할 수 없습니다.`, 'error');
+        throw new Error(`선택하신 날짜(${dateStr})의 잔여 객실이 부족합니다.`);
+      }
+      curDateCheck.setDate(curDateCheck.getDate() + 1);
+    }
+
     const phoneClean = data.bookerPhone.replace(/[^0-9]/g, '');
     const phoneLast4 = phoneClean.slice(-4) || '0000';
 
@@ -1364,6 +1657,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       refundStatus: 'none',
     };
 
+    // Deduct stock in memory and database immediately
+    setDailyRates((prev) => {
+      const curDateDeduct = new Date(sY, sM - 1, sD, 12, 0, 0);
+      const rateMap = new Map<string, DailyRate>(prev.map((r) => [`${r.roomTypeId}_${r.date}`, { ...r }]));
+      const changed: DailyRate[] = [];
+
+      for (let i = 0; i < data.nights; i++) {
+        const y = curDateDeduct.getFullYear();
+        const m = String(curDateDeduct.getMonth() + 1).padStart(2, '0');
+        const d = String(curDateDeduct.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${d}`;
+
+        const key = `${data.roomTypeId}_${dateStr}`;
+        const existing = rateMap.get(key);
+        if (existing) {
+          existing.stock = Math.max(0, existing.stock - data.roomCount);
+          existing.status = existing.stock > 0 ? 'available' : 'soldout';
+          changed.push(existing);
+        }
+        curDateDeduct.setDate(curDateDeduct.getDate() + 1);
+      }
+
+      if (changed.length > 0) {
+        upsertDailyRatesBatchInSupabase(changed).catch(() => {});
+      }
+
+      return Array.from(rateMap.values());
+    });
+
     setReservations((prev) => {
       const updated = [newRes, ...prev];
       if (googleToken) {
@@ -1371,6 +1693,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
       return updated;
     });
+
+    // Persist reservation in Supabase
+    upsertReservationInSupabase(newRes).catch(() => {});
 
     addAuditLog(
       'RESERVATION',
@@ -1474,6 +1799,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return updated;
     });
 
+    // Persist confirmation in Supabase
+    upsertReservationInSupabase(updatedRes).catch(() => {});
+
     addAuditLog(
       'RESERVATION',
       `예약 확정 번호 발급 완료 (${target.bookerName} / PMS No: ${finalNo})`,
@@ -1481,7 +1809,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     );
 
     // Send Kakao Alimtalk Notification
-    const notifText = `[오크밸리리조트] ${target.bookerName}님, ${target.partnerName} 특가 예약이 확정되었습니다.\n\n▶ 확정 예약번호: ${finalNo}\n▶ 입실일: ${target.checkIn} (${target.nights}박)\n▶ 객실: ${target.roomTypeName}\n▶ 결제: 현장결제 (오픈카드 보증 완료)\n▶ 문의: 1588-7676`;
+    const notifText = `[오크밸리리조트] ${target.bookerName}님, ${target.partnerName} 특가 예약이 확정되었습니다.\n\n▶ 확정 예약번호: ${finalNo}\n▶ 입실일: ${target.checkIn} (${target.nights}박)\n▶ 객실: ${target.roomTypeName}\n▶ 결제: 현장결제 (체크인 시 결제)\n▶ 문의: 1588-7676`;
 
     // Email Notification to the Booker (예약 확정 안내 메일)
     const bookerConfirmEmailText = `안녕하세요, ${target.bookerName}님.\n\n오크밸리 리조트 제휴기업 임직원 특가 예약이 성공적으로 확정되었습니다.\n리조트 이용 시 프런트 데스크에서 본인 확인 후 입실이 가능합니다.\n\n[예약 확정 상세 내역]\n- 확정 예약번호(PMS No): ${finalNo}\n- 접수번호: ${target.id}\n- 제휴기업: ${target.partnerName}\n- 예약 상품: ${target.packageName}\n- 객실 타입: ${target.roomTypeName}\n- 이용 일정: ${target.checkIn} ~ ${target.checkOut} (${target.nights}박, ${target.roomCount}실)\n- 총 결제 금액: ${target.totalPrice.toLocaleString()}원 (현장 후불 결제)\n- 문의 연락처: 1588-7676\n\n즐겁고 편안한 여행이 되시길 바랍니다.\n감사합니다.\n\n(본 메일은 마스터가 지정한 발송 전용 메일 주소 [${notificationEmail || 'master@oakvalley.co.kr'}]를 통해 발송되었습니다.)`;
@@ -1588,6 +1916,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return updated;
     });
 
+    // Restore inventory when reservation is cancelled
+    setDailyRates((prev) => {
+      const [sY, sM, sD] = target.checkIn.split('-').map(Number);
+      const curDateRestore = new Date(sY, sM - 1, sD, 12, 0, 0);
+      const rateMap = new Map<string, DailyRate>(prev.map((r) => [`${r.roomTypeId}_${r.date}`, { ...r }]));
+      const changed: DailyRate[] = [];
+
+      for (let i = 0; i < target.nights; i++) {
+        const y = curDateRestore.getFullYear();
+        const m = String(curDateRestore.getMonth() + 1).padStart(2, '0');
+        const d = String(curDateRestore.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${d}`;
+
+        const key = `${target.roomTypeId}_${dateStr}`;
+        const existing = rateMap.get(key);
+        if (existing) {
+          existing.stock = existing.stock + target.roomCount;
+          existing.status = 'available';
+          changed.push(existing);
+        }
+        curDateRestore.setDate(curDateRestore.getDate() + 1);
+      }
+
+      if (changed.length > 0) {
+        upsertDailyRatesBatchInSupabase(changed).catch(() => {});
+      }
+
+      return Array.from(rateMap.values());
+    });
+
+    // Persist cancellation in Supabase
+    upsertReservationInSupabase(updatedRes).catch(() => {});
+
     addAuditLog(
       'CANCELLATION',
       `예약 취소 접수 및 처리 (${target.bookerName} / 위약금: ${penaltyAmount.toLocaleString()}원)`,
@@ -1596,10 +1957,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Send Cancellation SMS
     const resIdentifier = target.pmsReservationNo ? `예약번호 ${target.pmsReservationNo}` : `접수번호 ${target.id}`;
-    const notifContent = `[오크밸리리조트] ${target.bookerName}님, ${resIdentifier} 건이 취소 처리되었습니다.\n사유: ${reason || '객실 수량 부족 / 예약 불가'}\n위약금: ${penaltyAmount.toLocaleString()}원\n오픈카드 보증은 즉시 해제 처리되었습니다.`;
+    const notifContent = `[오크밸리리조트] ${target.bookerName}님, ${resIdentifier} 건이 취소 처리되었습니다.\n사유: ${reason || '객실 수량 부족 / 예약 불가'}\n위약금: ${penaltyAmount.toLocaleString()}원`;
 
     // Email Notification to the Booker (예약 취소 안내 메일)
-    const bookerCancelEmailText = `안녕하세요, ${target.bookerName}님.\n\n오크밸리 리조트 예약이 취소 처리되었음을 안내해 드립니다.\n\n[예약 취소 상세 내역]\n- 대상 예약번호(접수번호): ${target.pmsReservationNo || target.id}\n- 제휴기업: ${target.partnerName}\n- 예약 상품: ${target.packageName}\n- 객실 타입: ${target.roomTypeName}\n- 이용 일정: ${target.checkIn} ~ ${target.checkOut}\n- 취소 사유: ${reason || '고객 또는 관리자 요청으로 인한 취소'}\n- 발생 위약금: ${penaltyAmount.toLocaleString()}원\n- 보증 카드 상태: 즉시 보증 해제 및 취소\n- 문의 연락처: 1588-7676\n\n이용에 불편을 드려 대단히 죄송하며, 다른 기회에 다시 모실 수 있기를 기대합니다.\n감사합니다.\n\n(본 메일은 마스터가 지정한 발송 전용 메일 주소 [${notificationEmail || 'master@oakvalley.co.kr'}]를 통해 발송되었습니다.)`;
+    const bookerCancelEmailText = `안녕하세요, ${target.bookerName}님.\n\n오크밸리 리조트 예약이 취소 처리되었음을 안내해 드립니다.\n\n[예약 취소 상세 내역]\n- 대상 예약번호(접수번호): ${target.pmsReservationNo || target.id}\n- 제휴기업: ${target.partnerName}\n- 예약 상품: ${target.packageName}\n- 객실 타입: ${target.roomTypeName}\n- 이용 일정: ${target.checkIn} ~ ${target.checkOut}\n- 취소 사유: ${reason || '고객 또는 관리자 요청으로 인한 취소'}\n- 발생 위약금: ${penaltyAmount.toLocaleString()}원\n- 문의 연락처: 1588-7676\n\n이용에 불편을 드려 대단히 죄송하며, 다른 기회에 다시 모실 수 있기를 기대합니다.\n감사합니다.\n\n(본 메일은 마스터가 지정한 발송 전용 메일 주소 [${notificationEmail || 'master@oakvalley.co.kr'}]를 통해 발송되었습니다.)`;
 
     const bookerCancelEmailNotif: NotificationLog = {
       id: `notif-booker-email-cancel-${Date.now()}`,
@@ -1841,7 +2202,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateAdminProfile,
         changeAdminPassword,
         resetAdminUserPassword,
-        resetMasterPasswordToDefault,
         addPartner,
         updatePartner,
         deletePartner,
@@ -1884,6 +2244,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         resetToDefaultData,
         darkMode,
         toggleDarkMode,
+        isSupabaseActive,
+        supabaseStatusMessage,
+        recheckSupabase,
       }}
     >
       {children}

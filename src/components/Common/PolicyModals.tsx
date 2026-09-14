@@ -71,12 +71,12 @@ export const PolicyModals: React.FC<PolicyModalsProps> = ({ isOpen, initialTab =
             onClick={() => setActiveTab('guarantee')}
             className={`px-4 py-2.5 text-xs font-extrabold rounded-t-xl transition-all border-b-2 flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'guarantee'
-                ? 'bg-white text-amber-700 border-amber-600 shadow-sm'
+                ? 'bg-white text-oak-green border-oak-green shadow-sm'
                 : 'text-stone-600 border-transparent hover:text-stone-900'
             }`}
           >
-            <CreditCard className="w-4 h-4 text-amber-600" />
-            <span>💳 오픈카드 보증안내</span>
+            <CreditCard className="w-4 h-4 text-oak-green" />
+            <span>💳 현장결제 및 이용안내</span>
           </button>
         </div>
 
@@ -100,7 +100,7 @@ export const PolicyModals: React.FC<PolicyModalsProps> = ({ isOpen, initialTab =
                 <h5 className="font-extrabold text-stone-900 text-xs text-oak-green">1. 수집하는 개인정보 항목</h5>
                 <ul className="list-disc pl-5 space-y-1 text-stone-600">
                   <li><strong>필수항목:</strong> 예약자 성명, 휴대전화번호, 이메일, 제휴사 코드 및 법인명, 입실/퇴실 희망일, 예약 객실수</li>
-                  <li><strong>보증항목 (오픈카드):</strong> 카드사명, 신용카드 번호(보안 마스킹 수집), 유효기간(MM/YY), 소유자 성명</li>
+                  <li><strong>예약 세부항목:</strong> 이용 패키지, 객실 타입, 숙박 박수, 특별 요청사항</li>
                   <li><strong>자동 수집항목:</strong> 접속 IP 주소, 접속 일시, 서비스 이용 기록</li>
                 </ul>
 
@@ -108,7 +108,7 @@ export const PolicyModals: React.FC<PolicyModalsProps> = ({ isOpen, initialTab =
                 <p>
                   - 오크밸리리조트 임직원 우대 패키지 예약 접수 및 PMS(Property Management System) 연동 확정 처리<br />
                   - 예약 확정 알림톡/SMS 발송 및 입실 전 안내 서비스 제공<br />
-                  - 노쇼(No-Show) 및 입실 임박 취소 시 위약금 보증 처리를 위한 오픈카드 가승인
+                  - 프론트 데스크 체크인 시 본인 확인 및 현장 결제 안내
                 </p>
 
                 <h5 className="font-extrabold text-stone-900 text-xs text-oak-green">3. 개인정보의 보유 및 이용 기간</h5>
@@ -155,21 +155,21 @@ export const PolicyModals: React.FC<PolicyModalsProps> = ({ isOpen, initialTab =
 
                 <h5 className="font-extrabold text-stone-900 text-xs">제 4 조 (취소 및 위약금 규정)</h5>
                 <p>
-                  예약의 변경 및 취소는 입실 기준 취소 규정(시즌별 및 입실 D-Day 기준)에 따라 처리되며, 위약금 발생 기간 내 취소 또는 노쇼 시 등록된 오픈카드로 규정된 위약금이 자진 가승인 및 매입 처리됩니다.
+                  예약의 변경 및 취소는 입실 기준 취소 규정(시즌별 및 입실 D-Day 기준)에 따라 처리되며, 위약금 발생 기간 내 취소 또는 노쇼 시 리조트 취소 규정에 따른 위약금이 부과될 수 있습니다.
                 </p>
               </div>
             </div>
           )}
 
-          {/* TAB 3: OPEN CARD GUARANTEE */}
+          {/* TAB 3: ON-SITE PAYMENT & STAY GUIDE */}
           {activeTab === 'guarantee' && (
             <div className="space-y-4">
-              <div className="bg-amber-50 p-4 rounded-2xl border border-amber-300 flex items-start gap-3">
-                <CreditCard className="w-6 h-6 text-amber-700 shrink-0 mt-0.5" />
+              <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-200 flex items-start gap-3">
+                <CreditCard className="w-6 h-6 text-emerald-700 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-extrabold text-amber-950 text-sm">오픈카드(Open-Card) 보증 제도란?</h4>
-                  <p className="text-amber-900 text-[11px] mt-0.5">
-                    예약 시점에 실제 카드 결제가 이루어지지 않는 <strong>0원 사전 보증 결제 시스템</strong>입니다. 
+                  <h4 className="font-extrabold text-emerald-950 text-sm">현장 결제 및 투숙 안내</h4>
+                  <p className="text-emerald-900 text-[11px] mt-0.5">
+                    예약 신청 시 별도의 온라인 사전 카드 결제 없이, 투숙 당일 리조트 프론트에서 직접 결제하는 <strong>현장 후불 결제 시스템</strong>입니다. 
                   </p>
                 </div>
               </div>
@@ -179,9 +179,9 @@ export const PolicyModals: React.FC<PolicyModalsProps> = ({ isOpen, initialTab =
                   <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-extrabold text-xs flex items-center justify-center">
                     01
                   </div>
-                  <h5 className="font-extrabold text-stone-900 text-xs pt-1">예약 시 0원 보증</h5>
+                  <h5 className="font-extrabold text-stone-900 text-xs pt-1">온라인 예약 신청</h5>
                   <p className="text-[11px] text-stone-500">
-                    예약 접수 시에는 신용카드 승인액 0원으로 카드 유효성만 확인합니다.
+                    카드번호 입력 없이 제휴사 코드 및 투숙 정보만으로 간편하게 예약을 접수합니다.
                   </p>
                 </div>
 
@@ -189,30 +189,30 @@ export const PolicyModals: React.FC<PolicyModalsProps> = ({ isOpen, initialTab =
                   <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 font-extrabold text-xs flex items-center justify-center">
                     02
                   </div>
-                  <h5 className="font-extrabold text-stone-900 text-xs pt-1">현장 결제 진행</h5>
+                  <h5 className="font-extrabold text-stone-900 text-xs pt-1">PMS 예약 확정</h5>
                   <p className="text-[11px] text-stone-500">
-                    숙박 당일 오크밸리리조트 프론트에서 원하시는 결제 수단으로 결제합니다.
+                    리조트 예약실에서 객실 배정 후 정식 PMS 예약번호를 문자/이메일로 안내해 드립니다.
                   </p>
                 </div>
 
                 <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-1">
-                  <div className="w-7 h-7 rounded-lg bg-rose-100 text-rose-800 font-extrabold text-xs flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-purple-100 text-purple-800 font-extrabold text-xs flex items-center justify-center">
                     03
                   </div>
-                  <h5 className="font-extrabold text-stone-900 text-xs pt-1">위약금 발생 시 차감</h5>
+                  <h5 className="font-extrabold text-stone-900 text-xs pt-1">체크인 시 현장 결제</h5>
                   <p className="text-[11px] text-stone-500">
-                    사전 연락 없이 노쇼(No-Show) 및 규정 위반 취소 시에만 약정 위약금이 보증카드로 청구됩니다.
+                    투숙 당일 프론트 데스크에서 신용카드, 체크카드 또는 현금으로 결제 후 입실합니다.
                   </p>
                 </div>
               </div>
 
               <div className="bg-stone-900 text-stone-300 p-4 rounded-2xl space-y-2 border border-stone-800 text-[11px]">
-                <div className="flex items-center gap-2 text-amber-400 font-extrabold text-xs">
-                  <Lock className="w-4 h-4" />
-                  <span>카드 보안 규정 (PCI-DSS 및 암호화)</span>
+                <div className="flex items-center gap-2 text-emerald-400 font-extrabold text-xs">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>체크인 시 유의사항</span>
                 </div>
                 <p>
-                  입력하신 보증 카드 정보는 마스킹 처리되어 데이터베이스에 안전하게 관리되며, 오크밸리리조트 보안 인증 관리자 외에는 열람할 수 없도록 이중 암호화 처리됩니다.
+                  체크인 시 제휴사 소속 확인을 위해 사원증 또는 재직 증명 서류 제시를 요청드릴 수 있습니다. 증빙 미제출 시 제휴 할인이 취소될 수 있으니 유의하시기 바랍니다.
                 </p>
               </div>
             </div>

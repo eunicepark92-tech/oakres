@@ -27,6 +27,7 @@ import {
   Shield,
   CloudUpload,
   Edit3,
+  Mail,
 } from 'lucide-react';
 
 export const ReservationDeskView: React.FC = () => {
@@ -42,10 +43,12 @@ export const ReservationDeskView: React.FC = () => {
     isGoogleConnected,
     connectGoogle,
     googleUser,
+    notificationEmail,
+    setNotificationEmail,
   } = useApp();
   const [isSyncingSheets, setIsSyncingSheets] = useState(false);
-
-  const canViewUnmaskedCard = hasPermission('canViewUnmaskedCard');
+  const [isEditingEmail, setIsEditingEmail] = useState(false);
+  const [tempEmail, setTempEmail] = useState(notificationEmail || 'master@oakvalley.co.kr');
 
   // Filters State
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,9 +65,6 @@ export const ReservationDeskView: React.FC = () => {
   // Cancellation Modal State
   const [cancellingRes, setCancellingRes] = useState<Reservation | null>(null);
   const [adminCancelReason, setAdminCancelReason] = useState('객실 수량 부족 (만실)으로 인한 예약 불가');
-
-  // Open-Card Inspector Modal State
-  const [inspectCardRes, setInspectCardRes] = useState<Reservation | null>(null);
 
   // Today Date String
   const todayStr = new Date().toISOString().split('T')[0];
@@ -150,8 +150,7 @@ export const ReservationDeskView: React.FC = () => {
       '객실수',
       '최종결제예정액(원)',
       '할인금액(원)',
-      '보증카드(카드사)',
-      '보증카드(번호)',
+      '결제방식',
       '예약상태',
       '신청일시',
       'PMS확정일시',
@@ -159,9 +158,12 @@ export const ReservationDeskView: React.FC = () => {
 
     const csvRows = filteredList.map((r) => {
       const isCancelled = r.status === 'cancelled';
-      const isCompleted = !isCancelled && (r.checkIn < todayStr || r.status === 'completed');
+      const isCancelRequested = r.status === 'cancel_requested';
+      const isCompleted = !isCancelled && !isCancelRequested && (r.checkIn < todayStr || r.status === 'completed');
       const statusLabel = isCancelled
         ? '취소완료'
+        : isCancelRequested
+        ? '취소요청(대기)'
         : isCompleted
         ? '투숙완료'
         : r.status === 'pending'
@@ -184,8 +186,7 @@ export const ReservationDeskView: React.FC = () => {
         r.roomCount,
         r.totalPrice,
         r.discountAmount,
-        `"${r.guaranteeCard?.cardType || '-'}"`,
-        `"${r.guaranteeCard?.cardNumberMasked || '-'}"`,
+        '"현장결제"',
         `"${statusLabel}"`,
         `"${r.createdAt}"`,
         `"${r.confirmedAt || '-'}"`,
@@ -283,6 +284,78 @@ export const ReservationDeskView: React.FC = () => {
             Google 계정 연결하기
           </button>
         )}
+      </div>
+
+      {/* Master Email Notification Setting Banner */}
+      <div className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+            <Mail className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-extrabold text-stone-900">마스터 발송/알림 메일 주소</span>
+              <span className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 font-bold text-[10px]">
+                실시간 발송 연동
+              </span>
+            </div>
+            <p className="text-[11px] text-stone-500 mt-0.5">
+              예약 접수(대기), 예약 확정(PMS 발급), 예약 취소 시 예약자 및 마스터에게 자동 발송되는 공식 이메일 계정입니다.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 w-full md:w-auto">
+          {isEditingEmail ? (
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <input
+                type="email"
+                value={tempEmail}
+                onChange={(e) => setTempEmail(e.target.value)}
+                placeholder="master@oakvalley.co.kr"
+                className="px-3 py-1.5 text-xs rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium w-full md:w-64"
+              />
+              <button
+                onClick={() => {
+                  if (!tempEmail.trim() || !tempEmail.includes('@')) {
+                    showToast('유효한 이메일 주소를 입력해주세요.', 'error');
+                    return;
+                  }
+                  setNotificationEmail(tempEmail.trim());
+                  setIsEditingEmail(false);
+                }}
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shrink-0"
+              >
+                저장
+              </button>
+              <button
+                onClick={() => {
+                  setTempEmail(notificationEmail || 'master@oakvalley.co.kr');
+                  setIsEditingEmail(false);
+                }}
+                className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition cursor-pointer shrink-0"
+              >
+                취소
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-start">
+              <span className="px-3 py-1.5 rounded-xl bg-stone-100 font-mono text-xs font-bold text-stone-800 border border-stone-200">
+                {notificationEmail || 'master@oakvalley.co.kr'}
+              </span>
+              <button
+                onClick={() => {
+                  setTempEmail(notificationEmail || 'master@oakvalley.co.kr');
+                  setIsEditingEmail(true);
+                }}
+                className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition flex items-center gap-1 cursor-pointer"
+              >
+                <Edit3 className="w-3.5 h-3.5" />
+                <span>변경</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Quick KPI Stat Bar */}
@@ -439,7 +512,7 @@ export const ReservationDeskView: React.FC = () => {
                 <th className="p-3.5">패키지 & 객실타입</th>
                 <th className="p-3.5">체크인 ~ 체크아웃</th>
                 <th className="p-3.5 text-right">결제 예정액</th>
-                <th className="p-3.5 text-center">오픈카드 보증</th>
+                <th className="p-3.5 text-center">결제 방식</th>
                 <th className="p-3.5 text-center">관리자 조치</th>
               </tr>
             </thead>
@@ -454,9 +527,10 @@ export const ReservationDeskView: React.FC = () => {
               ) : (
                 filteredList.map((res) => {
                   const isCancelled = res.status === 'cancelled';
-                  const isCompleted = !isCancelled && (res.checkIn < todayStr || res.status === 'completed');
-                  const isPending = !isCancelled && !isCompleted && res.status === 'pending';
-                  const isConfirmed = !isCancelled && !isCompleted && (res.status === 'confirmed' || res.status === 'checked_in');
+                  const isCancelRequested = res.status === 'cancel_requested';
+                  const isCompleted = !isCancelled && !isCancelRequested && (res.checkIn < todayStr || res.status === 'completed');
+                  const isPending = !isCancelled && !isCancelRequested && !isCompleted && res.status === 'pending';
+                  const isConfirmed = !isCancelled && !isCancelRequested && !isCompleted && (res.status === 'confirmed' || res.status === 'checked_in');
 
                   return (
                     <tr
@@ -478,6 +552,12 @@ export const ReservationDeskView: React.FC = () => {
                           <span className="inline-flex items-center gap-1 bg-amber-500 text-amber-950 font-black text-[10px] px-2.5 py-1 rounded-full shadow-sm animate-pulse">
                             <Clock className="w-3 h-3" />
                             <span>승인대기</span>
+                          </span>
+                        )}
+                        {isCancelRequested && (
+                          <span className="inline-flex items-center gap-1 bg-orange-100 text-orange-900 font-extrabold text-[10px] px-2.5 py-1 rounded-full border border-orange-300 animate-pulse">
+                            <Clock className="w-3 h-3 text-orange-700" />
+                            <span>취소요청</span>
                           </span>
                         )}
                         {isConfirmed && (
@@ -570,20 +650,12 @@ export const ReservationDeskView: React.FC = () => {
                         )}
                       </td>
 
-                      {/* Open-Card Info */}
+                      {/* Payment Method */}
                       <td className="p-3.5 text-center whitespace-nowrap">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setInspectCardRes(res);
-                          }}
-                          className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1 mx-auto cursor-pointer transition-colors"
-                          title="오픈카드 상세조회"
-                        >
-                          <CreditCard className="w-3.5 h-3.5 text-amber-700" />
-                          <span>{res.guaranteeCard?.cardType || '카드보증'}</span>
-                        </button>
+                        <span className="px-2.5 py-1 bg-stone-100 text-stone-700 border border-stone-200 rounded-lg text-[11px] font-bold inline-flex items-center gap-1">
+                          <CreditCard className="w-3.5 h-3.5 text-stone-500" />
+                          <span>현장결제</span>
+                        </span>
                       </td>
 
                       {/* Actions */}
@@ -741,7 +813,7 @@ export const ReservationDeskView: React.FC = () => {
                 <option value="객실 수량 부족 (만실)으로 인한 예약 불가">객실 수량 부족 (만실)으로 인한 예약 불가</option>
                 <option value="고객 요청에 의한 전화 취소">고객 요청에 의한 전화 취소</option>
                 <option value="제휴 임직원 신분 확인 불가">제휴 임직원 신분 확인 불가</option>
-                <option value="중복 예약 및 카드 정보 오류">중복 예약 및 카드 정보 오류</option>
+                <option value="중복 예약 및 예약 정보 오류">중복 예약 및 예약 정보 오류</option>
               </select>
             </div>
 
@@ -757,69 +829,6 @@ export const ReservationDeskView: React.FC = () => {
                 className="min-h-[44px] px-4 py-2 bg-rose-600 text-white font-bold text-xs rounded-xl hover:bg-rose-700 shadow-sm cursor-pointer transition-colors active:scale-98"
               >
                 예약 취소 집행
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* MODAL 3: OPEN CARD GUARANTEE INSPECTOR MODAL */}
-      {inspectCardRes && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white w-full max-w-md rounded-3xl shadow-2xl border border-stone-200 overflow-hidden space-y-4 p-6">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-extrabold text-stone-900 flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-amber-600" />
-                <span>오픈카드 보증 내역 상세검토</span>
-              </h3>
-              <button onClick={() => setInspectCardRes(null)} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-stone-400 hover:text-stone-700 rounded-xl hover:bg-stone-100">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="bg-gradient-to-br from-stone-900 to-stone-800 text-white p-5 rounded-2xl shadow-md space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-amber-400 uppercase tracking-widest">
-                  {inspectCardRes.guaranteeCard?.cardType || '신용카드 보증'}
-                </span>
-                <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-extrabold px-2 py-0.5 rounded border border-emerald-500/30">
-                  0원 가승인 보증완료
-                </span>
-              </div>
-              <div className="font-mono text-xl font-black tracking-widest text-amber-300 bg-black/40 p-2.5 rounded-xl border border-amber-500/30 text-center shadow-inner">
-                {canViewUnmaskedCard
-                  ? inspectCardRes.guaranteeCard?.cardNumberFull ||
-                    inspectCardRes.guaranteeCard?.cardNumberMasked?.replace(/\*{2,4}/g, '5821') ||
-                    '1234-5678-9012-3456'
-                  : inspectCardRes.guaranteeCard?.cardNumberMasked || '1234-****-****-9012'}
-              </div>
-              {!canViewUnmaskedCard && (
-                <p className="text-[11px] text-amber-400 bg-amber-950/60 p-2 rounded-lg text-center font-sans border border-amber-500/30">
-                  🔒 영업사원 계정 보안 정책: 카드번호 마스킹 해제 권한이 없습니다. (예약실/마스터 전용)
-                </p>
-              )}
-              <div className="flex items-center justify-between text-xs text-stone-300 pt-1 border-t border-stone-700">
-                <span>명의자: {inspectCardRes.guaranteeCard?.cardholderName || inspectCardRes.bookerName}</span>
-                <span>유효기간: {inspectCardRes.guaranteeCard?.cardExpiry || '12/28'}</span>
-              </div>
-            </div>
-
-            <div className="bg-amber-50 p-3.5 rounded-2xl border border-amber-200 text-xs text-amber-950 space-y-1">
-              <p className="font-bold flex items-center gap-1">
-                <ShieldCheck className="w-4 h-4 text-amber-700" />
-                <span>보증 카드 관리 준수 사항</span>
-              </p>
-              <p className="text-[11px] text-amber-900">
-                실제 객실 금액은 숙박 당일 오크밸리리조트 현장 체크인 시 지급 수단으로 결제되며, 노쇼 및 입실 임박 취소 시에만 보증 청구가 진행됩니다.
-              </p>
-            </div>
-
-            <div className="flex justify-end pt-2 border-t">
-              <button
-                onClick={() => setInspectCardRes(null)}
-                className="min-h-[44px] px-5 py-2.5 bg-stone-900 text-white font-bold text-xs rounded-xl hover:bg-stone-800 cursor-pointer transition-colors active:scale-98"
-              >
-                확인 완료
               </button>
             </div>
           </div>

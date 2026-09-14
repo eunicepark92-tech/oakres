@@ -36,46 +36,16 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
   onOpenConfirm,
   onOpenCancel,
 }) => {
-  const { currentAdmin, hasPermission, showToast, seasonPeriods, seasonalCancellationRules } = useApp();
-
-  const canViewCardFull = hasPermission('canViewUnmaskedCard');
-
-  // Staff Card Auth State
-  const [showCardAuthModal, setShowCardAuthModal] = useState(false);
-  const [staffPassword, setStaffPassword] = useState('');
-  const [isCardAuthenticated, setIsCardAuthenticated] = useState(() => {
-    // If master or reservation staff with permission, pre-authenticate if admin
-    return !!currentAdmin && canViewCardFull;
-  });
-  const [authError, setAuthError] = useState('');
+  const { currentAdmin, showToast, seasonPeriods, seasonalCancellationRules } = useApp();
 
   if (!reservation) return null;
 
   const todayStr = new Date().toISOString().split('T')[0];
   const isCancelled = reservation.status === 'cancelled';
-  const isCompleted = !isCancelled && (reservation.checkIn < todayStr || reservation.status === 'completed');
-  const isPending = !isCancelled && !isCompleted && reservation.status === 'pending';
-  const isConfirmed = !isCancelled && !isCompleted && (reservation.status === 'confirmed' || reservation.status === 'checked_in');
-
-  const fullCardNumber =
-    reservation.guaranteeCard?.cardNumberFull ||
-    reservation.guaranteeCard?.cardNumberMasked?.replace(/\*{2,4}/g, '5821') ||
-    '1234-5678-9012-3456';
-
-  const handleStaffAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    setAuthError('');
-
-    // Accept default '1234' or any valid staff/master admin
-    if (staffPassword === '1234' || staffPassword === 'admin123' || currentAdmin) {
-      setIsCardAuthenticated(true);
-      setShowCardAuthModal(false);
-      setStaffPassword('');
-      showToast('예약직원 보안 인증이 완료되었습니다. 오픈카드 내역이 해제됩니다.', 'success');
-    } else {
-      setAuthError('직원 인증 암호가 일치하지 않습니다. (기본 직원 암호: 1234)');
-    }
-  };
+  const isCancelRequested = reservation.status === 'cancel_requested';
+  const isCompleted = !isCancelled && !isCancelRequested && (reservation.checkIn < todayStr || reservation.status === 'completed');
+  const isPending = !isCancelled && !isCancelRequested && !isCompleted && reservation.status === 'pending';
+  const isConfirmed = !isCancelled && !isCancelRequested && !isCompleted && (reservation.status === 'confirmed' || reservation.status === 'checked_in');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-stone-900/70 backdrop-blur-sm animate-fade-in">
@@ -96,7 +66,7 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-stone-300">
-                한눈에 확인하는 예약자/객실/결제 및 오픈카드 보증 명세
+                한눈에 확인하는 예약자/객실/결제 상세 명세
               </p>
             </div>
           </div>
@@ -287,12 +257,12 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
               </div>
               <div>
                 <span className="text-stone-500">결제 방식:</span>
-                <p className="font-bold text-emerald-800">현장 결제 (오픈카드 보증)</p>
+                <p className="font-bold text-emerald-800">현장 후불 결제 (체크인 시 결제)</p>
               </div>
             </div>
           </div>
 
-          {/* Section 3: Financials & Open-Card Guarantee */}
+          {/* Section 3: Financials & Payment Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             
             {/* Price Box */}
@@ -312,78 +282,32 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
               </div>
             </div>
 
-            {/* Open Card Box with Staff Authentication */}
-            <div className="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200 space-y-2">
-              <div className="flex items-center justify-between border-b border-amber-200/80 pb-1">
-                <span className="text-amber-900 font-bold flex items-center gap-1">
-                  <CreditCard className="w-3.5 h-3.5 text-amber-700" />
-                  <span>오픈카드 보증 정보</span>
+            {/* Payment & Check-in Info Box */}
+            <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-2">
+              <div className="flex items-center justify-between border-b border-stone-200 pb-1">
+                <span className="text-stone-900 font-bold flex items-center gap-1">
+                  <CreditCard className="w-3.5 h-3.5 text-oak-green" />
+                  <span>결제 및 투숙 안내</span>
                 </span>
-                {isCardAuthenticated ? (
-                  <span className="text-[10px] bg-emerald-600 text-white font-extrabold px-2 py-0.5 rounded flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3" />
-                    <span>직원 인증 완료</span>
-                  </span>
-                ) : (
-                  <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-2 py-0.5 rounded flex items-center gap-1">
-                    <Lock className="w-3 h-3 text-amber-800" />
-                    <span>보안 잠금중</span>
-                  </span>
-                )}
+                <span className="text-[10px] bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-700" />
+                  <span>현장 후불 결제</span>
+                </span>
               </div>
 
-              {isCardAuthenticated && canViewCardFull ? (
-                <div className="space-y-1.5 font-mono text-xs bg-amber-100/60 p-2.5 rounded-xl border border-amber-300">
-                  <div className="flex justify-between items-center">
-                    <span className="text-amber-800 font-bold">카드 종류:</span>
-                    <span className="font-extrabold text-amber-950">{reservation.guaranteeCard?.cardType}</span>
-                  </div>
-                  <div className="flex justify-between items-center bg-white px-2.5 py-1 rounded-lg border border-amber-400 shadow-inner">
-                    <span className="text-amber-900 font-bold text-[11px]">카드번호(전체):</span>
-                    <span className="font-black text-rose-700 text-sm tracking-wider">
-                      {fullCardNumber}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-amber-800 font-bold">소유자명:</span>
-                    <span className="font-extrabold text-amber-950">{reservation.guaranteeCard?.cardholderName}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-amber-800 font-bold">유효기간:</span>
-                    <span className="font-extrabold text-amber-950">{reservation.guaranteeCard?.cardExpiry}</span>
-                  </div>
+              <div className="space-y-1.5 text-xs text-stone-700">
+                <div className="flex justify-between items-center">
+                  <span className="text-stone-500">결제 시점:</span>
+                  <span className="font-bold text-stone-900">투숙 당일 체크인 시</span>
                 </div>
-              ) : !canViewCardFull ? (
-                <div className="space-y-1.5 font-mono text-xs bg-stone-100 p-2.5 rounded-xl border border-stone-300">
-                  <div className="flex justify-between items-center">
-                    <span className="text-stone-600 font-bold">카드 종류:</span>
-                    <span className="font-extrabold text-stone-900">{reservation.guaranteeCard?.cardType}</span>
-                  </div>
-                  <div className="flex justify-between items-center bg-stone-200/80 px-2.5 py-1 rounded-lg border border-stone-300">
-                    <span className="text-stone-700 font-bold text-[11px]">카드번호:</span>
-                    <span className="font-black text-stone-800 text-sm tracking-wider">
-                      {reservation.guaranteeCard?.cardNumberMasked || '****-****-****-1234'}
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-stone-500 font-sans mt-1 bg-amber-50 p-1.5 rounded border border-amber-200 text-amber-900">
-                    🔒 <strong>영업사원 권한 제한:</strong> 고객의 카드번호 원본은 보증 보안 정책상 영업사원 계정으로 볼 수 없습니다. (예약실/마스터 전용)
-                  </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-stone-500">결제 수단:</span>
+                  <span className="font-bold text-stone-900">신용카드 / 체크카드 / 현금</span>
                 </div>
-              ) : (
-                <div className="space-y-2 py-0.5">
-                  <p className="text-[11px] text-amber-900 leading-snug">
-                    카드 정보 보호를 위하여 예약직원 보안 인증 후 상세 조회가 가능합니다.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowCardAuthModal(true)}
-                    className="w-full py-1.5 bg-oak-dark hover:bg-stone-900 text-amber-300 font-extrabold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    <Lock className="w-3.5 h-3.5 text-oak-gold" />
-                    <span>🔒 예약직원 인증하고 카드 확인</span>
-                  </button>
+                <div className="bg-stone-100 p-2 rounded-xl text-[11px] text-stone-600 mt-1">
+                  ※ 체크인 시 프론트 데스크에 예약번호 및 제휴사 사원증/증빙을 제시해주시기 바랍니다.
                 </div>
-              )}
+              </div>
             </div>
 
           </div>
@@ -461,71 +385,6 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
         </div>
 
       </div>
-
-      {/* STAFF CARD AUTHENTICATION SUB-MODAL */}
-      {showCardAuthModal && (
-        <div className="fixed inset-0 z-60 bg-stone-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white w-full max-w-sm rounded-3xl p-6 space-y-4 shadow-2xl border border-amber-300">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-amber-100 text-amber-900">
-                  <Lock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-extrabold text-stone-900">예약직원 보안 인증</h4>
-                  <p className="text-[11px] text-stone-500">오픈카드 보증 내역 열람을 위한 직원 암호 확인</p>
-                </div>
-              </div>
-              <button onClick={() => setShowCardAuthModal(false)} className="min-w-[44px] min-h-[44px] flex items-center justify-center text-stone-400 hover:text-stone-700 rounded-xl hover:bg-stone-100 font-bold">
-                ✕
-              </button>
-            </div>
-
-            <form onSubmit={handleStaffAuth} className="space-y-3">
-              <div>
-                <label className="block text-xs font-bold text-stone-800 mb-1">
-                  직원 비밀번호 (Passcode) <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  required
-                  autoFocus
-                  value={staffPassword}
-                  onChange={(e) => setStaffPassword(e.target.value)}
-                  placeholder="직원 암호 입력 (기본: 1234)"
-                  className="w-full min-h-[44px] px-3.5 py-2.5 bg-stone-50 border border-stone-300 rounded-xl text-sm font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500/40"
-                />
-                <p className="text-[11px] text-stone-500 mt-1">
-                  ※ 테스트 직원 기본 비밀번호는 <strong className="text-amber-800">1234</strong> 입니다.
-                </p>
-              </div>
-
-              {authError && (
-                <p className="text-xs text-rose-600 font-bold bg-rose-50 p-2 rounded-lg border border-rose-200">
-                  {authError}
-                </p>
-              )}
-
-              <div className="flex gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => setShowCardAuthModal(false)}
-                  className="flex-1 min-h-[44px] py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs rounded-xl"
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 min-h-[44px] py-2.5 bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1 cursor-pointer"
-                >
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>보안 인증 확인</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
     </div>
   );

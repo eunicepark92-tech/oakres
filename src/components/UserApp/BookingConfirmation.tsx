@@ -73,7 +73,7 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
           </p>
           <p className="text-stone-600 leading-relaxed">
             {isPending ? (
-              <>리조트 현장 프론트 배정 및 객실 확인 후 관리자가 예약번호를 등록하면 최종 확정 문자가 발송됩니다. 오픈카드 보증이 완료되어 안전하게 대기 접수되었습니다.</>
+              <>리조트 현장 프론트 배정 및 객실 확인 후 관리자가 예약번호를 등록하면 최종 확정 문자가 발송됩니다. 예약 신청이 안전하게 접수되었습니다.</>
             ) : (
               <>체크인 당일 리조트 프론트에서 예약번호({reservation.pmsReservationNo || reservation.id})와 사원증/신분증을 제시해주시면 현장 결제 후 체크인 가능합니다.</>
             )}
@@ -183,11 +183,11 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Payment & Open Card Guarantee */}
+          {/* Section 3: Payment Details */}
           <div>
             <h4 className="font-extrabold text-sm text-stone-900 border-b pb-2 mb-3 flex items-center gap-2">
               <CreditCard className="w-4 h-4 text-oak-green" />
-              <span>결제 및 오픈카드 보증 내역</span>
+              <span>결제 및 투숙 안내 내역</span>
             </h4>
             <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200/80 space-y-3">
               <div className="flex items-center justify-between text-sm border-b pb-2">
@@ -203,20 +203,18 @@ export const BookingConfirmation: React.FC<BookingConfirmationProps> = ({
                   <span className="font-bold text-emerald-700">현장 후불 결제</span>
                 </div>
                 <div>
-                  <span className="text-stone-500">보증 오픈카드:</span>{' '}
-                  <span className="font-bold text-stone-900">
-                    {reservation.guaranteeCard.cardType} ({reservation.guaranteeCard.cardNumberMasked})
-                  </span>
+                  <span className="text-stone-500">결제 시점:</span>{' '}
+                  <span className="font-bold text-stone-900">투숙 당일 체크인 시 프론트 결제</span>
                 </div>
                 <div>
-                  <span className="text-stone-500">카드 소유자:</span>{' '}
-                  <span className="font-bold text-stone-900">{reservation.guaranteeCard.cardholderName}</span>
+                  <span className="text-stone-500">예약 접수자:</span>{' '}
+                  <span className="font-bold text-stone-900">{reservation.bookerName}</span>
                 </div>
                 <div>
-                  <span className="text-stone-500">보증 상태:</span>{' '}
+                  <span className="text-stone-500">접수 상태:</span>{' '}
                   <span className="font-bold text-emerald-600 flex items-center gap-1 inline-flex">
                     <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>정상 보증 완료</span>
+                    <span>정상 접수 완료</span>
                   </span>
                 </div>
               </div>

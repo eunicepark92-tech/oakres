@@ -4,7 +4,7 @@ import { PackageCategory, Package } from '../../types';
 import { Gift, Plus, Trash2, Edit3, Layers, Tag, Check, Sparkles, Image as ImageIcon, Upload, X, AlertTriangle, BedDouble, CheckSquare, Square } from 'lucide-react';
 import { CategoryManagerModal } from './CategoryManagerModal';
 import { MediaGalleryManager } from './MediaGalleryManager';
-import { compressImageFile } from '../../utils/imageCompressor';
+import { uploadImageToSupabaseStorage, deleteImageFromSupabaseStorage } from '../../services/supabaseStorage';
 
 interface PackageManagerProps {
   initialRoomTypeId?: string;
@@ -97,17 +97,17 @@ export const PackageManager: React.FC<PackageManagerProps> = ({ initialRoomTypeI
     if (!file) return;
 
     try {
-      showToast('이미지를 최적화 압축 처리 중입니다...', 'info');
-      const compressedDataUrl = await compressImageFile(file, 1600, 1200, 0.82);
-      setImageUrl(compressedDataUrl);
-      showToast('이미지가 최적화되어 설정되었습니다. (최대 10MB 자동압축)', 'success');
+      showToast('클라우드 스토리지에 업로드 중입니다...', 'info');
+      const publicUrl = await uploadImageToSupabaseStorage(file, 'packages');
+      setImageUrl(publicUrl);
+      showToast('스토리지 파일 업로드가 완료되었습니다.', 'success');
       
       // Auto register to media vault
       addMediaAsset({
         title: file.name.replace(/\.[^/.]+$/, ""),
-        url: compressedDataUrl,
+        url: publicUrl,
         category: '패키지',
-        sizeKb: Math.round((compressedDataUrl.length * 0.75) / 1024),
+        sizeKb: Math.round(file.size / 1024),
       });
     } catch (err: any) {
       alert(err.message || '이미지 파일 업로드 중 오류가 발생했습니다.');
@@ -520,73 +520,81 @@ export const PackageManager: React.FC<PackageManagerProps> = ({ initialRoomTypeI
           </h3>
 
           <div className="space-y-4">
-            {packages.map((pkg) => {
-              const connectedCount = pkg.roomTypeIds?.length || roomTypes.length;
+            {packages.length === 0 ? (
+              <div className="bg-stone-50 rounded-2xl border border-dashed border-stone-300 p-8 text-center">
+                <Gift className="w-10 h-10 text-stone-300 mx-auto mb-2" />
+                <p className="text-sm font-bold text-stone-700">등록된 패키지가 없습니다.</p>
+                <p className="text-xs text-stone-400 mt-1">좌측 폼에서 신규 패키지 상품을 직접 등록하세요.</p>
+              </div>
+            ) : (
+              packages.map((pkg) => {
+                const connectedCount = pkg.roomTypeIds?.length || roomTypes.length;
 
-              return (
-                <div
-                  key={pkg.id}
-                  className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
-                    editingPackage?.id === pkg.id
-                      ? 'bg-amber-50/80 border-amber-300 ring-2 ring-amber-400'
-                      : 'bg-stone-50 border-stone-200/80 hover:border-stone-300'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <img
-                      src={pkg.imageUrl}
-                      alt={pkg.name}
-                      className="w-20 h-20 rounded-xl object-cover shrink-0 border border-stone-200"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = mediaAssets[0]?.url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80';
-                      }}
-                    />
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-extrabold text-stone-900 text-sm">{pkg.name}</span>
-                        <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
-                          {pkg.partnerCode === 'ALL' ? '전체 제휴' : pkg.partnerCode}
-                        </span>
-                        {pkg.highlightBadge && (
-                          <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
-                            {pkg.highlightBadge}
+                return (
+                  <div
+                    key={pkg.id}
+                    className={`p-4 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+                      editingPackage?.id === pkg.id
+                        ? 'bg-amber-50/80 border-amber-300 ring-2 ring-amber-400'
+                        : 'bg-stone-50 border-stone-200/80 hover:border-stone-300'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <img
+                        src={pkg.imageUrl}
+                        alt={pkg.name}
+                        className="w-20 h-20 rounded-xl object-cover shrink-0 border border-stone-200"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = mediaAssets[0]?.url || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80';
+                        }}
+                      />
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-extrabold text-stone-900 text-sm">{pkg.name}</span>
+                          <span className="text-[10px] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">
+                            {pkg.partnerCode === 'ALL' ? '전체 제휴' : pkg.partnerCode}
                           </span>
-                        )}
-                      </div>
+                          {pkg.highlightBadge && (
+                            <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">
+                              {pkg.highlightBadge}
+                            </span>
+                          )}
+                        </div>
 
-                      <p className="text-xs text-stone-500 mt-1 line-clamp-1">{pkg.description}</p>
+                        <p className="text-xs text-stone-500 mt-1 line-clamp-1">{pkg.description}</p>
 
-                      <div className="flex items-center gap-2 text-xs font-bold text-oak-dark mt-2 flex-wrap">
-                        <span>기본가 {pkg.basePrice.toLocaleString()}원</span>
-                        <span>• {pkg.categoryLabel}</span>
-                        <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
-                          연결 원천객실 {connectedCount}개
-                        </span>
+                        <div className="flex items-center gap-2 text-xs font-bold text-oak-dark mt-2 flex-wrap">
+                          <span>기본가 {pkg.basePrice.toLocaleString()}원</span>
+                          <span>• {pkg.categoryLabel}</span>
+                          <span className="text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-bold">
+                            연결 원천객실 {connectedCount}개
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
-                    <button
-                      onClick={() => handleStartEdit(pkg)}
-                      className="p-2 bg-white hover:bg-stone-100 text-stone-700 hover:text-amber-700 border border-stone-300 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-1 cursor-pointer"
-                      title="패키지 정보 수정"
-                    >
-                      <Edit3 className="w-3.5 h-3.5 text-amber-600" />
-                      <span>수정</span>
-                    </button>
+                    <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                      <button
+                        onClick={() => handleStartEdit(pkg)}
+                        className="p-2 bg-white hover:bg-stone-100 text-stone-700 hover:text-amber-700 border border-stone-300 rounded-xl font-bold text-xs shadow-sm transition-all flex items-center gap-1 cursor-pointer"
+                        title="패키지 정보 수정"
+                      >
+                        <Edit3 className="w-3.5 h-3.5 text-amber-600" />
+                        <span>수정</span>
+                      </button>
 
-                    <button
-                      onClick={() => setDeletingPkg(pkg)}
-                      className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
-                      title="패키지 삭제"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                      <button
+                        onClick={() => setDeletingPkg(pkg)}
+                        className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+                        title="패키지 삭제"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -652,6 +660,9 @@ export const PackageManager: React.FC<PackageManagerProps> = ({ initialRoomTypeI
               </button>
               <button
                 onClick={() => {
+                  if (deletingPkg.imageUrl && deletingPkg.imageUrl.includes('supabase.co')) {
+                    deleteImageFromSupabaseStorage(deletingPkg.imageUrl).catch(() => {});
+                  }
                   deletePackage(deletingPkg.id);
                   setDeletingPkg(null);
                 }}

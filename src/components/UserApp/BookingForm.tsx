@@ -55,16 +55,8 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   const [showThirdPartyDetail, setShowThirdPartyDetail] = useState(false);
   const [showCancelDetail, setShowCancelDetail] = useState(false);
 
-  // Open Card Guarantee State
-  const [cardholderName, setCardholderName] = useState('');
-  const [cardNumber1, setCardNumber1] = useState('');
-  const [cardNumber2, setCardNumber2] = useState('');
-  const [cardNumber3, setCardNumber3] = useState('');
-  const [cardNumber4, setCardNumber4] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardType, setCardType] = useState('삼성카드');
-
   const [formError, setFormError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAgreeAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
@@ -75,7 +67,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
   const isAllAgreed = agreePrivacy && agreeThirdParty && agreeCancelPolicy;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError('');
 
@@ -84,7 +76,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       return;
     }
     if (!bookerPhone.trim() || bookerPhone.replace(/[^0-9]/g, '').length < 10) {
-      setFormError('올바른 휴대폰 번호를 입력해주세요 (예: 010-1234-5678).');
+      setFormError('올바른 휴대폰 번호를 입력해주세요 (예: 010-5678-0000).');
       return;
     }
 
@@ -100,56 +92,38 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       return;
     }
 
-    if (!cardholderName.trim()) {
-      setFormError('오픈카드 소유자명을 입력해주세요.');
-      return;
+    setIsSubmitting(true);
+    try {
+      // Auto scroll top smoothly on submit
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Create Reservation
+      const newReservation = await createReservation({
+        partnerCode: currentPartner?.code || 'ALL',
+        partnerName: currentPartner?.name || '제휴사 전용',
+        packageId: selectedPackage.id,
+        packageName: selectedPackage.name,
+        roomTypeId: selectedRoom.id,
+        roomTypeName: selectedRoom.name,
+        checkIn: bookingSpecs.checkIn,
+        checkOut: bookingSpecs.checkOut,
+        nights: bookingSpecs.nights,
+        roomCount: bookingSpecs.roomCount,
+        totalPrice: bookingSpecs.totalPrice,
+        originalTotalPrice: bookingSpecs.originalTotalPrice,
+        discountAmount: bookingSpecs.discountAmount,
+        bookerName,
+        bookerPhone,
+        bookerEmail: fullEmail,
+        specialRequests,
+      });
+
+      onBookingComplete(newReservation);
+    } catch (err: any) {
+      setFormError(err?.message || '예약 생성 중 오류가 발생했습니다.');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    const fullCardNum = `${cardNumber1}-${cardNumber2}-${cardNumber3}-${cardNumber4}`;
-    if (cardNumber1.length !== 4 || cardNumber4.length !== 4) {
-      setFormError('오픈카드 번호 16자리를 올바르게 입력해주세요.');
-      return;
-    }
-
-    if (!cardExpiry.trim() || cardExpiry.length < 4) {
-      setFormError('카드 유효기간(MM/YY)을 입력해주세요.');
-      return;
-    }
-
-    const maskedCard = `${cardNumber1}-${cardNumber2.replace(/./g, '*')}-${cardNumber3.replace(/./g, '*')}-${cardNumber4}`;
-
-    // Auto scroll top smoothly on submit
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Create Reservation
-    const newReservation = createReservation({
-      partnerCode: currentPartner?.code || 'ALL',
-      partnerName: currentPartner?.name || '제휴사 전용',
-      packageId: selectedPackage.id,
-      packageName: selectedPackage.name,
-      roomTypeId: selectedRoom.id,
-      roomTypeName: selectedRoom.name,
-      checkIn: bookingSpecs.checkIn,
-      checkOut: bookingSpecs.checkOut,
-      nights: bookingSpecs.nights,
-      roomCount: bookingSpecs.roomCount,
-      totalPrice: bookingSpecs.totalPrice,
-      originalTotalPrice: bookingSpecs.originalTotalPrice,
-      discountAmount: bookingSpecs.discountAmount,
-      bookerName,
-      bookerPhone,
-      bookerEmail: fullEmail,
-      specialRequests,
-      guaranteeCard: {
-        cardholderName,
-        cardNumberMasked: maskedCard,
-        cardNumberFull: fullCardNum,
-        cardExpiry,
-        cardType,
-      },
-    });
-
-    onBookingComplete(newReservation);
   };
 
   return (
@@ -166,7 +140,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         </button>
 
         <h2 className="text-base sm:text-2xl font-extrabold text-stone-900">
-          예약자 정보 입력 & 오픈카드 보증
+          예약자 정보 입력 & 예약 신청
         </h2>
       </div>
 
@@ -245,7 +219,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
                   required
                   value={bookerPhone}
                   onChange={(e) => setBookerPhone(formatPhoneNumber(e.target.value))}
-                  placeholder="예: 010-1234-5678"
+                  placeholder="예: 010-5678-0000"
                   className="w-full px-3.5 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
                 />
                 <Phone className="w-4 h-4 text-stone-400 absolute right-3.5 top-3.5" />
@@ -317,120 +291,28 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         </div>
 
         {/* 2. Open Card Guarantee Section */}
+        {/* 2. 결제 및 투숙 안내 */}
         <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
           <div className="flex items-center justify-between border-b pb-3">
             <h3 className="text-base font-bold text-stone-900 flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-oak-green" />
-              <span>오픈카드 (Open Card) 보증 등록</span>
+              <span>결제 및 투숙 안내</span>
             </h3>
-            <span className="text-xs text-amber-700 font-bold bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
-              현장결제 전용 보증
+            <span className="text-xs text-emerald-800 font-bold bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
+              현장 후불 결제
             </span>
           </div>
 
-          <div className="bg-stone-50 p-3.5 rounded-xl border border-stone-200/80 text-xs text-stone-600 space-y-1.5">
-            <p className="font-bold text-stone-900 flex items-center gap-1">
+          <div className="bg-stone-50 p-4 rounded-xl border border-stone-200/80 text-xs text-stone-600 space-y-2">
+            <p className="font-bold text-stone-900 flex items-center gap-1.5 text-sm">
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
-              <span>오픈카드 보증 안내</span>
+              <span>체크인 시 현장 결제 안내</span>
             </p>
             <p className="leading-relaxed">
-              • 결제는 투숙 당일 리조트 프론트에서 진행됩니다.<br />
-              • 본 오픈카드 등록은 노쇼(No-show) 방지 및 예약 확정을 위한 안전 보증용이며, 입실 전 승인 결제가 이루어지지 않습니다.
+              • 본 우대 예약은 사전 카드 결제가 필요 없는 <strong>현장 후불 결제</strong> 상품입니다.<br />
+              • 숙박 당일 오크밸리리조트 프론트 데스크에서 체크인 시 신용카드 또는 현금으로 결제하시면 됩니다.<br />
+              • 예약 신청 접수 후 예약실의 객실 배정 및 확정 절차를 거쳐 최종 예약번호 및 안내 문자가 발송됩니다.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-stone-700 mb-1">
-                카드종류 선택 <span className="text-rose-500">*</span>
-              </label>
-              <select
-                value={cardType}
-                onChange={(e) => setCardType(e.target.value)}
-                className="w-full px-3.5 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm font-bold text-stone-900 focus:outline-none min-h-[44px]"
-              >
-                {['삼성카드', '현대카드', 'KB국민카드', '신한카드', '롯데카드', '하나카드', 'BC카드', 'NH농협카드'].map(
-                  (c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  )
-                )}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-stone-700 mb-1">
-                카드 소유자 성명 <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={cardholderName}
-                onChange={(e) => setCardholderName(e.target.value.toUpperCase())}
-                placeholder="영문 또는 한글 성명"
-                className="w-full px-3.5 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm font-medium uppercase focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
-              />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-bold text-stone-700 mb-1">
-                카드 번호 (16자리) <span className="text-rose-500">*</span>
-              </label>
-              <div className="grid grid-cols-4 gap-2">
-                <input
-                  type="password"
-                  maxLength={4}
-                  required
-                  value={cardNumber1}
-                  onChange={(e) => setCardNumber1(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="1234"
-                  className="px-2 sm:px-3 py-2.5 sm:py-3 bg-stone-50 border border-stone-300 rounded-xl text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
-                />
-                <input
-                  type="password"
-                  maxLength={4}
-                  required
-                  value={cardNumber2}
-                  onChange={(e) => setCardNumber2(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="••••"
-                  className="px-2 sm:px-3 py-2.5 sm:py-3 bg-stone-50 border border-stone-300 rounded-xl text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
-                />
-                <input
-                  type="password"
-                  maxLength={4}
-                  required
-                  value={cardNumber3}
-                  onChange={(e) => setCardNumber3(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="••••"
-                  className="px-2 sm:px-3 py-2.5 sm:py-3 bg-stone-50 border border-stone-300 rounded-xl text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
-                />
-                <input
-                  type="text"
-                  maxLength={4}
-                  required
-                  value={cardNumber4}
-                  onChange={(e) => setCardNumber4(e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder="5678"
-                  className="px-2 sm:px-3 py-2.5 sm:py-3 bg-stone-50 border border-stone-300 rounded-xl text-center text-sm font-bold focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-stone-700 mb-1">
-                카드 유효기간 (MM/YY) <span className="text-rose-500">*</span>
-              </label>
-              <input
-                type="text"
-                maxLength={5}
-                required
-                value={cardExpiry}
-                onChange={(e) => setCardExpiry(e.target.value)}
-                placeholder="예: 10/28"
-                className="w-full px-3.5 py-3 bg-stone-50 border border-stone-300 rounded-xl text-sm font-bold text-stone-900 focus:outline-none focus:ring-2 focus:ring-oak-green/30 min-h-[44px]"
-              />
-            </div>
           </div>
         </div>
 
@@ -485,7 +367,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
                 <div className="bg-stone-50 p-3 rounded-lg text-[11px] text-stone-600 leading-relaxed max-h-32 overflow-y-auto">
                   [개인정보 수집 및 이용 목적]<br />
                   - 오크밸리리조트 제휴사 임직원 예약 진행, 예약자 확인 및 관련 알림톡/문자 서비스 발송<br />
-                  - 수집 항목: 성명, 휴대폰 번호, 이메일 주소, 오픈카드 보증 정보<br />
+                  - 수집 항목: 성명, 휴대폰 번호, 이메일 주소<br />
                   - 보유 및 이용 기간: 전자상거래법에 의거 서비스 제공 완료 후 5년간 보관.
                 </div>
               )}
@@ -545,10 +427,10 @@ export const BookingForm: React.FC<BookingFormProps> = ({
               </div>
               {showCancelDetail && (
                 <div className="bg-stone-50 p-3 rounded-lg text-[11px] text-stone-600 leading-relaxed">
-                  • 입실 7일 전 취소: 위약금 0% (전액 취소)<br />
+                  • 입실 7일 전 취소: 위약금 0% (전액 취소 가능)<br />
                   • 입실 3~6일 전 취소: 총 금액의 20% 위약금 부과<br />
                   • 입실 1~2일 전 취소: 총 금액의 50% 위약금 부과<br />
-                  • 당일 취소 및 노쇼(No-show): 총 금액의 100% 위약금이 오픈카드로 청구됩니다.
+                  • 당일 취소 및 노쇼(No-show): 총 금액의 100% 위약금 부과 (예약 확정 후 별도 안내)
                 </div>
               )}
             </div>
@@ -566,10 +448,11 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full min-h-[52px] py-4 bg-oak-green hover:bg-oak-dark text-white font-extrabold text-base rounded-2xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+          disabled={isSubmitting}
+          className="w-full min-h-[52px] py-4 bg-oak-green hover:bg-oak-dark disabled:bg-stone-400 text-white font-extrabold text-base rounded-2xl shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
         >
           <Lock className="w-5 h-5 text-oak-gold" />
-          <span>예약 완료 및 오픈카드 보증 등록</span>
+          <span>{isSubmitting ? '예약 접수 처리중...' : '예약 접수 신청하기'}</span>
           <Sparkles className="w-4 h-4 text-oak-gold" />
         </button>
       </form>

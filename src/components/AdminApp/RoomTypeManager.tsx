@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { RoomType } from '../../types';
 import { BedDouble, Plus, Trash2, Edit3, Check, Sparkles, Layers, Image as ImageIcon, ArrowRight, ShieldCheck, Tag, X, Upload, AlertTriangle, RefreshCw } from 'lucide-react';
-import { compressImageFile } from '../../utils/imageCompressor';
+import { uploadImageToSupabaseStorage, deleteImageFromSupabaseStorage } from '../../services/supabaseStorage';
 
 interface RoomTypeManagerProps {
   onNavigateToPackages?: (roomTypeId?: string) => void;
@@ -71,18 +71,18 @@ export const RoomTypeManager: React.FC<RoomTypeManagerProps> = ({ onNavigateToPa
     if (!file) return;
 
     try {
-      showToast('이미지 최적화 압축 진행 중...', 'info');
-      const compressedDataUrl = await compressImageFile(file, 1600, 1200, 0.82);
-      setImageUrl(compressedDataUrl);
+      showToast('클라우드 스토리지에 업로드 중입니다...', 'info');
+      const publicUrl = await uploadImageToSupabaseStorage(file, 'rooms');
+      setImageUrl(publicUrl);
       
       // Auto register to central media library
       addMediaAsset({
         title: file.name.replace(/\.[^/.]+$/, ""),
-        url: compressedDataUrl,
+        url: publicUrl,
         category: '객실',
-        sizeKb: Math.round((compressedDataUrl.length * 0.75) / 1024),
+        sizeKb: Math.round(file.size / 1024),
       });
-      showToast('객실 이미지가 최적화되어 선택 및 미디어 보관함에 연동되었습니다.', 'success');
+      showToast('객실 이미지가 스토리지에 성공적으로 업로드되었습니다.', 'success');
     } catch (err: any) {
       alert(err.message || '파일 처리 중 오류가 발생했습니다.');
     } finally {
@@ -136,6 +136,9 @@ export const RoomTypeManager: React.FC<RoomTypeManagerProps> = ({ onNavigateToPa
 
   const handleConfirmDelete = () => {
     if (deletingRoom) {
+      if (deletingRoom.imageUrl && deletingRoom.imageUrl.includes('supabase.co')) {
+        deleteImageFromSupabaseStorage(deletingRoom.imageUrl).catch(() => {});
+      }
       deleteRoomType(deletingRoom.id);
       setDeletingRoom(null);
     }
@@ -235,8 +238,23 @@ export const RoomTypeManager: React.FC<RoomTypeManagerProps> = ({ onNavigateToPa
       </div>
 
       {/* Room Type Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {filteredRoomTypes.map((room) => (
+      {filteredRoomTypes.length === 0 ? (
+        <div className="bg-white rounded-2xl border border-dashed border-stone-300 p-12 text-center">
+          <BedDouble className="w-12 h-12 text-stone-300 mx-auto mb-3" />
+          <h3 className="text-base font-bold text-stone-700">등록된 객실 타입이 없습니다.</h3>
+          <p className="text-xs text-stone-400 mt-1 mb-5">신규 원천 객실을 직접 등록하여 운영을 시작하세요.</p>
+          <button
+            type="button"
+            onClick={handleOpenAddModal}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-oak-green text-white rounded-xl text-xs font-bold hover:bg-oak-green/90 transition-colors cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>신규 원천 객실 등록</span>
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredRoomTypes.map((room) => (
           <div
             key={room.id}
             className="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group"
@@ -344,6 +362,7 @@ export const RoomTypeManager: React.FC<RoomTypeManagerProps> = ({ onNavigateToPa
           </div>
         ))}
       </div>
+      )}
 
       {/* Add / Edit Modal */}
       {isModalOpen && (

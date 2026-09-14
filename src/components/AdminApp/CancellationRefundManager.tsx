@@ -124,7 +124,7 @@ export const CancellationRefundManager: React.FC = () => {
   const sortedRules = [...seasonalCancellationRules].sort((a, b) => b.minDays - a.minDays);
   const matchedRule = sortedRules.find((r) => simDaysBeforeCheckIn >= r.minDays) || sortedRules[sortedRules.length - 1];
 
-  let simPenaltyRate = 100;
+  let simPenaltyRate = 0;
   if (matchedRule) {
     if (simSeasonInfo.isPeak) {
       simPenaltyRate = matchedRule.peakSeasonRate;
@@ -205,29 +205,35 @@ export const CancellationRefundManager: React.FC = () => {
 
         {/* Periods Display Grid / Edit Forms */}
         {!isEditingPeriods ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {seasonPeriods.map((period) => (
-              <div
-                key={period.id}
-                className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/80 space-y-1.5"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-extrabold text-amber-950 flex items-center gap-1">
-                    <Palmtree className="w-4 h-4 text-amber-600" />
-                    <span>{period.name}</span>
-                  </span>
-                  <span className="text-[10px] font-mono font-bold bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded">
-                    성수기 지정
-                  </span>
+          seasonPeriods.length === 0 ? (
+            <div className="bg-stone-50 border border-dashed border-stone-200 rounded-2xl p-6 text-center text-xs text-stone-500 font-medium">
+              등록된 성수기 구간 설정이 없습니다. (기본 비수기 규정이 적용됩니다)
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {seasonPeriods.map((period) => (
+                <div
+                  key={period.id}
+                  className="bg-amber-50/60 p-4 rounded-2xl border border-amber-200/80 space-y-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold text-amber-950 flex items-center gap-1">
+                      <Palmtree className="w-4 h-4 text-amber-600" />
+                      <span>{period.name}</span>
+                    </span>
+                    <span className="text-[10px] font-mono font-bold bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded">
+                      성수기 지정
+                    </span>
+                  </div>
+                  <div className="text-xs font-mono font-bold text-stone-800 flex items-center gap-1.5 pt-1">
+                    <span>{period.startDate}</span>
+                    <ArrowRight className="w-3 h-3 text-stone-400" />
+                    <span>{period.endDate}</span>
+                  </div>
                 </div>
-                <div className="text-xs font-mono font-bold text-stone-800 flex items-center gap-1.5 pt-1">
-                  <span>{period.startDate}</span>
-                  <ArrowRight className="w-3 h-3 text-stone-400" />
-                  <span>{period.endDate}</span>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )
         ) : (
           <div className="space-y-3">
             <div className="space-y-2">
@@ -392,25 +398,33 @@ export const CancellationRefundManager: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-200 font-medium">
-                {seasonalCancellationRules.map((rule) => (
-                  <tr key={rule.id} className="hover:bg-stone-50/80">
-                    <td className="py-3 px-4 font-extrabold text-stone-900">
-                      {rule.label} <span className="text-[10px] text-stone-400 block font-normal">(입실 {rule.minDays}일 이상 전)</span>
-                    </td>
-                    <td className="py-3 px-4 border-l border-emerald-100 bg-emerald-50/30 font-mono font-bold text-emerald-900">
-                      {rule.offPeakWeekdayRate === 0 ? '무료 (0%)' : `위약금 ${rule.offPeakWeekdayRate}%`}
-                    </td>
-                    <td className="py-3 px-4 border-l border-blue-100 bg-blue-50/30 font-mono font-bold text-blue-900">
-                      {rule.offPeakWeekendRate === 0 ? '무료 (0%)' : `위약금 ${rule.offPeakWeekendRate}%`}
-                    </td>
-                    <td className="py-3 px-4 border-l border-rose-100 bg-rose-50/30 font-mono font-bold text-rose-900">
-                      {rule.peakSeasonRate === 0 ? '무료 (0%)' : `위약금 ${rule.peakSeasonRate}%`}
-                    </td>
-                    <td className="py-3 px-4 border-l border-stone-200 text-stone-500 text-[11px]">
-                      {rule.description}
+                {seasonalCancellationRules.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-stone-400 text-xs font-normal">
+                      등록된 취소 위약율 규정이 없습니다. (기본 전액 환불 / 위약금 0% 적용)
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  seasonalCancellationRules.map((rule) => (
+                    <tr key={rule.id} className="hover:bg-stone-50/80">
+                      <td className="py-3 px-4 font-extrabold text-stone-900">
+                        {rule.label} <span className="text-[10px] text-stone-400 block font-normal">(입실 {rule.minDays}일 이상 전)</span>
+                      </td>
+                      <td className="py-3 px-4 border-l border-emerald-100 bg-emerald-50/30 font-mono font-bold text-emerald-900">
+                        {rule.offPeakWeekdayRate === 0 ? '무료 (0%)' : `위약금 ${rule.offPeakWeekdayRate}%`}
+                      </td>
+                      <td className="py-3 px-4 border-l border-blue-100 bg-blue-50/30 font-mono font-bold text-blue-900">
+                        {rule.offPeakWeekendRate === 0 ? '무료 (0%)' : `위약금 ${rule.offPeakWeekendRate}%`}
+                      </td>
+                      <td className="py-3 px-4 border-l border-rose-100 bg-rose-50/30 font-mono font-bold text-rose-900">
+                        {rule.peakSeasonRate === 0 ? '무료 (0%)' : `위약금 ${rule.peakSeasonRate}%`}
+                      </td>
+                      <td className="py-3 px-4 border-l border-stone-200 text-stone-500 text-[11px]">
+                        {rule.description}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

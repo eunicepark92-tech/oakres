@@ -4,7 +4,7 @@ import { AccountProfileModal } from '../Common/AccountProfileModal';
 import { WorkHistoryModal } from '../Admin/WorkHistoryModal';
 import { OakValleyLogo } from '../Common/OakValleyLogo';
 import { SPREADSHEET_URL } from '../../services/googleDriveSheets';
-import { LayoutDashboard, Building2, BedDouble, Gift, Calendar, RefreshCw, MessageSquare, DollarSign, ShieldCheck, UserCheck, Image as ImageIcon, ShieldAlert, Key, UserCog, History, Table, ExternalLink, Shield } from 'lucide-react';
+import { LayoutDashboard, Building2, BedDouble, Gift, Calendar, RefreshCw, MessageSquare, DollarSign, ShieldCheck, UserCheck, Image as ImageIcon, ShieldAlert, Key, UserCog, History, Table, ExternalLink, Shield, LogOut } from 'lucide-react';
 
 export type AdminTab =
   | 'dashboard'
@@ -26,11 +26,12 @@ interface AdminHeaderProps {
 }
 
 export const AdminHeader: React.FC<AdminHeaderProps> = ({ activeTab, onSelectTab }) => {
-  const { currentAdmin, adminUsers, loginAdmin, hasPermission, showToast, isGoogleConnected, connectGoogle, googleUser } = useApp();
+  const { currentAdmin, adminUsers, logoutAdmin, hasPermission, showToast, isGoogleConnected, connectGoogle, googleUser } = useApp();
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
   const [isWorkHistoryOpen, setIsWorkHistoryOpen] = useState(false);
 
   const isMaster = currentAdmin?.role === 'master';
+  const isMasterApproved = isMaster && Boolean(currentAdmin?.approved);
   const isReservationStaff = currentAdmin?.role === 'reservation_staff';
   const pendingApprovalsCount = adminUsers.filter((u) => u.role === 'sales_agent' && !u.approved).length;
 
@@ -52,26 +53,12 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ activeTab, onSelectTab
     if (tab.masterOnly) return false;
     if (tab.requiresPermission) {
       if (tab.id === 'reservation_desk') {
-        return hasPermission('canConfirmReservations') || hasPermission('canViewUnmaskedCard');
+        return hasPermission('canConfirmReservations');
       }
       return hasPermission(tab.requiresPermission);
     }
     return true;
   });
-
-  const handleQuickSwitchMaster = () => {
-    loginAdmin('master@hdc-resort.com', '1234');
-    showToast('마스터 총괄 관리자 계정으로 전환되었습니다.', 'info');
-  };
-
-  const handleSelectMasterTab = (tabId: AdminTab) => {
-    if (!isMaster) {
-      // Auto-switch to master account so user can access it immediately
-      loginAdmin('master@oakvalley.co.kr', '1234');
-      showToast('마스터 계정으로 전환되어 마스터 승인 및 감사로그에 접근합니다.', 'info');
-    }
-    onSelectTab(tabId);
-  };
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-3 mb-6 space-y-3">
@@ -139,6 +126,16 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ activeTab, onSelectTab
           >
             <UserCog className="w-4 h-4 text-stone-600 dark:text-stone-400" />
             <span>계정 관리</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={logoutAdmin}
+            className="min-h-[40px] sm:min-h-[34px] flex-1 sm:flex-none px-3 py-2 sm:px-2.5 sm:py-1 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 text-xs font-bold rounded-lg border border-rose-200 dark:border-rose-900/50 transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+            title="관리자 세션 로그아웃"
+          >
+            <LogOut className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+            <span>로그아웃</span>
           </button>
 
           {isMaster && (
@@ -232,6 +229,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ activeTab, onSelectTab
                 <ShieldAlert className="w-4 h-4 text-amber-700 dark:text-amber-400" />
                 <span>📜 전체 감사 로그</span>
               </button>
+
             </div>
 
             <div className="text-[10px] text-amber-800/80 dark:text-amber-400/60 font-medium px-1 hidden lg:block">
@@ -241,7 +239,6 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ activeTab, onSelectTab
         )}
 
       </div>
-
     </div>
   );
 };

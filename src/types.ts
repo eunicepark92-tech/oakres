@@ -1,7 +1,6 @@
 export type UserRole = 'master' | 'sales_agent' | 'reservation_staff';
 
 export interface RolePermissions {
-  canViewUnmaskedCard: boolean;   // 고객 카드번호 마스킹 해제 원본 조회 권한
   canManagePackages: boolean;     // 패키지 및 요금 등록/수정/삭제 권한
   canManagePartners: boolean;     // 제휴사 등록 및 관리 권한
   canManageRooms: boolean;        // 원천 객실 타입 관리 권한
@@ -17,6 +16,7 @@ export interface SystemRoleSettings {
 
 export interface AdminUser {
   id: string;
+  userId?: string; // Supabase Auth auth.users.id UUID
   email: string;
   name: string;
   role: UserRole;
@@ -24,7 +24,6 @@ export interface AdminUser {
   approved: boolean; // 마스터 승인 여부
   createdAt: string;
   phone?: string;
-  password?: string;
 }
 
 export interface Partner {
@@ -144,16 +143,8 @@ export interface DailyRate {
   status: 'available' | 'soldout' | 'blocked';
 }
 
-export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'checked_in' | 'completed';
+export type ReservationStatus = 'pending' | 'confirmed' | 'cancel_requested' | 'cancelled' | 'checked_in' | 'completed';
 export type RefundStatus = 'none' | 'pending' | 'completed' | 'rejected';
-
-export interface GuaranteeCard {
-  cardholderName: string;
-  cardNumberMasked: string; // e.g. 1234-56**-****-9012
-  cardNumberFull?: string; // e.g. 1234-5678-9012-3456
-  cardExpiry: string; // MM/YY
-  cardType: string; // e.g. 현대카드 / 삼성카드
-}
 
 export interface Reservation {
   id: string; // e.g. OV-REQ-20260805-7721
@@ -174,11 +165,10 @@ export interface Reservation {
   originalTotalPrice: number;
   discountAmount: number;
   bookerName: string;
-  bookerPhone: string; // e.g. 010-1234-5678
-  bookerPhoneLast4: string; // e.g. 5678
+  bookerPhone: string; // e.g. 010-5678-0000
+  bookerPhoneLast4: string; // e.g. 0000
   bookerEmail: string;
   specialRequests?: string;
-  guaranteeCard: GuaranteeCard;
   status: ReservationStatus;
   createdAt: string;
   
@@ -188,6 +178,7 @@ export interface Reservation {
   penaltyAmount?: number;
   refundAmount?: number;
   cancelReason?: string;
+  adminCancelNote?: string;
   cancelledAt?: string;
 }
 

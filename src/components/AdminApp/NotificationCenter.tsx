@@ -98,7 +98,7 @@ export const NotificationCenter: React.FC = () => {
               >
                 <option value="REMINDER_CHECKIN">입실 1일 전 체크인 안내 템플릿</option>
                 <option value="BOOKING_CONFIRMED">예약 확정 안내 템플릿</option>
-                <option value="CANCELLATION">예약 취소 및 오픈카드 해제 템플릿</option>
+                <option value="CANCELLATION">예약 취소 안내 템플릿</option>
               </select>
             </div>
 

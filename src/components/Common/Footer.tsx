@@ -48,7 +48,7 @@ export const Footer: React.FC = () => {
               onClick={() => handleOpenPolicy('guarantee')}
               className="hover:text-white transition-colors cursor-pointer"
             >
-              오픈카드 보증안내
+              현장결제 및 이용안내
             </button>
           </div>
         </div>

@@ -15,7 +15,7 @@ import {
   Save,
   Move,
 } from 'lucide-react';
-import { compressImageFile } from '../../utils/imageCompressor';
+import { uploadImageToSupabaseStorage, deleteImageFromSupabaseStorage } from '../../services/supabaseStorage';
 
 interface MediaGalleryManagerProps {
   onSelectImage?: (url: string) => void;
@@ -58,13 +58,13 @@ export const MediaGalleryManager: React.FC<MediaGalleryManagerProps> = ({ onSele
     if (!file) return;
 
     try {
-      showToast('이미지 최적화 압축 처리 중...', 'info');
-      const compressedDataUrl = await compressImageFile(file, 1600, 1200, 0.82);
-      setUrl(compressedDataUrl);
+      showToast('클라우드 스토리지에 업로드 중입니다...', 'info');
+      const publicUrl = await uploadImageToSupabaseStorage(file, 'gallery');
+      setUrl(publicUrl);
       if (!title) {
         setTitle(file.name.replace(/\.[^/.]+$/, ''));
       }
-      showToast('이미지 최적화 및 로드 성공 (최대 10MB 자동압축 지원)', 'success');
+      showToast('이미지가 스토리지에 성공적으로 업로드되었습니다.', 'success');
     } catch (err: any) {
       alert(err.message || '이미지 처리 중 오류가 발생했습니다.');
     } finally {
@@ -538,6 +538,10 @@ export const MediaGalleryManager: React.FC<MediaGalleryManagerProps> = ({ onSele
               </button>
               <button
                 onClick={() => {
+                  const targetAsset = mediaAssets.find((m) => m.id === deletingAssetId);
+                  if (targetAsset?.url && targetAsset.url.includes('supabase.co')) {
+                    deleteImageFromSupabaseStorage(targetAsset.url).catch(() => {});
+                  }
                   deleteMediaAsset(deletingAssetId);
                   setDeletingAssetId(null);
                 }}

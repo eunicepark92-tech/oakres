@@ -263,7 +263,7 @@ export const PartnerManager: React.FC = () => {
                   type="tel"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
-                  placeholder="02-1234-5678"
+                  placeholder="02-5555-6677"
                   className="w-full px-3 py-2 bg-stone-50 border border-stone-300 rounded-lg text-xs"
                 />
               </div>
@@ -295,56 +295,64 @@ export const PartnerManager: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {partners.map((partner) => (
-              <div
-                key={partner.id}
-                className="bg-stone-50 p-4 rounded-xl border border-stone-200/80 flex items-center justify-between gap-4 hover:bg-stone-100/60 transition-colors"
-              >
-                <div className="flex items-center gap-3">
-                  {/* Logo Preview */}
-                  <div className="w-14 h-12 bg-white rounded-lg border p-1 flex items-center justify-center shrink-0">
-                    <img
-                      src={partner.logoUrl}
-                      alt={partner.name}
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  </div>
-
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-extrabold text-stone-900 text-sm">{partner.name}</span>
-                      <span className="text-[10px] font-mono font-extrabold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
-                        코드: {partner.code}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-[11px] text-stone-500 mt-1">
-                      <span>할인율: <strong className="text-stone-800">{partner.discountRate}%</strong></span>
-                      <span>담당자: {partner.salesAgentName}</span>
-                      <span>등록일: {partner.createdAt}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center gap-1 shrink-0">
-                  <button
-                    onClick={() => handleStartEdit(partner)}
-                    className="p-2 text-stone-500 hover:text-oak-green hover:bg-emerald-50 rounded-lg border border-transparent hover:border-emerald-200 transition-colors cursor-pointer"
-                    title="제휴사 수정"
-                  >
-                    <Edit3 className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => deletePartner(partner.id)}
-                    className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
-                    title="제휴사 삭제"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
+            {partners.length === 0 ? (
+              <div className="bg-stone-50 rounded-xl border border-dashed border-stone-300 p-8 text-center">
+                <Building2 className="w-10 h-10 text-stone-300 mx-auto mb-2" />
+                <p className="text-sm font-bold text-stone-700">등록된 제휴사가 없습니다.</p>
+                <p className="text-xs text-stone-400 mt-1">좌측 폼에서 신규 기업/협약 제휴사를 직접 등록하세요.</p>
               </div>
-            ))}
+            ) : (
+              partners.map((partner) => (
+                <div
+                  key={partner.id}
+                  className="bg-stone-50 p-4 rounded-xl border border-stone-200/80 flex items-center justify-between gap-4 hover:bg-stone-100/60 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Logo Preview */}
+                    <div className="w-14 h-12 bg-white rounded-lg border p-1 flex items-center justify-center shrink-0">
+                      <img
+                        src={partner.logoUrl}
+                        alt={partner.name}
+                        className="max-h-full max-w-full object-contain"
+                      />
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-extrabold text-stone-900 text-sm">{partner.name}</span>
+                        <span className="text-[10px] font-mono font-extrabold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
+                          코드: {partner.code}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3 text-[11px] text-stone-500 mt-1">
+                        <span>할인율: <strong className="text-stone-800">{partner.discountRate}%</strong></span>
+                        <span>담당자: {partner.salesAgentName}</span>
+                        <span>등록일: {partner.createdAt}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => handleStartEdit(partner)}
+                      className="p-2 text-stone-500 hover:text-oak-green hover:bg-emerald-50 rounded-lg border border-transparent hover:border-emerald-200 transition-colors cursor-pointer"
+                      title="제휴사 수정"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => deletePartner(partner.id)}
+                      className="p-2 text-stone-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+                      title="제휴사 삭제"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

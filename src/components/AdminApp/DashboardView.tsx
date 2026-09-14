@@ -229,7 +229,7 @@ export const DashboardView: React.FC = () => {
             <span>실시간 예약 승인/취소 및 엑셀 다운로드는 [예약 처리 센터]를 이용해주세요</span>
           </div>
           <p className="text-xs text-stone-300">
-            PMS 확정번호 발급, 오픈카드 보증 내역 검토, 예약 취소/환불 집행 및 엑셀(CSV) 다운로드 기능이 전용 화면으로 분리 이동되었습니다.
+            PMS 확정번호 발급, 예약 상세 검토, 예약 취소/환불 집행 및 엑셀(CSV) 다운로드 기능이 전용 화면으로 분리 이동되었습니다.
           </p>
         </div>
 

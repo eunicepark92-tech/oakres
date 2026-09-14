@@ -47,14 +47,14 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ isOpen
     onClose();
   };
 
-  const handleChangePassword = (e: React.FormEvent) => {
+  const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
       showToast('현재 비밀번호를 입력해주세요.', 'error');
       return;
     }
-    if (!newPassword || newPassword.length < 4) {
-      showToast('새 비밀번호는 최소 4자리 이상 입력해주세요.', 'error');
+    if (!newPassword || newPassword.length < 6) {
+      showToast('새 비밀번호는 최소 6자리 이상 입력해주세요.', 'error');
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -62,7 +62,7 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ isOpen
       return;
     }
 
-    const success = changeAdminPassword(currentAdmin.id, currentPassword, newPassword);
+    const success = await changeAdminPassword(currentAdmin.id, currentPassword, newPassword);
     if (success) {
       setCurrentPassword('');
       setNewPassword('');
@@ -220,7 +220,7 @@ export const AccountProfileModal: React.FC<AccountProfileModalProps> = ({ isOpen
               <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
                 <Lock className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
                 <span>
-                  안전한 시스템 운영을 위해 주기적으로 비밀번호를 변경해 주세요. (기본 비밀번호: 1234)
+                  안전한 시스템 운영을 위해 주기적으로 비밀번호를 변경해 주세요.
                 </span>
               </div>
 

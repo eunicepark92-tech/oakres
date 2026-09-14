@@ -32,7 +32,10 @@ export function getReservationCancellationFeeInfo(
   let isWeekend = false;
   let seasonLabel = '비수기 주중';
 
-  const matchedPeak = seasonPeriods.find(
+  const safePeriods = seasonPeriods || [];
+  const safeRules = seasonalCancellationRules || [];
+
+  const matchedPeak = safePeriods.find(
     (p) => checkInStr >= p.startDate && checkInStr <= p.endDate
   );
   if (matchedPeak) {
@@ -45,7 +48,7 @@ export function getReservationCancellationFeeInfo(
   }
 
   // Find matched rule
-  const sortedRules = [...seasonalCancellationRules].sort((a, b) => b.minDays - a.minDays);
+  const sortedRules = [...safeRules].sort((a, b) => b.minDays - a.minDays);
   
   let penaltyRate = 0;
   let ruleLabel = '무료 취소 가능 (위약금 0%)';
@@ -54,6 +57,10 @@ export function getReservationCancellationFeeInfo(
     // Check-in date is today or past
     penaltyRate = 100;
     ruleLabel = '입실 당일/경과';
+  } else if (sortedRules.length === 0) {
+    // No rules configured
+    penaltyRate = 0;
+    ruleLabel = '취소 규정 미등록 (전액 환불)';
   } else {
     const matchedRule = sortedRules.find((r) => daysBeforeCheckIn >= r.minDays);
     if (matchedRule) {
