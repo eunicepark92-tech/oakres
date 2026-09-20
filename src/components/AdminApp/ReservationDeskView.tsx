@@ -624,7 +624,14 @@ export const ReservationDeskView: React.FC = () => {
 
                       {/* Package & Room */}
                       <td className="p-3.5 min-w-[180px]">
-                        <div className="font-bold text-stone-900 line-clamp-1">{res.packageName}</div>
+                        <div className="font-bold text-stone-900 flex items-center gap-1 flex-wrap">
+                          {res.packageId === 'diy-package' && (
+                            <span className="bg-rose-100 text-rose-800 text-[10px] font-extrabold px-1.5 py-0.2 rounded border border-rose-300">
+                              [DIY]
+                            </span>
+                          )}
+                          <span className="line-clamp-1">{res.packageName}</span>
+                        </div>
                         <div className="text-[11px] text-stone-500 line-clamp-1">{res.roomTypeName}</div>
                       </td>
 

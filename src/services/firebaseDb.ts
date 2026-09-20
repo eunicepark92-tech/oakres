@@ -64,8 +64,10 @@ export async function saveFirebaseAppState(state: any): Promise<boolean> {
   try {
     const docRef = doc(db, APP_STATE_DOC_PATH.collection, APP_STATE_DOC_PATH.doc);
     const updatedAt = new Date().toISOString();
+    // Sanitize any nested undefined fields to be fully Firestore compatible
+    const cleanState = JSON.parse(JSON.stringify(state));
     await setDoc(docRef, {
-      state,
+      state: cleanState,
       updatedAt,
     }, { merge: true });
     return true;

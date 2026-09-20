@@ -36,9 +36,11 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
   onOpenConfirm,
   onOpenCancel,
 }) => {
-  const { currentAdmin, showToast, seasonPeriods, seasonalCancellationRules } = useApp();
+  const { currentAdmin, showToast, seasonPeriods, seasonalCancellationRules, reservationItems } = useApp();
 
   if (!reservation) return null;
+
+  const currentItems = (reservationItems || []).filter((item) => item.reservationId === reservation.id);
 
   const todayStr = new Date().toISOString().split('T')[0];
   const isCancelled = reservation.status === 'cancelled';
@@ -261,6 +263,80 @@ export const ReservationDetailModal: React.FC<ReservationDetailModalProps> = ({
               </div>
             </div>
           </div>
+
+          {/* Section 2.5: DIY Component Snapshot (PMS Reservation Items) */}
+          {currentItems.length > 0 && (
+            <div className="bg-white p-3.5 rounded-2xl border border-stone-200 space-y-2">
+              <div className="text-[11px] font-bold text-stone-500 flex items-center gap-1.5 border-b pb-1.5">
+                <Gift className="w-3.5 h-3.5 text-rose-600" />
+                <span>나만의 DIY 패키지 상세 구성 Snapshot (PMS 인입 기준)</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-[11px] border-collapse">
+                  <thead>
+                    <tr className="bg-stone-50 text-stone-500 font-extrabold border-b border-stone-200">
+                      <th className="p-2">구분</th>
+                      <th className="p-2">상품명</th>
+                      <th className="p-2">이용일</th>
+                      <th className="p-2 text-center">수량</th>
+                      <th className="p-2 text-right">정상가</th>
+                      <th className="p-2 text-right">할인액</th>
+                      <th className="p-2 text-right">최종 인입금액</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100 font-medium">
+                    {currentItems.map((item) => {
+                      const typeLabel = 
+                        item.itemType === 'ROOM' ? '객실' :
+                        item.itemType === 'FB' ? 'F&B' :
+                        item.itemType === 'ACTIVITY' ? 'ACTIVITY' :
+                        item.itemType === 'OPTION' ? 'OPTION' : 'BENEFIT';
+
+                      return (
+                        <tr key={item.id} className="hover:bg-stone-50/50">
+                          <td className="p-2 whitespace-nowrap">
+                            <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold ${
+                              item.itemType === 'ROOM' 
+                                ? 'bg-blue-100 text-blue-800' 
+                                : item.itemType === 'FB'
+                                ? 'bg-amber-100 text-amber-800'
+                                : item.itemType === 'ACTIVITY'
+                                ? 'bg-orange-100 text-orange-800'
+                                : 'bg-purple-100 text-purple-800'
+                            }`}>
+                              {typeLabel}
+                            </span>
+                          </td>
+                          <td className="p-2 font-bold text-stone-900">{item.itemName}</td>
+                          <td className="p-2 text-stone-500 font-mono">{item.usageDate || reservation.checkIn}</td>
+                          <td className="p-2 text-center font-bold whitespace-nowrap">
+                            {item.itemType === 'ROOM' ? `${item.quantity}실×${reservation.nights}박` : `${item.quantity}개`}
+                          </td>
+                          <td className="p-2 text-right font-mono text-stone-400 whitespace-nowrap">
+                            ₩{item.originalPrice.toLocaleString()}
+                          </td>
+                          <td className="p-2 text-right font-mono text-rose-500 whitespace-nowrap">
+                            {item.discountAmount > 0 ? `₩${item.discountAmount.toLocaleString()}` : '-'}
+                          </td>
+                          <td className="p-2 text-right font-mono font-bold text-stone-950 whitespace-nowrap">
+                            ₩{item.finalPrice.toLocaleString()}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-stone-50 font-extrabold border-t-2 border-stone-200">
+                      <td colSpan={4} className="p-2 text-stone-700 text-right">총 인입금액 합계:</td>
+                      <td colSpan={3} className="p-2 text-right text-rose-600 text-xs font-black font-sans">
+                        ₩{currentItems.reduce((sum, item) => sum + item.finalPrice, 0).toLocaleString()}
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          )}
 
           {/* Section 3: Financials & Payment Info */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

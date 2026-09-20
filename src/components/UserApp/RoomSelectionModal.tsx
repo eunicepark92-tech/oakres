@@ -7,16 +7,19 @@ import { ArrowLeft, CheckCircle2, Bed, Users, Maximize, Check, Info, Sparkles, A
 interface RoomSelectionModalProps {
   selectedPackage: Package;
   onBack: () => void;
-  onSelectRoom: (data: {
-    roomType: RoomType;
-    checkIn: string;
-    checkOut: string;
-    nights: number;
-    roomCount: number;
-    totalPrice: number;
-    originalTotalPrice: number;
-    discountAmount: number;
-  }) => void;
+  onSelectRoom: (
+    data: {
+      roomType: RoomType;
+      checkIn: string;
+      checkOut: string;
+      nights: number;
+      roomCount: number;
+      totalPrice: number;
+      originalTotalPrice: number;
+      discountAmount: number;
+    },
+    isDiy: boolean
+  ) => void;
 }
 
 export const RoomSelectionModal: React.FC<RoomSelectionModalProps> = ({
@@ -256,7 +259,7 @@ export const RoomSelectionModal: React.FC<RoomSelectionModalProps> = ({
                       </div>
                     </div>
 
-                    <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 w-full sm:w-auto">
+                     <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 w-full sm:w-auto">
                       {/* Detailed Info Button */}
                       <button
                         onClick={() => setDetailModalRoom(room)}
@@ -266,7 +269,7 @@ export const RoomSelectionModal: React.FC<RoomSelectionModalProps> = ({
                         <span>상세정보</span>
                       </button>
 
-                      {/* Select Button */}
+                      {/* Select and Proceed Booking Button */}
                       <button
                         disabled={isSoldOut}
                         onClick={() =>
@@ -279,16 +282,15 @@ export const RoomSelectionModal: React.FC<RoomSelectionModalProps> = ({
                             totalPrice: priceInfo.totalDiscountedPrice,
                             originalTotalPrice: priceInfo.totalOriginalPrice,
                             discountAmount: priceInfo.discountAmount,
-                          })
+                          }, false)
                         }
-                        className={`min-h-[44px] px-5 py-2.5 font-bold text-xs sm:text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-98 ${
+                        className={`min-h-[44px] px-6 py-2.5 font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0 active:scale-98 ${
                           isSoldOut
-                            ? 'bg-stone-300 text-stone-500 cursor-not-allowed'
+                            ? 'bg-stone-100 text-stone-400 border-stone-200 cursor-not-allowed'
                             : 'bg-oak-green hover:bg-oak-dark text-white'
                         }`}
                       >
-                        <span>예약 정보 입력</span>
-                        <Sparkles className="w-4 h-4 text-oak-gold" />
+                        <span>선택 및 예약 진행</span>
                       </button>
                     </div>
                   </div>

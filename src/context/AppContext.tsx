@@ -20,6 +20,7 @@ import {
   upsertDailyRateInSupabase,
   upsertDailyRatesBatchInSupabase,
   upsertReservationInSupabase,
+  saveReservationItemsInSupabase,
   saveOperationNoticeInSupabase,
   upsertAdminUserInSupabase,
   deleteAdminUserFromSupabase,
@@ -51,6 +52,14 @@ import {
   RolePermissions,
   SystemRoleSettings,
   SpecialDay,
+  UserProfile,
+  UserProfileRole,
+  UserProfileStatus,
+  Component,
+  ComponentCategory,
+  PartnerComponentRule,
+  ReservationItem,
+  DiyRoomRate,
 } from '../types';
 import {
   INITIAL_ADMIN_USERS,
@@ -69,6 +78,7 @@ import {
   INITIAL_AUDIT_LOGS,
   DEFAULT_ROLE_SETTINGS,
   DEFAULT_SPECIAL_DAYS,
+  INITIAL_DIY_ROOM_RATES,
 } from '../mockData';
 
 import { UserRole } from '../types';
@@ -146,6 +156,29 @@ interface AppContextType {
   changeAdminPassword: (adminId: string, currentPass: string, newPass: string) => Promise<boolean>;
   resetAdminUserPassword: (adminId: string, customNewPass?: string) => boolean;
 
+  // New DIY & User Profile Extensibility
+  userProfiles: UserProfile[];
+  components: Component[];
+  partnerComponentRules: PartnerComponentRule[];
+  reservationItems: ReservationItem[];
+  diyRoomRates: DiyRoomRate[];
+  
+  signUpProfile: (data: { email: string; pass: string; name: string; phone?: string; role: UserProfileRole; partnerId?: string }) => Promise<{ success: boolean; message: string }>;
+  approveProfile: (profileId: string, employeeId?: string, role?: string) => Promise<{ success: boolean; message: string }>;
+  rejectProfile: (profileId: string) => Promise<{ success: boolean; message: string }>;
+  deactivateProfile: (profileId: string) => Promise<{ success: boolean; message: string }>;
+  inviteStaff: (data: { email: string; name: string; phone?: string; employeeId: string; role: 'sales_agent' | 'reservation_staff' }) => Promise<{ success: boolean; message: string; tempInviteUrl?: string }>;
+  
+  addComponent: (data: { category: ComponentCategory; name: string; description?: string; basePrice: number; normalPrice?: number; isDiscountable: boolean; tags?: string[] }) => Promise<Component>;
+  updateComponent: (id: string, data: Partial<Component>) => Promise<void>;
+  deleteComponent: (id: string) => Promise<void>;
+  upsertPartnerComponentRule: (data: { partnerId: string; componentId: string; customPrice?: number; customDiscountRate?: number; isVisible: boolean }) => Promise<void>;
+
+  addDiyRoomRate: (rate: Omit<DiyRoomRate, 'id' | 'createdAt'>) => Promise<DiyRoomRate>;
+  updateDiyRoomRate: (id: string, data: Partial<DiyRoomRate>) => Promise<void>;
+  deleteDiyRoomRate: (id: string) => Promise<void>;
+
+
   // Partner Management by Admin
   addPartner: (partnerData: { name: string; code: string; logoUrl: string; contactEmail?: string; contactPhone?: string; discountRate?: number }) => Partner;
   updatePartner: (partnerId: string, partnerData: Partial<Partner>) => void;
@@ -209,7 +242,8 @@ interface AppContextType {
     bookerPhone: string;
     bookerEmail: string;
     specialRequests?: string;
-  }) => Reservation;
+    selectedDiyItems?: any[];
+  }) => Promise<Reservation>;
 
   cancelReservation: (reservationId: string, reason: string) => { success: boolean; reservation?: Reservation; message?: string };
   confirmReservation: (reservationId: string, pmsReservationNo: string) => { success: boolean; reservation?: Reservation; message?: string };
@@ -452,6 +486,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [roleSettings, setRoleSettings] = useState<SystemRoleSettings>(DEFAULT_ROLE_SETTINGS);
   const [specialDays, setSpecialDays] = useState<SpecialDay[]>(DEFAULT_SPECIAL_DAYS);
 
+  // New States for DIY & User Profiles
+  const [userProfiles, setUserProfiles] = useState<UserProfile[]>([]);
+  const [components, setComponents] = useState<Component[]>([]);
+  const [partnerComponentRules, setPartnerComponentRules] = useState<PartnerComponentRule[]>([]);
+  const [reservationItems, setReservationItems] = useState<ReservationItem[]>([]);
+  const [diyRoomRates, setDiyRoomRates] = useState<DiyRoomRate[]>([]);
+
+
   // Master Notification Email Setting
   const [notificationEmail, setNotificationEmailState] = useState<string>(() => {
     const saved = localStorage.getItem('OAKVALLEY_NOTIFICATION_EMAIL');
@@ -603,6 +645,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (parsed.roleSettings) setRoleSettings(parsed.roleSettings);
     if (parsed.specialDays) setSpecialDays(parsed.specialDays);
     if (parsed.notificationEmail) setNotificationEmailState(parsed.notificationEmail);
+    if (parsed.userProfiles) setUserProfiles(parsed.userProfiles);
+    if (parsed.components) setComponents(parsed.components);
+    if (parsed.partnerComponentRules) setPartnerComponentRules(parsed.partnerComponentRules);
+    if (parsed.reservationItems) setReservationItems(parsed.reservationItems);
+    if (parsed.diyRoomRates) setDiyRoomRates(parsed.diyRoomRates);
+    else setDiyRoomRates(INITIAL_DIY_ROOM_RATES);
+
     setTimeout(() => {
       isApplyingRemoteUpdateRef.current = false;
     }, 100);
@@ -730,6 +779,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           roleSettings: DEFAULT_ROLE_SETTINGS,
           specialDays: DEFAULT_SPECIAL_DAYS,
           notificationEmail: 'master@oakvalley.co.kr',
+          diyRoomRates: INITIAL_DIY_ROOM_RATES,
         };
         applyStateData(freshState);
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(freshState));
@@ -790,6 +840,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       roleSettings,
       specialDays,
       notificationEmail,
+      userProfiles,
+      components,
+      partnerComponentRules,
+      reservationItems,
+      diyRoomRates,
     };
 
     // Save to local device storage instantly
@@ -842,6 +897,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     roleSettings,
     specialDays,
     notificationEmail,
+    userProfiles,
+    components,
+    partnerComponentRules,
+    reservationItems,
+    diyRoomRates,
   ]);
 
   const addAuditLog = (actionType: AuditLog['actionType'], actionSummary: string, details?: string) => {
@@ -1207,6 +1267,655 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     showToast(`[${user.name}] 관리자 비밀번호 재설정은 Supabase Auth 대시보드 또는 이메일 링크를 통해 진행해주세요.`, 'info');
     return true;
+  };
+
+  // ====================================================================
+  // New DIY & User Profile Extensibility Actions
+  // ====================================================================
+
+  const signUpProfile = async (data: {
+    email: string;
+    pass: string;
+    name: string;
+    phone?: string;
+    role: UserProfileRole;
+    partnerId?: string;
+  }): Promise<{ success: boolean; message: string }> => {
+    try {
+      if (supabase && isSupabaseActive) {
+        // 1. Supabase Auth Sign Up
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.pass,
+          options: {
+            data: {
+              name: data.name,
+              phone: data.phone || '',
+            }
+          }
+        });
+
+        if (authError) {
+          console.error('[Supabase Auth SignUp Error]', authError);
+          return { success: false, message: `가입 실패: ${authError.message}` };
+        }
+
+        if (!authData.user) {
+          return { success: false, message: '사용자를 생성할 수 없습니다.' };
+        }
+
+        // 2. Insert into user_profiles
+        const { error: profileError } = await supabase.from('user_profiles').insert({
+          id: authData.user.id,
+          email: data.email,
+          name: data.name,
+          phone: data.phone || null,
+          role: data.role,
+          status: 'PENDING',
+          partner_id: data.partnerId || null,
+        });
+
+        if (profileError) {
+          console.error('[user_profiles Write Error]', profileError);
+          return { success: false, message: `프로필 생성 실패: ${profileError.message}` };
+        }
+
+        // Re-fetch profiles
+        const { data: freshProfiles } = await supabase.from('user_profiles').select('*');
+        if (freshProfiles) {
+          setUserProfiles(freshProfiles.map((up: any) => ({
+            id: up.id,
+            email: up.email,
+            name: up.name,
+            phone: up.phone || '',
+            role: up.role as any,
+            status: up.status as any,
+            partnerId: up.partner_id || undefined,
+            createdAt: up.created_at,
+            updatedAt: up.updated_at,
+          })));
+        }
+
+        addAuditLog(
+          'USER_APPROVAL',
+          `신규 회원가입 신청 (${data.name} / ${data.email})`,
+          `역할: ${data.role}, 상태: PENDING, 제휴사ID: ${data.partnerId || '없음'}`
+        );
+
+        return { success: true, message: '회원가입 신청이 완료되었습니다. 마스터 승인 대기 중입니다.' };
+      } else {
+        // Mock Mode
+        const newId = `mock-uuid-${Math.floor(Math.random() * 100000)}`;
+        const newProfile: UserProfile = {
+          id: newId,
+          email: data.email,
+          name: data.name,
+          phone: data.phone,
+          role: data.role,
+          status: 'PENDING',
+          partnerId: data.partnerId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        setUserProfiles((prev) => [...prev, newProfile]);
+        addAuditLog(
+          'USER_APPROVAL',
+          `신규 회원가입 신청(로컬) (${data.name} / ${data.email})`,
+          `역할: ${data.role}, 상태: PENDING`
+        );
+        return { success: true, message: '회원가입 신청(로컬)이 완료되었습니다. 마스터 승인 대기 중입니다.' };
+      }
+    } catch (err: any) {
+      console.error('[signUpProfile Catch Error]', err);
+      return { success: false, message: err?.message || '처리 중 에러가 발생했습니다.' };
+    }
+  };
+
+  const approveProfile = async (
+    profileId: string,
+    employeeId?: string,
+    role?: string
+  ): Promise<{ success: boolean; message: string }> => {
+    try {
+      let targetProfile = userProfiles.find((up) => up.id === profileId);
+      
+      if (supabase && isSupabaseActive) {
+        if (!targetProfile) {
+          const { data: upDb } = await supabase.from('user_profiles').select('*').eq('id', profileId).maybeSingle();
+          if (upDb) {
+            targetProfile = {
+              id: upDb.id,
+              email: upDb.email,
+              name: upDb.name,
+              phone: upDb.phone || '',
+              role: upDb.role as any,
+              status: upDb.status as any,
+              partnerId: upDb.partner_id || undefined,
+              createdAt: upDb.created_at,
+              updatedAt: upDb.updated_at,
+            };
+          }
+        }
+
+        if (!targetProfile) {
+          return { success: false, message: '해당 프로필을 찾을 수 없습니다.' };
+        }
+
+        const { error: updateErr } = await supabase
+          .from('user_profiles')
+          .update({ status: 'APPROVED', updated_at: new Date().toISOString() })
+          .eq('id', profileId);
+
+        if (updateErr) {
+          return { success: false, message: `승인 처리 실패: ${updateErr.message}` };
+        }
+
+        if (targetProfile.role === 'STAFF' || targetProfile.role === 'MASTER') {
+          const mappedRole = role || (targetProfile.role === 'MASTER' ? 'master' : 'sales_agent');
+          const empId = employeeId || `SA-${Math.floor(1000 + Math.random() * 9000)}`;
+
+          const { error: adminErr } = await supabase.from('admin_users').upsert({
+            user_id: profileId,
+            email: targetProfile.email,
+            name: targetProfile.name,
+            role: mappedRole,
+            employee_id: empId,
+            approved: true,
+            phone: targetProfile.phone || null,
+            updated_at: new Date().toISOString(),
+          });
+
+          if (adminErr) {
+            console.error('[Admin insert failed but profile approved]', adminErr);
+          }
+        }
+
+        const { data: freshProfiles } = await supabase.from('user_profiles').select('*');
+        if (freshProfiles) {
+          setUserProfiles(freshProfiles.map((up: any) => ({
+            id: up.id,
+            email: up.email,
+            name: up.name,
+            phone: up.phone || '',
+            role: up.role as any,
+            status: up.status as any,
+            partnerId: up.partner_id || undefined,
+            createdAt: up.created_at,
+            updatedAt: up.updated_at,
+          })));
+        }
+
+        const { data: freshAdmins } = await supabase.from('admin_users').select('*');
+        if (freshAdmins) {
+          setAdminUsers(freshAdmins.map((a: any) => ({
+            id: a.user_id || a.id,
+            userId: a.user_id || a.id,
+            email: a.email,
+            name: a.name,
+            role: a.role as any,
+            employeeId: a.employee_id || '',
+            approved: Boolean(a.approved),
+            phone: a.phone || '',
+            createdAt: a.created_at,
+          })));
+        }
+
+        addAuditLog(
+          'USER_APPROVAL',
+          `사용자 가입 승인 (${targetProfile.name} / ${targetProfile.email})`,
+          `역할: ${targetProfile.role}, 사번: ${employeeId || '자동 발급'}`
+        );
+
+        showToast(`[${targetProfile.name}] 계정이 성공적으로 승인되었습니다.`, 'success');
+        return { success: true, message: '승인 처리가 완료되었습니다.' };
+      } else {
+        if (!targetProfile) return { success: false, message: '프로필을 찾을 수 없습니다.' };
+        
+        setUserProfiles((prev) =>
+          prev.map((up) => (up.id === profileId ? { ...up, status: 'APPROVED', updatedAt: new Date().toISOString() } : up))
+        );
+
+        if (targetProfile.role === 'STAFF' || targetProfile.role === 'MASTER') {
+          const mappedRole = role || (targetProfile.role === 'MASTER' ? 'master' : 'sales_agent');
+          const empId = employeeId || `SA-${Math.floor(1000 + Math.random() * 9000)}`;
+          
+          const newAdmin: AdminUser = {
+            id: profileId,
+            userId: profileId,
+            email: targetProfile.email,
+            name: targetProfile.name,
+            role: mappedRole as any,
+            employeeId: empId,
+            approved: true,
+            phone: targetProfile.phone,
+            createdAt: new Date().toISOString(),
+          };
+
+          setAdminUsers((prev) => {
+            if (prev.some((a) => a.id === profileId)) {
+              return prev.map((a) => (a.id === profileId ? newAdmin : a));
+            }
+            return [...prev, newAdmin];
+          });
+        }
+
+        addAuditLog(
+          'USER_APPROVAL',
+          `사용자 가입 승인(로컬) (${targetProfile.name} / ${targetProfile.email})`,
+          `역할: ${targetProfile.role}`
+        );
+
+        showToast(`[${targetProfile.name}] 계정(로컬)이 승인되었습니다.`, 'success');
+        return { success: true, message: '승인 처리가 완료되었습니다.' };
+      }
+    } catch (err: any) {
+      console.error('[approveProfile Error]', err);
+      return { success: false, message: err?.message || '처리 중 오류가 발생했습니다.' };
+    }
+  };
+
+  const rejectProfile = async (profileId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      const targetProfile = userProfiles.find((up) => up.id === profileId);
+      if (supabase && isSupabaseActive) {
+        const { error } = await supabase
+          .from('user_profiles')
+          .update({ status: 'REJECTED', updated_at: new Date().toISOString() })
+          .eq('id', profileId);
+
+        if (error) return { success: false, message: `거절 처리 실패: ${error.message}` };
+
+        const { data: fresh } = await supabase.from('user_profiles').select('*');
+        if (fresh) {
+          setUserProfiles(fresh.map((up: any) => ({
+            id: up.id,
+            email: up.email,
+            name: up.name,
+            phone: up.phone || '',
+            role: up.role as any,
+            status: up.status as any,
+            partnerId: up.partner_id || undefined,
+            createdAt: up.created_at,
+            updatedAt: up.updated_at,
+          })));
+        }
+
+        addAuditLog(
+          'USER_APPROVAL',
+          `가입 신청 거절 (${targetProfile?.name || '알수없음'} / ${targetProfile?.email || ''})`,
+          `프로필ID: ${profileId}`
+        );
+
+        showToast('가입 신청이 거절 처리되었습니다.', 'info');
+        return { success: true, message: '거절 처리가 완료되었습니다.' };
+      } else {
+        setUserProfiles((prev) =>
+          prev.map((up) => (up.id === profileId ? { ...up, status: 'REJECTED', updatedAt: new Date().toISOString() } : up))
+        );
+        addAuditLog('USER_APPROVAL', '가입 신청 거절(로컬)', `프로필ID: ${profileId}`);
+        showToast('가입 신청(로컬)이 거절 처리되었습니다.', 'info');
+        return { success: true, message: '거절 처리가 완료되었습니다.' };
+      }
+    } catch (err: any) {
+      return { success: false, message: err?.message || '처리 오류' };
+    }
+  };
+
+  const deactivateProfile = async (profileId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      const targetProfile = userProfiles.find((up) => up.id === profileId);
+      if (supabase && isSupabaseActive) {
+        const { error } = await supabase
+          .from('user_profiles')
+          .update({ status: 'INACTIVE', updated_at: new Date().toISOString() })
+          .eq('id', profileId);
+
+        if (error) return { success: false, message: `비활성화 실패: ${error.message}` };
+
+        await supabase.from('admin_users').update({ approved: false, updated_at: new Date().toISOString() }).eq('user_id', profileId);
+
+        const { data: freshProfiles } = await supabase.from('user_profiles').select('*');
+        if (freshProfiles) {
+          setUserProfiles(freshProfiles.map((up: any) => ({
+            id: up.id,
+            email: up.email,
+            name: up.name,
+            phone: up.phone || '',
+            role: up.role as any,
+            status: up.status as any,
+            partnerId: up.partner_id || undefined,
+            createdAt: up.created_at,
+            updatedAt: up.updated_at,
+          })));
+        }
+        const { data: freshAdmins } = await supabase.from('admin_users').select('*');
+        if (freshAdmins) {
+          setAdminUsers(freshAdmins.map((a: any) => ({
+            id: a.user_id || a.id,
+            userId: a.user_id || a.id,
+            email: a.email,
+            name: a.name,
+            role: a.role as any,
+            employeeId: a.employee_id || '',
+            approved: Boolean(a.approved),
+            phone: a.phone || '',
+            createdAt: a.created_at,
+          })));
+        }
+
+        addAuditLog(
+          'USER_APPROVAL',
+          `계정 비활성화 (${targetProfile?.name || '알수없음'})`,
+          `프로필ID: ${profileId}`
+        );
+
+        showToast('계정이 성공적으로 비활성화 처리되었습니다.', 'info');
+        return { success: true, message: '비활성화 처리되었습니다.' };
+      } else {
+        setUserProfiles((prev) =>
+          prev.map((up) => (up.id === profileId ? { ...up, status: 'INACTIVE', updatedAt: new Date().toISOString() } : up))
+        );
+        setAdminUsers((prev) =>
+          prev.map((a) => (a.id === profileId ? { ...a, approved: false } : a))
+        );
+        addAuditLog('USER_APPROVAL', '계정 비활성화(로컬)', `프로필ID: ${profileId}`);
+        showToast('계정(로컬)이 비활성화 처리되었습니다.', 'info');
+        return { success: true, message: '비활성화 처리되었습니다.' };
+      }
+    } catch (err: any) {
+      return { success: false, message: err?.message || '처리 오류' };
+    }
+  };
+
+  const inviteStaff = async (data: {
+    email: string;
+    name: string;
+    phone?: string;
+    employeeId: string;
+    role: 'sales_agent' | 'reservation_staff';
+  }): Promise<{ success: boolean; message: string; tempInviteUrl?: string }> => {
+    try {
+      const inviteToken = `inv-${Math.floor(100000 + Math.random() * 900000)}`;
+      const setupUrl = `${window.location.origin}/admin?invite=true&token=${inviteToken}&email=${encodeURIComponent(data.email)}&role=${data.role}&name=${encodeURIComponent(data.name)}&employeeId=${encodeURIComponent(data.employeeId)}&phone=${encodeURIComponent(data.phone || '')}`;
+
+      if (supabase && isSupabaseActive) {
+        addAuditLog(
+          'USER_APPROVAL',
+          `신규 임직원 STAFF 초대장 발급 (${data.name} / ${data.email})`,
+          `사번: ${data.employeeId}, 링크: ${setupUrl}`
+        );
+        
+        showToast(`[${data.name}] STAFF 계정 초대 URL이 생성되었습니다.`, 'success');
+        return { success: true, message: '초대 URL 발급 완료', tempInviteUrl: setupUrl };
+      } else {
+        addAuditLog(
+          'USER_APPROVAL',
+          `임직원 STAFF 초대장 발급(로컬) (${data.name} / ${data.email})`,
+          `링크: ${setupUrl}`
+        );
+        showToast(`[${data.name}] STAFF 계정 초대 URL(로컬)이 생성되었습니다.`, 'success');
+        return { success: true, message: '초대 URL 발급 완료', tempInviteUrl: setupUrl };
+      }
+    } catch (err: any) {
+      return { success: false, message: err?.message || '초대 처리 오류' };
+    }
+  };
+
+  // Component Master (DIY) Actions
+  const addComponent = async (data: {
+    category: ComponentCategory;
+    name: string;
+    description?: string;
+    basePrice: number;
+    normalPrice?: number;
+    isDiscountable: boolean;
+    tags?: string[];
+  }): Promise<Component> => {
+    const newComp: Component = {
+      id: `comp-${Date.now()}`,
+      category: data.category,
+      name: data.name,
+      description: data.description,
+      basePrice: data.basePrice,
+      normalPrice: data.normalPrice,
+      isDiscountable: data.isDiscountable,
+      isActive: true,
+      tags: data.tags || [],
+      createdAt: new Date().toISOString(),
+    };
+
+    if (supabase && isSupabaseActive) {
+      await supabase.from('components').insert({
+        id: newComp.id,
+        category: newComp.category,
+        name: newComp.name,
+        description: newComp.description || null,
+        base_price: newComp.basePrice,
+        normal_price: newComp.normalPrice || null,
+        is_discountable: newComp.isDiscountable,
+        is_active: newComp.isActive,
+        tags: newComp.tags,
+      });
+    }
+
+    setComponents((prev) => [...prev, newComp]);
+    addAuditLog('PACKAGE', `컴포넌트 마스터 등록: ${newComp.name}`, `카테고리: ${newComp.category}, 가격: ${newComp.basePrice}`);
+    showToast(`[${newComp.name}] 컴포넌트 마스터가 등록되었습니다.`, 'success');
+    return newComp;
+  };
+
+  const updateComponent = async (id: string, data: Partial<Component>): Promise<void> => {
+    if (supabase && isSupabaseActive) {
+      const updateData: any = {};
+      if (data.category) updateData.category = data.category;
+      if (data.name) updateData.name = data.name;
+      if (data.description !== undefined) updateData.description = data.description || null;
+      if (data.basePrice !== undefined) updateData.base_price = data.basePrice;
+      if (data.normalPrice !== undefined) updateData.normal_price = data.normalPrice || null;
+      if (data.isDiscountable !== undefined) updateData.is_discountable = data.isDiscountable;
+      if (data.isActive !== undefined) updateData.is_active = data.isActive;
+      if (data.tags) updateData.tags = data.tags;
+
+      await supabase.from('components').update(updateData).eq('id', id);
+    }
+
+    setComponents((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, ...data } : c))
+    );
+    showToast('컴포넌트 마스터 정보가 수정되었습니다.', 'success');
+  };
+
+  const deleteComponent = async (id: string): Promise<void> => {
+    const target = components.find((c) => c.id === id);
+    if (!target) return;
+
+    if (supabase && isSupabaseActive) {
+      await supabase.from('components').delete().eq('id', id);
+    }
+
+    setComponents((prev) => prev.filter((c) => c.id !== id));
+    addAuditLog('PACKAGE', `컴포넌트 마스터 삭제: ${target.name}`, `ID: ${id}`);
+    showToast(`[${target.name}] 컴포넌트 마스터가 삭제되었습니다.`, 'info');
+  };
+
+  const addDiyRoomRate = async (rateData: Omit<DiyRoomRate, 'id' | 'createdAt'>): Promise<DiyRoomRate> => {
+    // Validate date overlaps for active rates of the same roomTypeId
+    if (rateData.isActive) {
+      const isOverlapping = diyRoomRates.some((r) => {
+        if (r.roomTypeId !== rateData.roomTypeId || !r.isActive) return false;
+        return (rateData.startDate <= r.endDate && rateData.endDate >= r.startDate);
+      });
+      if (isOverlapping) {
+        throw new Error('동일 객실의 활성 요금 적용 기간이 중복됩니다. 기간을 조정해주세요.');
+      }
+    }
+
+    const newRate: DiyRoomRate = {
+      ...rateData,
+      id: `drr-${Date.now()}`,
+      createdAt: new Date().toISOString()
+    };
+    
+    const updated = [...diyRoomRates, newRate];
+    
+    const dbResult = await saveOperationNoticeInSupabase('diy_room_rates', 'DIY_ROOM_RATES', updated, 'DIY 객실 요금 설정');
+    if (!dbResult.success) {
+      throw new Error(dbResult.error || 'Supabase 저장 실패');
+    }
+    
+    setDiyRoomRates(updated);
+    addAuditLog('RATE', `DIY 객실 요금 설정 등록`, `객실유형 ID: ${rateData.roomTypeId}, 주중: ${rateData.weekdayPrice}`);
+    showToast('DIY 객실요금 설정이 추가되었습니다.', 'success');
+    return newRate;
+  };
+
+  const updateDiyRoomRate = async (id: string, data: Partial<DiyRoomRate>): Promise<void> => {
+    const isNewActive = data.isActive !== false;
+    if (isNewActive) {
+      const existing = diyRoomRates.find(r => r.id === id);
+      const rateRoomTypeId = data.roomTypeId || existing?.roomTypeId;
+      const rateStartDate = data.startDate || existing?.startDate;
+      const rateEndDate = data.endDate || existing?.endDate;
+      
+      if (rateRoomTypeId && rateStartDate && rateEndDate) {
+        const isOverlapping = diyRoomRates.some((r) => {
+          if (r.id === id) return false;
+          if (r.roomTypeId !== rateRoomTypeId || !r.isActive) return false;
+          return (rateStartDate <= r.endDate && rateEndDate >= r.startDate);
+        });
+        if (isOverlapping) {
+          throw new Error('동일 객실의 활성 요금 적용 기간이 중복됩니다. 기간을 조정해주세요.');
+        }
+      }
+    }
+
+    const updated = diyRoomRates.map((r) => (r.id === id ? { ...r, ...data } : r));
+    
+    const dbResult = await saveOperationNoticeInSupabase('diy_room_rates', 'DIY_ROOM_RATES', updated, 'DIY 객실 요금 설정');
+    if (!dbResult.success) {
+      throw new Error(dbResult.error || 'Supabase 저장 실패');
+    }
+    
+    setDiyRoomRates(updated);
+    addAuditLog('RATE', `DIY 객실 요금 설정 수정`, `ID: ${id}`);
+    showToast('DIY 객실요금이 수정되었습니다.', 'success');
+  };
+
+  const deleteDiyRoomRate = async (id: string): Promise<void> => {
+    const updated = diyRoomRates.filter((r) => r.id !== id);
+    
+    const dbResult = await saveOperationNoticeInSupabase('diy_room_rates', 'DIY_ROOM_RATES', updated, 'DIY 객실 요금 설정');
+    if (!dbResult.success) {
+      throw new Error(dbResult.error || 'Supabase 저장 실패');
+    }
+    
+    setDiyRoomRates(updated);
+    addAuditLog('RATE', `DIY 객실 요금 설정 삭제`, `ID: ${id}`);
+    showToast('DIY 객실요금이 삭제되었습니다.', 'info');
+  };
+
+  const upsertPartnerComponentRule = async (data: {
+    partnerId: string;
+    componentId: string;
+    customPrice?: number;
+    customDiscountRate?: number;
+    isVisible: boolean;
+  }): Promise<void> => {
+    let updatedRules = [...partnerComponentRules];
+
+    if (data.customPrice === undefined && data.customDiscountRate === undefined && data.isVisible === true) {
+      // Delete rule if it represents default no-op state
+      const existingRule = partnerComponentRules.find(
+        (r) => r.partnerId === data.partnerId && r.componentId === data.componentId
+      );
+      if (existingRule) {
+        if (supabase && isSupabaseActive) {
+          await supabase.from('partner_component_rules').delete().eq('id', existingRule.id);
+        }
+        updatedRules = updatedRules.filter((r) => r.id !== existingRule.id);
+        setPartnerComponentRules(updatedRules);
+        showToast('제휴사별 판매 규칙이 초기화되었습니다.', 'info');
+        return;
+      }
+    }
+
+    const existingRule = partnerComponentRules.find(
+      (r) => r.partnerId === data.partnerId && r.componentId === data.componentId
+    );
+
+    const dbPayload = {
+      partner_id: data.partnerId,
+      component_id: data.componentId,
+      custom_price: data.customPrice !== undefined ? data.customPrice : null,
+      custom_discount_rate: data.customDiscountRate !== undefined ? data.customDiscountRate : null,
+      is_visible: data.isVisible,
+    };
+
+    if (existingRule) {
+      if (supabase && isSupabaseActive) {
+        await supabase
+          .from('partner_component_rules')
+          .update(dbPayload)
+          .eq('id', existingRule.id);
+      }
+      
+      updatedRules = updatedRules.map((r) =>
+        r.id === existingRule.id
+          ? {
+              ...r,
+              customPrice: data.customPrice,
+              customDiscountRate: data.customDiscountRate,
+              isVisible: data.isVisible,
+            }
+          : r
+      );
+    } else {
+      if (supabase && isSupabaseActive) {
+        const { data: insertedData, error } = await supabase
+          .from('partner_component_rules')
+          .insert(dbPayload)
+          .select('*')
+          .single();
+
+        if (!error && insertedData) {
+          updatedRules.push({
+            id: insertedData.id,
+            partnerId: insertedData.partner_id,
+            componentId: insertedData.component_id,
+            customPrice: insertedData.custom_price != null ? Number(insertedData.custom_price) : undefined,
+            customDiscountRate: insertedData.custom_discount_rate != null ? Number(insertedData.custom_discount_rate) : undefined,
+            isVisible: Boolean(insertedData.is_visible !== false),
+            createdAt: insertedData.created_at,
+          });
+        } else {
+          const tempId = Math.floor(Math.random() * 1000000);
+          updatedRules.push({
+            id: tempId,
+            partnerId: data.partnerId,
+            componentId: data.componentId,
+            customPrice: data.customPrice,
+            customDiscountRate: data.customDiscountRate,
+            isVisible: data.isVisible,
+            createdAt: new Date().toISOString(),
+          });
+        }
+      } else {
+        const tempId = Math.floor(Math.random() * 1000000);
+        updatedRules.push({
+          id: tempId,
+          partnerId: data.partnerId,
+          componentId: data.componentId,
+          customPrice: data.customPrice,
+          customDiscountRate: data.customDiscountRate,
+          isVisible: data.isVisible,
+          createdAt: new Date().toISOString(),
+        });
+      }
+    }
+
+    setPartnerComponentRules(updatedRules);
+    showToast('제휴사별 판매 규칙이 적용되었습니다.', 'success');
   };
 
   // Partner Management
@@ -1601,7 +2310,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Reservation Flow
-  const createReservation = (data: {
+  const createReservation = async (data: {
     partnerCode: string;
     partnerName: string;
     packageId: string;
@@ -1619,7 +2328,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     bookerPhone: string;
     bookerEmail: string;
     specialRequests?: string;
-  }): Reservation => {
+    selectedDiyItems?: any[];
+  }): Promise<Reservation> => {
     // Inventory Verification: Prevent overbooking and negative stock
     const [sY, sM, sD] = data.checkIn.split('-').map(Number);
     const curDateCheck = new Date(sY, sM - 1, sD, 12, 0, 0);
@@ -1648,8 +2358,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const randomSuffix = Math.floor(1000 + Math.random() * 9000);
     const reservationId = `OV-REQ-${dateCompact}-${randomSuffix}`;
 
+    const { selectedDiyItems, ...restOfData } = data;
+
     const newRes: Reservation = {
-      ...data,
+      ...restOfData,
       id: reservationId,
       bookerPhoneLast4: phoneLast4,
       status: 'pending',
@@ -1696,6 +2408,61 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // Persist reservation in Supabase
     upsertReservationInSupabase(newRes).catch(() => {});
+
+    // Map and save DIY reservation items if they exist
+    if (newRes.packageId === 'diy-package') {
+      const diyItemOriginalTotal = selectedDiyItems ? selectedDiyItems.reduce((sum: number, item: any) => sum + (item.originalPrice * item.quantity), 0) : 0;
+      const diyItemFinalTotal = selectedDiyItems ? selectedDiyItems.reduce((sum: number, item: any) => sum + (item.finalPrice * item.quantity), 0) : 0;
+
+      const roomOriginalPrice = newRes.originalTotalPrice - diyItemOriginalTotal;
+      const roomFinalPrice = newRes.totalPrice - diyItemFinalTotal;
+      const roomDiscountAmount = roomOriginalPrice - roomFinalPrice;
+
+      // 1. Create Room Item
+      const roomItem: ReservationItem = {
+        id: Date.now(),
+        reservationId: newRes.id,
+        itemType: 'ROOM',
+        itemId: newRes.roomTypeId,
+        itemName: `${newRes.roomTypeName} 숙박`,
+        usageDate: newRes.checkIn,
+        quantity: newRes.roomCount,
+        originalPrice: roomOriginalPrice,
+        salePrice: roomOriginalPrice / newRes.roomCount,
+        discountAmount: roomDiscountAmount,
+        finalPrice: roomFinalPrice,
+        createdAt: new Date().toISOString()
+      };
+
+      // 2. Create Component Items
+      const componentItems: ReservationItem[] = (selectedDiyItems || []).map((item: any, idx: number) => {
+        const itemOriginal = (item.originalPrice || item.component.normalPrice || item.component.basePrice) * item.quantity;
+        const itemFinal = (item.finalPrice || item.component.basePrice) * item.quantity;
+        return {
+          id: Date.now() + 1 + idx,
+          reservationId: newRes.id,
+          itemType: item.component.category === 'FB' ? 'FB' :
+                    item.component.category === 'ACTIVITY' ? 'ACTIVITY' :
+                    item.component.category === 'OPTION' ? 'OPTION' : 'BENEFIT',
+          itemId: item.component.id,
+          itemName: item.component.name,
+          usageDate: newRes.checkIn,
+          quantity: item.quantity,
+          originalPrice: itemOriginal,
+          salePrice: item.finalPrice || item.component.basePrice,
+          discountAmount: itemOriginal - itemFinal,
+          finalPrice: itemFinal,
+          createdAt: new Date().toISOString()
+        };
+      });
+
+      const allNewItems = [roomItem, ...componentItems];
+
+      setReservationItems((prev) => [...allNewItems, ...prev]);
+      saveReservationItemsInSupabase(allNewItems).catch((err) => {
+        console.error('[Error saving DIY reservation items]', err);
+      });
+    }
 
     addAuditLog(
       'RESERVATION',
@@ -2247,6 +3014,23 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isSupabaseActive,
         supabaseStatusMessage,
         recheckSupabase,
+        userProfiles,
+        components,
+        partnerComponentRules,
+        reservationItems,
+        diyRoomRates,
+        signUpProfile,
+        approveProfile,
+        rejectProfile,
+        deactivateProfile,
+        inviteStaff,
+        addComponent,
+        updateComponent,
+        deleteComponent,
+        upsertPartnerComponentRule,
+        addDiyRoomRate,
+        updateDiyRoomRate,
+        deleteDiyRoomRate,
       }}
     >
       {children}

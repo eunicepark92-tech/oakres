@@ -12,6 +12,9 @@ import { RoomSelectionModal } from './components/UserApp/RoomSelectionModal';
 import { BookingForm } from './components/UserApp/BookingForm';
 import { BookingConfirmation } from './components/UserApp/BookingConfirmation';
 import { BookingLookupModal } from './components/UserApp/BookingLookupModal';
+import { DIYSelectionView } from './components/UserApp/DIYSelectionView';
+import { DIYQuotationView } from './components/UserApp/DIYQuotationView';
+import { DIYRoomSelectionView } from './components/UserApp/DIYRoomSelectionView';
 
 // Admin Mode Components
 import { AdminLogin } from './components/AdminApp/AdminLogin';
@@ -20,6 +23,7 @@ import { DashboardView } from './components/AdminApp/DashboardView';
 import { PartnerManager } from './components/AdminApp/PartnerManager';
 import { RoomTypeManager } from './components/AdminApp/RoomTypeManager';
 import { PackageManager } from './components/AdminApp/PackageManager';
+import { DIYComponentManager } from './components/AdminApp/DIYComponentManager';
 import { RateInventoryMatrix } from './components/AdminApp/RateInventoryMatrix';
 import { CancellationRefundManager } from './components/AdminApp/CancellationRefundManager';
 import { SettlementModule } from './components/AdminApp/SettlementModule';
@@ -31,6 +35,7 @@ import { CalendarManager } from './components/AdminApp/CalendarManager';
 
 import { Package, RoomType, Reservation } from './types';
 import { LogOut, Calendar, Search, Sparkles } from 'lucide-react';
+import { calculateDiyRoomStayPrice } from './utils/pricing';
 
 export function App() {
   const {
@@ -41,10 +46,15 @@ export function App() {
     currentAdmin,
     logoutAdmin,
     dailyRates,
+    diyRoomRates,
+    specialDays,
   } = useApp();
 
-  // User App Step State: 'packages' -> 'booking' -> 'confirmation'
-  const [userStep, setUserStep] = useState<'packages' | 'booking' | 'confirmation'>('packages');
+  // User App Step State: 'entry' -> 'packages' / 'diy_room_select' -> 'diy_select' -> 'diy_quotation' -> 'booking' -> 'confirmation'
+  const [userStep, setUserStep] = useState<'entry' | 'packages' | 'diy_room_select' | 'diy_select' | 'diy_quotation' | 'booking' | 'confirmation'>('entry');
+
+  // Selected DIY Component Items for active proposal/quote
+  const [selectedDiyItems, setSelectedDiyItems] = useState<any[]>([]);
 
   // Selected Booking Search & Filters
   const [checkIn, setCheckIn] = useState(() => {
@@ -108,7 +118,8 @@ export function App() {
     setBookingSpecs(null);
     setCompletedReservation(null);
     setIsRoomModalOpen(false);
-    setUserStep('packages');
+    setUserStep('entry');
+    setSelectedDiyItems([]);
   }, [currentPartner?.id, currentPartner?.code]);
 
   // Handlers for User Flow
@@ -127,7 +138,8 @@ export function App() {
     setSelectedRoom(null);
     setBookingSpecs(null);
     setCompletedReservation(null);
-    setUserStep('packages');
+    setSelectedDiyItems([]);
+    setUserStep('entry');
   };
 
   const handleCheckInChange = (newCheckIn: string) => {
@@ -218,9 +230,141 @@ export function App() {
                   </div>
                 </div>
 
+                {/* USER STEP 0: LANDING ENTRY SELECTION */}
+                {userStep === 'entry' && (
+                  <div className="space-y-8 animate-fade-in py-4">
+                    {/* Hero introduction */}
+                    <div className="text-center max-w-2xl mx-auto space-y-3">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200/60 rounded-full text-xs font-semibold">
+                        <Sparkles className="w-3.5 h-3.5 text-oak-gold animate-pulse" />
+                        <span>Oak Valley Custom Reservation System</span>
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight leading-none">
+                        예약 방식을 선택해 주세요
+                      </h2>
+                      <p className="text-stone-500 text-xs sm:text-sm leading-relaxed">
+                        원하시는 스타일로 오크밸리에서의 완벽한 여정을 설계하세요.
+                      </p>
+                    </div>
+
+                    {/* Choice cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                      {/* Option 1: Standard Packages */}
+                      <button
+                        onClick={() => setUserStep('packages')}
+                        className="bg-white hover:bg-stone-50 text-left p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-xs hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[220px] active:scale-99"
+                      >
+                        <div className="space-y-4">
+                          <div className="w-12 h-12 bg-stone-100 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            🎁
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-extrabold text-stone-950 group-hover:text-oak-green transition-colors">
+                              일반 / 추천 패키지 예약
+                            </h3>
+                            <p className="text-stone-500 text-xs mt-2 leading-relaxed">
+                              오크밸리가 제휴사 임직원을 위해 정성스럽게 구성한 고품격 추천 시즌 패키지와 합리적인 상품들을 한눈에 확인하고 예약하세요.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-stone-700 font-extrabold mt-6 group-hover:translate-x-1 transition-transform">
+                          <span>추천 패키지 보러가기</span>
+                          <span>→</span>
+                        </div>
+                      </button>
+
+                      {/* Option 2: DIY Package */}
+                      <button
+                        onClick={() => setUserStep('diy_room_select')}
+                        className="bg-stone-900 hover:bg-stone-800 text-left p-6 sm:p-8 rounded-3xl border border-stone-800 shadow-xs hover:shadow-lg transition-all duration-300 group cursor-pointer flex flex-col justify-between min-h-[220px] active:scale-99"
+                      >
+                        <div className="space-y-4">
+                          <div className="w-12 h-12 bg-stone-800 rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                            🛠️
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-extrabold text-white group-hover:text-oak-gold transition-colors">
+                              나만의 DIY 패키지 만들기
+                            </h3>
+                            <p className="text-stone-400 text-xs mt-2 leading-relaxed">
+                              취향대로 자유롭게 조립하는 1:1 커스텀 메이드! 투숙 날짜와 마음에 드는 객실을 정한 뒤, F&B 식음과 레저 액티비티를 원하는 만큼 담아 맞춤 패키지를 만드세요.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs text-oak-gold font-extrabold mt-6 group-hover:translate-x-1 transition-transform">
+                          <span>DIY 패키지 만들기 시작</span>
+                          <span>→</span>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* USER STEP 0.5: DIY ROOM SELECTION */}
+                {userStep === 'diy_room_select' && (
+                  <DIYRoomSelectionView
+                    onBack={() => setUserStep('entry')}
+                    onSelectRoom={(data) => {
+                      // Calculate DIY Room Stay Price over period
+                      const baseRoomPrice = calculateDiyRoomStayPrice(
+                        data.roomType.id,
+                        data.checkIn,
+                        data.nights,
+                        diyRoomRates,
+                        specialDays
+                      );
+                      const totalRoomPrice = baseRoomPrice * data.roomCount;
+
+                      setSelectedRoom(data.roomType);
+                      
+                      // Construct custom DIY Package object
+                      const customDiyPkg: Package = {
+                        id: 'diy-package',
+                        partnerId: currentPartner?.id || 'ALL',
+                        partnerCode: currentPartner?.code || 'ALL',
+                        name: '나만의 DIY 패키지',
+                        category: 'ROOM_ONLY',
+                        categoryLabel: 'DIY 커스텀',
+                        description: '직접 원하는 구성품을 조합하여 설계한 오크밸리 1:1 맞춤형 패키지입니다.',
+                        inclusions: ['선택한 DIY 객실', '조합한 DIY 옵션 상품'],
+                        imageUrl: data.roomType.imageUrl,
+                        maxOccupancy: 4,
+                        basePrice: 150000,
+                        active: true,
+                        roomTypeIds: [data.roomType.id],
+                      };
+                      setSelectedPackage(customDiyPkg);
+
+                      const roomOriginalPrice = totalRoomPrice;
+                      const roomDiscountRate = currentPartner?.discountRate || 0;
+                      const roomDiscountAmount = Math.round(roomOriginalPrice * (roomDiscountRate / 100));
+                      const roomFinalPrice = roomOriginalPrice - roomDiscountAmount;
+
+                      setBookingSpecs({
+                        checkIn: data.checkIn,
+                        checkOut: data.checkOut,
+                        nights: data.nights,
+                        roomCount: data.roomCount,
+                        totalPrice: roomFinalPrice,
+                        originalTotalPrice: roomOriginalPrice,
+                        discountAmount: roomDiscountAmount,
+                      });
+
+                      setUserStep('diy_select');
+                    }}
+                  />
+                )}
+
                 {/* USER STEP 1: PACKAGE LIST + DATE ROOM SELECTOR */}
                 {userStep === 'packages' && (
                   <div className="space-y-6">
+                    <button
+                      onClick={() => setUserStep('entry')}
+                      className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-extrabold text-xs rounded-xl transition-all cursor-pointer inline-flex items-center gap-1 active:scale-98"
+                    >
+                      <span>← 예약 방식 선택으로 가기</span>
+                    </button>
+                    
                     {/* Date & Room Count Filter */}
                     <DateRoomSelector
                       checkIn={checkIn}
@@ -239,14 +383,63 @@ export function App() {
                   </div>
                 )}
 
-                {/* USER STEP 2: BOOKING FORM */}
-                {userStep === 'booking' && selectedPackage && selectedRoom && bookingSpecs && (
-                  <BookingForm
+                 {/* USER STEP 2: BOOKING FORM */}
+                 {userStep === 'booking' && selectedPackage && selectedRoom && bookingSpecs && (
+                   (() => {
+                     const isDiy = selectedPackage.id === 'diy-package';
+                     const diyItemOriginalTotal = isDiy && selectedDiyItems ? selectedDiyItems.reduce((sum, item) => sum + (item.originalPrice * item.quantity), 0) : 0;
+                     const diyItemFinalTotal = isDiy && selectedDiyItems ? selectedDiyItems.reduce((sum, item) => sum + (item.finalPrice * item.quantity), 0) : 0;
+
+                     const displaySpecs = {
+                       ...bookingSpecs,
+                       totalPrice: bookingSpecs.totalPrice + diyItemFinalTotal,
+                       originalTotalPrice: bookingSpecs.originalTotalPrice + diyItemOriginalTotal,
+                       discountAmount: (bookingSpecs.originalTotalPrice + diyItemOriginalTotal) - (bookingSpecs.totalPrice + diyItemFinalTotal),
+                     };
+
+                     return (
+                       <BookingForm
+                         selectedPackage={selectedPackage}
+                         selectedRoom={selectedRoom}
+                         bookingSpecs={displaySpecs}
+                         selectedDiyItems={selectedDiyItems}
+                         onBack={() => setUserStep(isDiy ? 'diy_select' : 'packages')}
+                         onBookingComplete={handleBookingComplete}
+                       />
+                     );
+                   })()
+                 )}
+
+                {/* USER STEP 2.5: DIY COMPONENT SELECTION */}
+                {userStep === 'diy_select' && selectedPackage && selectedRoom && bookingSpecs && (
+                  <DIYSelectionView
                     selectedPackage={selectedPackage}
                     selectedRoom={selectedRoom}
                     bookingSpecs={bookingSpecs}
-                    onBack={() => setUserStep('packages')}
-                    onBookingComplete={handleBookingComplete}
+                    onBack={() => {
+                      setUserStep('diy_room_select');
+                    }}
+                    onProceedToQuotation={(items) => {
+                      setSelectedDiyItems(items);
+                      setUserStep('diy_quotation');
+                    }}
+                    onProceedToNormalBooking={() => {
+                      setSelectedDiyItems([]);
+                      setUserStep('booking');
+                    }}
+                  />
+                )}
+
+                {/* USER STEP 2.6: DIY QUOTATION VIEW */}
+                {userStep === 'diy_quotation' && selectedPackage && selectedRoom && bookingSpecs && (
+                  <DIYQuotationView
+                    selectedPackage={selectedPackage}
+                    selectedRoom={selectedRoom}
+                    bookingSpecs={bookingSpecs}
+                    selectedItems={selectedDiyItems}
+                    onBack={() => setUserStep('diy_select')}
+                    onStartOver={handleNewBooking}
+                    onProceedToBooking={() => setUserStep('booking')}
                   />
                 )}
 
@@ -298,6 +491,7 @@ export function App() {
                 {adminTab === 'packages' && (
                   <PackageManager initialRoomTypeId={preSelectedRoomTypeIdForPackage} />
                 )}
+                {adminTab === 'diy_components' && <DIYComponentManager />}
                 {adminTab === 'matrix' && <RateInventoryMatrix />}
                 {adminTab === 'mediaGallery' && <MediaGalleryManager />}
                 {adminTab === 'refunds' && <CancellationRefundManager />}
@@ -318,7 +512,7 @@ export function App() {
               <RoomSelectionModal
                 selectedPackage={selectedPackage}
                 onBack={() => setIsRoomModalOpen(false)}
-                onSelectRoom={(data) => {
+                onSelectRoom={(data, isDiy) => {
                   setSelectedRoom(data.roomType);
                   setBookingSpecs({
                     checkIn: data.checkIn,
@@ -330,7 +524,7 @@ export function App() {
                     discountAmount: data.discountAmount,
                   });
                   setIsRoomModalOpen(false);
-                  setUserStep('booking');
+                  setUserStep(isDiy ? 'diy_select' : 'booking');
                 }}
               />
             </div>

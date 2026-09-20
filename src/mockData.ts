@@ -461,3 +461,43 @@ export const DEFAULT_SPECIAL_DAYS: import('./types').SpecialDay[] = [
   },
 ];
 
+export const INITIAL_DIY_ROOM_RATES: import('./types').DiyRoomRate[] = [
+  {
+    id: 'drr-1',
+    roomTypeId: 'room-golf-31',
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    weekdayPrice: 150000,
+    fridayPrice: 180000,
+    saturdayPrice: 220000,
+    specialPrice: 250000,
+    isActive: true,
+    createdAt: '2026-09-20T00:00:00Z',
+  },
+  {
+    id: 'drr-2',
+    roomTypeId: 'room-golf-48',
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    weekdayPrice: 220000,
+    fridayPrice: 260000,
+    saturdayPrice: 320000,
+    specialPrice: 350000,
+    isActive: true,
+    createdAt: '2026-09-20T00:00:00Z',
+  },
+  {
+    id: 'drr-3',
+    roomTypeId: 'room-caravan',
+    startDate: '2026-01-01',
+    endDate: '2026-12-31',
+    weekdayPrice: 120000,
+    fridayPrice: 150000,
+    saturdayPrice: 180000,
+    specialPrice: 200000,
+    isActive: true,
+    createdAt: '2026-09-20T00:00:00Z',
+  },
+];
+
+

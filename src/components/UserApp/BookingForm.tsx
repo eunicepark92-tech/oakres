@@ -15,6 +15,7 @@ interface BookingFormProps {
     originalTotalPrice: number;
     discountAmount: number;
   };
+  selectedDiyItems?: any[];
   onBack: () => void;
   onBookingComplete: (reservation: Reservation) => void;
 }
@@ -23,6 +24,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   selectedPackage,
   selectedRoom,
   bookingSpecs,
+  selectedDiyItems,
   onBack,
   onBookingComplete,
 }) => {
@@ -116,6 +118,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         bookerPhone,
         bookerEmail: fullEmail,
         specialRequests,
+        selectedDiyItems,
       });
 
       onBookingComplete(newReservation);

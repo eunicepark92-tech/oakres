@@ -211,3 +211,96 @@ export interface Settlement {
   status: 'DRAFT' | 'PENDING' | 'CONFIRMED' | 'SETTLED';
   settledAt?: string;
 }
+
+// ====================================================================
+// STEP 1-A: DIY 및 계정 권한 관리를 위한 신규 확장 데이터 규격
+// ====================================================================
+
+export type UserProfileRole = 'MASTER' | 'STAFF' | 'PARTNER';
+export type UserProfileStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'INACTIVE';
+
+export interface UserProfile {
+  id: string; // Supabase auth.users.id UUID
+  email: string;
+  name: string;
+  phone?: string;
+  role: UserProfileRole;
+  status: UserProfileStatus;
+  partnerId?: string; // 제휴사 연결 (PARTNER 역할일 때 필수, STAFF/MASTER는 선택/없음)
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ComponentCategory = 'ROOM' | 'GOLF' | 'FB' | 'ACTIVITY' | 'OPTION' | 'BENEFIT';
+
+export interface Component {
+  id: string;
+  category: ComponentCategory;
+  name: string;
+  description?: string;
+  basePrice: number;
+  normalPrice?: number; // 정상가 (비할인가)
+  isDiscountable: boolean;
+  isActive: boolean;
+  tags: string[]; // 메타 정보 태그
+  createdAt: string;
+
+  // Day of week / seasonal pricing extension
+  startDate?: string; // YYYY-MM-DD
+  endDate?: string;   // YYYY-MM-DD
+  weekdayPrice?: number;
+  fridayPrice?: number;
+  saturdayPrice?: number;
+  specialPrice?: number;
+}
+
+export interface DiyRoomRate {
+  id: string;
+  roomTypeId: string;
+  startDate: string; // YYYY-MM-DD
+  endDate: string;   // YYYY-MM-DD
+  weekdayPrice: number;
+  fridayPrice: number;
+  saturdayPrice: number;
+  specialPrice: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface PartnerComponentRule {
+  id: number;
+  partnerId: string;
+  componentId: string;
+  customPrice?: number; // NULL일 시 components.base_price 사용
+  customDiscountRate?: number; // NULL일 시 partners.discount_rate 사용
+  isVisible: boolean; // 미노출 여부
+  createdAt: string;
+}
+
+export interface ReservationItem {
+  id: number;
+  reservationId: string;
+  itemType: ComponentCategory;
+  itemId: string; // room_type_id or component_id
+  itemName: string;
+  usageDate: string; // YYYY-MM-DD
+  quantity: number;
+  originalPrice: number;
+  salePrice: number;
+  discountAmount: number;
+  finalPrice: number;
+  createdAt: string;
+}
+
+// 1. ROOM 데이터 중복 생성 금지 규격 (room_types와 components의 통합 계산 어댑터용)
+export interface PackageItem {
+  id: string; // 'room_type_id' or 'component_id'
+  type: ComponentCategory;
+  name: string;
+  description: string;
+  basePrice: number;
+  isDiscountable: boolean;
+  isAvailable: boolean;
+  sourceId: string; // 실제 데이터 원천 고유 식별자
+}
+

@@ -4,7 +4,7 @@ import { AccountProfileModal } from '../Common/AccountProfileModal';
 import { WorkHistoryModal } from '../Admin/WorkHistoryModal';
 import { OakValleyLogo } from '../Common/OakValleyLogo';
 import { SPREADSHEET_URL } from '../../services/googleDriveSheets';
-import { LayoutDashboard, Building2, BedDouble, Gift, Calendar, RefreshCw, MessageSquare, DollarSign, ShieldCheck, UserCheck, Image as ImageIcon, ShieldAlert, Key, UserCog, History, Table, ExternalLink, Shield, LogOut } from 'lucide-react';
+import { LayoutDashboard, Building2, BedDouble, Gift, Layers, Calendar, RefreshCw, MessageSquare, DollarSign, ShieldCheck, UserCheck, Image as ImageIcon, ShieldAlert, Key, UserCog, History, Table, ExternalLink, Shield, LogOut } from 'lucide-react';
 
 export type AdminTab =
   | 'dashboard'
@@ -13,6 +13,7 @@ export type AdminTab =
   | 'roomTypes'
   | 'mediaGallery'
   | 'packages'
+  | 'diy_components'
   | 'matrix'
   | 'refunds'
   | 'settlement'
@@ -41,6 +42,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({ activeTab, onSelectTab
     { id: 'partners', label: '제휴사/로고 관리', icon: <Building2 className="w-4 h-4" />, requiresPermission: 'canManagePartners' },
     { id: 'roomTypes', label: '원천 객실 관리', icon: <BedDouble className="w-4 h-4" />, requiresPermission: 'canManageRooms' },
     { id: 'packages', label: '패키지 등록/수정', icon: <Gift className="w-4 h-4" />, requiresPermission: 'canManagePackages' },
+    { id: 'diy_components', label: 'DIY 상품 관리', icon: <Layers className="w-4 h-4" />, masterOnly: true },
     { id: 'matrix', label: '요금/재고 관리', icon: <Calendar className="w-4 h-4" />, requiresPermission: 'canManageRates' },
     { id: 'mediaGallery', label: '미디어 라이브러리', icon: <ImageIcon className="w-4 h-4" /> },
     { id: 'refunds', label: '약관 및 보증/위약금 규정', icon: <RefreshCw className="w-4 h-4" />, masterOnly: true },

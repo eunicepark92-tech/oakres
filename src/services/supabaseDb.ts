@@ -14,6 +14,11 @@ import {
   SystemRoleSettings,
   CategoryItem,
   CancellationRule,
+  UserProfile,
+  Component,
+  PartnerComponentRule,
+  ReservationItem,
+  DiyRoomRate,
 } from '../types';
 
 export interface SupabaseFullState {
@@ -31,6 +36,11 @@ export interface SupabaseFullState {
   specialDays?: SpecialDay[];
   roleSettings?: SystemRoleSettings;
   notificationEmail?: string;
+  userProfiles?: UserProfile[];
+  components?: Component[];
+  partnerComponentRules?: PartnerComponentRule[];
+  reservationItems?: ReservationItem[];
+  diyRoomRates?: DiyRoomRate[];
 }
 
 // -------------------------------------------------------------
@@ -69,9 +79,32 @@ export function mapRateRowToDailyRate(pp: any): DailyRate {
   };
 }
 
+function isUuid(str: string): boolean {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(str);
+}
+
+export function generateDeterministicUuid(str: string): string {
+  if (!str) return '00000000-0000-0000-0000-000000000000';
+  if (isUuid(str)) return str;
+  let hash1 = 0;
+  let hash2 = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash1 = (hash1 << 5) - hash1 + char;
+    hash1 |= 0;
+    hash2 = (hash2 << 7) - hash2 + char;
+    hash2 |= 0;
+  }
+  const part1 = Math.abs(hash1).toString(16).padStart(8, '0').slice(0, 8);
+  const part2 = Math.abs(hash2).toString(16).padStart(8, '0');
+  const part3 = Math.abs(hash1 ^ hash2).toString(16).padStart(8, '0');
+  return `${part1}-${part2.slice(0, 4)}-4${part2.slice(4, 7)}-8${part3.slice(0, 3)}-${part3.slice(3, 15)}`.slice(0, 36);
+}
+
 export function mapReservationRowToReservation(r: any): Reservation {
   return {
-    id: r.id || r.booking_no,
+    id: r.booking_no || r.id,
     pmsReservationNo: r.pms_reservation_no || r.pmsReservationNo || undefined,
     partnerCode: r.partner_code || r.partnerCode || '',
     partnerName: r.partner_name || r.partnerName || '',
@@ -490,6 +523,8 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
     let specialDays: SpecialDay[] | undefined;
     let roleSettings: SystemRoleSettings | undefined;
     let notificationEmail: string | undefined;
+    let diyRoomRates: DiyRoomRate[] | undefined;
+    let fallbackReservationItems: ReservationItem[] = [];
 
     (noticesData || []).forEach((n: any) => {
       let parsedPayload = n.payload;
@@ -514,8 +549,106 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
         roleSettings = parsedPayload;
       } else if (n.id === 'system_config' && parsedPayload?.notificationEmail) {
         notificationEmail = parsedPayload.notificationEmail;
+      } else if (n.id === 'diy_room_rates' && Array.isArray(parsedPayload)) {
+        diyRoomRates = parsedPayload;
+      } else if (n.id === 'reservation_items' && Array.isArray(parsedPayload)) {
+        fallbackReservationItems = parsedPayload;
       }
     });
+
+    // Fetch new extensibility tables with try-catch to avoid crashes if tables do not exist or are being synchronized
+    let userProfiles: UserProfile[] = [];
+    let components: Component[] = [];
+    let partnerComponentRules: PartnerComponentRule[] = [];
+    let reservationItems: ReservationItem[] = [];
+
+    try {
+      const { data: upData, error: upErr } = await supabase.from('user_profiles').select('*');
+      if (!upErr && upData) {
+        userProfiles = upData.map((up: any) => ({
+          id: up.id,
+          email: up.email,
+          name: up.name,
+          phone: up.phone || '',
+          role: up.role as any,
+          status: up.status as any,
+          partnerId: up.partner_id || undefined,
+          createdAt: up.created_at,
+          updatedAt: up.updated_at,
+        }));
+      }
+    } catch (e) {
+      console.warn('[Fetch user_profiles omitted/failed]', e);
+    }
+
+    try {
+      const { data: cpData, error: cpErr } = await supabase.from('components').select('*');
+      if (!cpErr && cpData) {
+        components = cpData.map((cp: any) => ({
+          id: cp.id,
+          category: cp.category as any,
+          name: cp.name,
+          description: cp.description || '',
+          basePrice: Number(cp.base_price || 0),
+          normalPrice: cp.normal_price ? Number(cp.normal_price) : undefined,
+          isDiscountable: Boolean(cp.is_discountable !== false),
+          isActive: Boolean(cp.is_active !== false),
+          tags: Array.isArray(cp.tags) ? cp.tags : [],
+          createdAt: cp.created_at,
+        }));
+      }
+    } catch (e) {
+      console.warn('[Fetch components omitted/failed]', e);
+    }
+
+    try {
+      const { data: pcrData, error: pcrErr } = await supabase.from('partner_component_rules').select('*');
+      if (!pcrErr && pcrData) {
+        partnerComponentRules = pcrData.map((pcr: any) => ({
+          id: pcr.id,
+          partnerId: pcr.partner_id,
+          componentId: pcr.component_id,
+          customPrice: pcr.custom_price != null ? Number(pcr.custom_price) : undefined,
+          customDiscountRate: pcr.custom_discount_rate != null ? Number(pcr.custom_discount_rate) : undefined,
+          isVisible: Boolean(pcr.is_visible !== false),
+          createdAt: pcr.created_at,
+        }));
+      }
+    } catch (e) {
+      console.warn('[Fetch partner_component_rules omitted/failed]', e);
+    }
+
+    try {
+      const { data: riData, error: riErr } = await supabase.from('reservation_items').select('*');
+      if (!riErr && riData) {
+        const resIdToBookingNoMap = new Map<string, string>();
+        (resData || []).forEach((r) => {
+          if (r.booking_no) {
+            resIdToBookingNoMap.set(r.id, r.booking_no);
+          }
+        });
+
+        reservationItems = riData.map((ri: any) => ({
+          id: ri.id,
+          reservationId: resIdToBookingNoMap.get(ri.reservation_id) || ri.reservation_id,
+          itemType: ri.item_type as any,
+          itemId: ri.item_id,
+          itemName: ri.item_name,
+          usageDate: ri.usage_date,
+          quantity: Number(ri.quantity || 1),
+          originalPrice: Number(ri.original_price || 0),
+          salePrice: Number(ri.sale_price || 0),
+          discountAmount: Number(ri.discount_amount || 0),
+          finalPrice: Number(ri.final_price || 0),
+          createdAt: ri.created_at,
+        }));
+      } else {
+        reservationItems = fallbackReservationItems;
+      }
+    } catch (e) {
+      console.warn('[Fetch reservation_items omitted/failed, using fallback]', e);
+      reservationItems = fallbackReservationItems;
+    }
 
     return {
       partners,
@@ -532,6 +665,11 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
       specialDays,
       roleSettings,
       notificationEmail,
+      userProfiles,
+      components,
+      partnerComponentRules,
+      reservationItems,
+      diyRoomRates,
     };
   } catch (err) {
     console.error('[Supabase Fetch Error]', err);
@@ -800,8 +938,10 @@ export async function upsertDailyRatesBatchInSupabase(rates: DailyRate[]): Promi
 export async function upsertReservationInSupabase(res: Reservation): Promise<boolean> {
   if (!supabase || !isSupabaseConfigured) return false;
   try {
+    const dbId = generateDeterministicUuid(res.id);
     const { error } = await supabase.from('reservations').upsert({
-      id: res.id,
+      id: dbId,
+      booking_no: res.id,
       pms_reservation_no: res.pmsReservationNo || null,
       partner_id: res.partnerCode,
       partner_name: res.partnerName,
@@ -834,6 +974,59 @@ export async function upsertReservationInSupabase(res: Reservation): Promise<boo
   }
 }
 
+export async function saveReservationItemsInSupabase(items: ReservationItem[]): Promise<boolean> {
+  if (!supabase || !isSupabaseConfigured) return false;
+  try {
+    const dbPayload = items.map((item) => ({
+      id: generateDeterministicUuid(String(item.id)),
+      reservation_id: generateDeterministicUuid(item.reservationId),
+      item_type: item.itemType,
+      item_id: item.itemId,
+      item_name: item.itemName,
+      usage_date: item.usageDate,
+      quantity: item.quantity,
+      original_price: item.originalPrice,
+      sale_price: item.salePrice,
+      discount_amount: item.discountAmount,
+      final_price: item.finalPrice,
+      created_at: item.createdAt || new Date().toISOString(),
+    }));
+
+    const { error } = await supabase.from('reservation_items').upsert(dbPayload);
+    if (!error) return true;
+
+    // Fallback to operation_notices if table does not exist
+    if (error.code === 'PGRST205' || error.message?.includes("Could not find the table") || error.message?.includes("schema cache")) {
+      const { data } = await supabase.from('operation_notices').select('content').eq('id', 'reservation_items').single();
+      let existingItems: any[] = [];
+      if (data?.content) {
+        try {
+          existingItems = JSON.parse(data.content);
+          if (!Array.isArray(existingItems)) existingItems = [];
+        } catch {}
+      }
+      
+      const itemMap = new Map<string, any>();
+      existingItems.forEach(item => itemMap.set(String(item.id), item));
+      items.forEach(item => itemMap.set(String(item.id), item));
+      const mergedList = Array.from(itemMap.values());
+
+      await supabase.from('operation_notices').upsert({
+        id: 'reservation_items',
+        category: 'RESERVATION_ITEMS',
+        title: '실시간 예약 상세 품목',
+        content: JSON.stringify(mergedList),
+        updated_at: new Date().toISOString(),
+      });
+      return true;
+    }
+    throw error;
+  } catch (err) {
+    console.error('[Supabase Save Reservation Items Error]', err);
+    return false;
+  }
+}
+
 export async function saveOperationNoticeInSupabase(
   id: string,
   category: string,
@@ -850,7 +1043,6 @@ export async function saveOperationNoticeInSupabase(
       category,
       title: title || id,
       content: contentStr,
-      payload,
       updated_at: new Date().toISOString(),
     });
     if (error) throw error;

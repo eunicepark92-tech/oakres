@@ -191,6 +191,65 @@ ALTER TABLE operation_notices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
+-- 10. USER_PROFILES (사용자 프로필 정보)
+CREATE TABLE IF NOT EXISTS user_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email VARCHAR(150) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  phone VARCHAR(50),
+  role VARCHAR(50) NOT NULL DEFAULT 'PARTNER', -- 'MASTER', 'STAFF', 'PARTNER'
+  status VARCHAR(30) NOT NULL DEFAULT 'PENDING', -- 'PENDING', 'APPROVED', 'REJECTED', 'INACTIVE'
+  partner_id VARCHAR(100) REFERENCES partners(id) ON DELETE SET NULL, -- 제휴사 연결 (STAFF/MASTER는 NULL 가능)
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 11. COMPONENTS (DIY 패키지용 단위 구성 상품 마스터)
+CREATE TABLE IF NOT EXISTS components (
+  id VARCHAR(100) PRIMARY KEY,
+  category VARCHAR(50) NOT NULL, -- 'ROOM', 'GOLF', 'FB', 'ACTIVITY', 'OPTION', 'BENEFIT'
+  name VARCHAR(250) NOT NULL,
+  description TEXT,
+  base_price NUMERIC NOT NULL DEFAULT 0,
+  is_discountable BOOLEAN DEFAULT true, -- 제휴사 기본 할인율 적용 여부
+  is_active BOOLEAN DEFAULT true,
+  tags JSONB DEFAULT '[]'::jsonb, -- AI 검색/추천용 메타 태그
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 12. PARTNER_COMPONENT_RULES (제휴사별 컴포넌트 판매/가격/할인 규칙 매핑)
+CREATE TABLE IF NOT EXISTS partner_component_rules (
+  id SERIAL PRIMARY KEY,
+  partner_id VARCHAR(100) REFERENCES partners(id) ON DELETE CASCADE,
+  component_id VARCHAR(100) REFERENCES components(id) ON DELETE CASCADE,
+  custom_price NUMERIC, -- NULL일 시 components.base_price 사용 (해당 제휴사 전용가 필요할 때 지정)
+  custom_discount_rate NUMERIC, -- NULL일 시 partners.discount_rate 사용
+  is_visible BOOLEAN DEFAULT true, -- 해당 제휴사 전용 미노출 처리용
+  created_at TIMESTAMPTZ DEFAULT now(),
+  CONSTRAINT uq_partner_component UNIQUE (partner_id, component_id)
+);
+
+-- 13. RESERVATION_ITEMS (예약 상세 스냅샷 품목)
+CREATE TABLE IF NOT EXISTS reservation_items (
+  id SERIAL PRIMARY KEY,
+  reservation_id VARCHAR(100) REFERENCES reservations(id) ON DELETE CASCADE,
+  item_type VARCHAR(50) NOT NULL, -- 'ROOM', 'GOLF', 'FB', 'ACTIVITY', 'OPTION'
+  item_id VARCHAR(100) NOT NULL,  -- 실제 매칭 id (room_type_id 또는 component_id)
+  item_name VARCHAR(250) NOT NULL, -- 예약 당시의 상품명 스냅샷
+  usage_date DATE NOT NULL,       -- 실제 이용일
+  quantity INTEGER NOT NULL DEFAULT 1,
+  original_price NUMERIC NOT NULL, -- 예약 당시 정상가
+  sale_price NUMERIC NOT NULL,     -- 예약 당시 판매가
+  discount_amount NUMERIC NOT NULL DEFAULT 0, -- 할인 적용액
+  final_price NUMERIC NOT NULL,     -- 최종 청구 금액
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE components ENABLE ROW LEVEL SECURITY;
+ALTER TABLE partner_component_rules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reservation_items ENABLE ROW LEVEL SECURITY;
+
 -- 정책 적용: Anon 키 허용 (프론트엔드 안전 액세스)
 CREATE POLICY "Anon Full Access Partners" ON partners FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Anon Full Access Products" ON products FOR ALL USING (true) WITH CHECK (true);
@@ -201,6 +260,19 @@ CREATE POLICY "Anon Full Access Operation Notices" ON operation_notices FOR ALL 
 CREATE POLICY "Anon Full Access Admin Users" ON admin_users FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Anon Full Access Audit Logs" ON audit_logs FOR ALL USING (true) WITH CHECK (true);
 
+-- 신규 테이블 Anon Full Access
+CREATE POLICY "Anon Full Access User Profiles" ON user_profiles FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Anon Full Access Components" ON components FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Anon Full Access Partner Component Rules" ON partner_component_rules FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Anon Full Access Reservation Items" ON reservation_items FOR ALL USING (true) WITH CHECK (true);
+
+-- 신규 테이블 인덱스
+CREATE INDEX IF NOT EXISTS idx_user_profiles_email ON user_profiles (email);
+CREATE INDEX IF NOT EXISTS idx_user_profiles_status ON user_profiles (status);
+CREATE INDEX IF NOT EXISTS idx_components_category ON components (category);
+CREATE INDEX IF NOT EXISTS idx_partner_component_rules_partner ON partner_component_rules (partner_id);
+CREATE INDEX IF NOT EXISTS idx_reservation_items_reservation ON reservation_items (reservation_id);
+
 -- ====================================================================
 -- REALTIME SUBSCRIPTION (실시간 동기화)
 -- ====================================================================
@@ -210,6 +282,6 @@ BEGIN
     SELECT 1 FROM pg_publication_tables 
     WHERE pubname = 'supabase_realtime' AND tablename = 'products'
   ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE partners, products, product_prices, inventory, reservations, operation_notices;
+    ALTER PUBLICATION supabase_realtime ADD TABLE partners, products, product_prices, inventory, reservations, operation_notices, user_profiles, components, partner_component_rules, reservation_items;
   END IF;
 END $$;

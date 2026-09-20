@@ -136,3 +136,78 @@ CREATE POLICY "Admin View Audit Logs" ON public.audit_logs
 DROP POLICY IF EXISTS "Auth Insert Audit Logs" ON public.audit_logs;
 CREATE POLICY "Auth Insert Audit Logs" ON public.audit_logs
   FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
+
+-- 12. Helper 함수: 현재 사용자가 승인된 제휴사 사용자인지 확인
+CREATE OR REPLACE FUNCTION public.is_approved_partner()
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.user_profiles
+    WHERE id = auth.uid()
+      AND status = 'APPROVED'
+      AND role = 'PARTNER'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE;
+
+-- 13. USER_PROFILES 테이블 정책
+-- 본인 정보 조회/수정 또는 승인된 관리자가 관리 가능
+DROP POLICY IF EXISTS "Self Or Admin Select Profiles" ON public.user_profiles;
+CREATE POLICY "Self Or Admin Select Profiles" ON public.user_profiles
+  FOR SELECT TO authenticated USING (
+    id = auth.uid() OR public.is_approved_admin()
+  );
+
+DROP POLICY IF EXISTS "Self Register Profile" ON public.user_profiles;
+CREATE POLICY "Self Register Profile" ON public.user_profiles
+  FOR INSERT TO authenticated WITH CHECK (
+    id = auth.uid()
+  );
+
+DROP POLICY IF EXISTS "Self Or Master Update Profiles" ON public.user_profiles;
+CREATE POLICY "Self Or Master Update Profiles" ON public.user_profiles
+  FOR UPDATE TO authenticated USING (
+    id = auth.uid() OR public.is_approved_master()
+  ) WITH CHECK (
+    id = auth.uid() OR public.is_approved_master()
+  );
+
+DROP POLICY IF EXISTS "Master Delete Profiles" ON public.user_profiles;
+CREATE POLICY "Master Delete Profiles" ON public.user_profiles
+  FOR DELETE TO authenticated USING (
+    public.is_approved_master()
+  );
+
+-- 14. COMPONENTS 테이블 정책
+-- 비로그인 포함 모든 고객 조회 가능, 관리자는 전체 권한
+DROP POLICY IF EXISTS "Public View Components" ON public.components;
+CREATE POLICY "Public View Components" ON public.components
+  FOR SELECT TO anon, authenticated USING (is_active = true);
+
+DROP POLICY IF EXISTS "Admin Manage Components" ON public.components;
+CREATE POLICY "Admin Manage Components" ON public.components
+  FOR ALL TO authenticated USING (public.is_approved_admin())
+  WITH CHECK (public.is_approved_admin());
+
+-- 15. PARTNER_COMPONENT_RULES 테이블 정책
+-- 로그인 사용자 조회 가능, 관리자는 전체 권한
+DROP POLICY IF EXISTS "Auth View Partner Rules" ON public.partner_component_rules;
+CREATE POLICY "Auth View Partner Rules" ON public.partner_component_rules
+  FOR SELECT TO authenticated USING (true);
+
+DROP POLICY IF EXISTS "Admin Manage Partner Rules" ON public.partner_component_rules;
+CREATE POLICY "Admin Manage Partner Rules" ON public.partner_component_rules
+  FOR ALL TO authenticated USING (public.is_approved_admin())
+  WITH CHECK (public.is_approved_admin());
+
+-- 16. RESERVATION_ITEMS 테이블 정책
+-- 비로그인 조회 가능 (보조 snapshot용), 관리자는 전체 권한
+DROP POLICY IF EXISTS "Public View Reservation Items" ON public.reservation_items;
+CREATE POLICY "Public View Reservation Items" ON public.reservation_items
+  FOR SELECT TO anon, authenticated USING (true);
+
+DROP POLICY IF EXISTS "Admin Manage Reservation Items" ON public.reservation_items;
+CREATE POLICY "Admin Manage Reservation Items" ON public.reservation_items
+  FOR ALL TO authenticated USING (public.is_approved_admin())
+  WITH CHECK (public.is_approved_admin());
+
