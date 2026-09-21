@@ -1019,11 +1019,25 @@ export async function upsertReservationInSupabase(res: Reservation): Promise<boo
   if (!supabase || !isSupabaseConfigured) return false;
   try {
     const dbId = generateDeterministicUuid(res.id);
+
+    // Resolve real partners.id FK
+    let targetPartnerId = res.partnerId;
+    if (!targetPartnerId && res.partnerCode) {
+      const { data: matchedPartner } = await supabase
+        .from('partners')
+        .select('id')
+        .eq('code', res.partnerCode)
+        .maybeSingle();
+      if (matchedPartner?.id) {
+        targetPartnerId = matchedPartner.id;
+      }
+    }
+
     const { error } = await supabase.from('reservations').upsert({
       id: dbId,
       booking_no: res.id,
       pms_reservation_no: res.pmsReservationNo || null,
-      partner_id: res.partnerCode,
+      partner_id: targetPartnerId || res.partnerCode,
       partner_name: res.partnerName,
       partner_code: res.partnerCode,
       package_id: res.packageId,
