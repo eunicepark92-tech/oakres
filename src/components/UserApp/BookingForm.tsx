@@ -101,6 +101,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
       // Create Reservation
       const newReservation = await createReservation({
+        partnerId: currentPartner?.id,
         partnerCode: currentPartner?.code || 'ALL',
         partnerName: currentPartner?.name || '제휴사 전용',
         packageId: selectedPackage.id,

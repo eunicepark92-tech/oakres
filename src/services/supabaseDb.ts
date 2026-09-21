@@ -1026,7 +1026,7 @@ export async function upsertReservationInSupabase(res: Reservation): Promise<boo
       partner_id: res.partnerId || null,
       partner_name: res.partnerName,
       partner_code: res.partnerCode,
-      package_id: res.packageId,
+      package_id: res.packageId === 'diy-package' ? null : res.packageId,
       package_name: res.packageName,
       room_type_id: res.roomTypeId,
       room_type_name: res.roomTypeName,
