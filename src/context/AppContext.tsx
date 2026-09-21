@@ -27,6 +27,8 @@ import {
   upsertAdminUserInSupabase,
   deleteAdminUserFromSupabase,
   insertAuditLogInSupabase,
+  upsertComponentInSupabase,
+  deleteComponentFromSupabase,
   subscribeToSupabaseRealtime,
 } from '../services/supabaseDb';
 import {
@@ -1688,17 +1690,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     if (supabase && isSupabaseActive) {
-      await supabase.from('components').insert({
-        id: newComp.id,
-        category: newComp.category,
-        name: newComp.name,
-        description: newComp.description || null,
-        base_price: newComp.basePrice,
-        normal_price: newComp.normalPrice || null,
-        is_discountable: newComp.isDiscountable,
-        is_active: newComp.isActive,
-        tags: newComp.tags,
-      });
+      const res = await upsertComponentInSupabase(newComp);
+      if (!res.success) {
+        console.error('[addComponent Supabase Error]', res.error);
+        showToast(`Supabase 저장 실패: ${res.error}`, 'error');
+      }
     }
 
     setComponents((prev) => [...prev, newComp]);
@@ -1708,18 +1704,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateComponent = async (id: string, data: Partial<Component>): Promise<void> => {
-    if (supabase && isSupabaseActive) {
-      const updateData: any = {};
-      if (data.category) updateData.category = data.category;
-      if (data.name) updateData.name = data.name;
-      if (data.description !== undefined) updateData.description = data.description || null;
-      if (data.basePrice !== undefined) updateData.base_price = data.basePrice;
-      if (data.normalPrice !== undefined) updateData.normal_price = data.normalPrice || null;
-      if (data.isDiscountable !== undefined) updateData.is_discountable = data.isDiscountable;
-      if (data.isActive !== undefined) updateData.is_active = data.isActive;
-      if (data.tags) updateData.tags = data.tags;
+    const current = components.find((c) => c.id === id);
+    const updated: Component = {
+      id,
+      category: data.category || current?.category || 'FB',
+      name: data.name || current?.name || '',
+      description: data.description !== undefined ? data.description : current?.description,
+      basePrice: data.basePrice !== undefined ? data.basePrice : current?.basePrice || 0,
+      normalPrice: data.normalPrice !== undefined ? data.normalPrice : current?.normalPrice,
+      isDiscountable: data.isDiscountable !== undefined ? data.isDiscountable : current?.isDiscountable !== false,
+      isActive: data.isActive !== undefined ? data.isActive : current?.isActive !== false,
+      tags: data.tags || current?.tags || [],
+      createdAt: current?.createdAt || new Date().toISOString(),
+      startDate: data.startDate !== undefined ? data.startDate : current?.startDate,
+      endDate: data.endDate !== undefined ? data.endDate : current?.endDate,
+      weekdayPrice: data.weekdayPrice !== undefined ? data.weekdayPrice : current?.weekdayPrice,
+      fridayPrice: data.fridayPrice !== undefined ? data.fridayPrice : current?.fridayPrice,
+      saturdayPrice: data.saturdayPrice !== undefined ? data.saturdayPrice : current?.saturdayPrice,
+      specialPrice: data.specialPrice !== undefined ? data.specialPrice : current?.specialPrice,
+    };
 
-      await supabase.from('components').update(updateData).eq('id', id);
+    if (supabase && isSupabaseActive) {
+      const res = await upsertComponentInSupabase(updated);
+      if (!res.success) {
+        console.error('[updateComponent Supabase Error]', res.error);
+        showToast(`Supabase 수정 실패: ${res.error}`, 'error');
+      }
     }
 
     setComponents((prev) =>
@@ -1733,7 +1743,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (!target) return;
 
     if (supabase && isSupabaseActive) {
-      await supabase.from('components').delete().eq('id', id);
+      const res = await deleteComponentFromSupabase(id);
+      if (!res.success) {
+        console.error('[deleteComponent Supabase Error]', res.error);
+        showToast(`Supabase 삭제 실패: ${res.error}`, 'error');
+      }
     }
 
     setComponents((prev) => prev.filter((c) => c.id !== id));
@@ -2415,7 +2429,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     // Persist reservation in Supabase
-    upsertReservationInSupabase(newRes).catch(() => {});
+    const resSavePromise = upsertReservationInSupabase(newRes).catch(() => false);
 
     // Map and save DIY reservation items if they exist
     if (newRes.packageId === 'diy-package') {
@@ -2467,7 +2481,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const allNewItems = [roomItem, ...componentItems];
 
       setReservationItems((prev) => [...allNewItems, ...prev]);
-      saveReservationItemsInSupabase(allNewItems).catch((err) => {
+      resSavePromise.then(() => {
+        return saveReservationItemsInSupabase(allNewItems);
+      }).catch((err) => {
         console.error('[Error saving DIY reservation items]', err);
       });
     }

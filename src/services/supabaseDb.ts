@@ -840,6 +840,48 @@ export async function deleteProductFromSupabase(id: string): Promise<{ success: 
   }
 }
 
+export async function upsertComponentInSupabase(c: Component): Promise<{ success: boolean; error?: string }> {
+  if (!supabase || !isSupabaseConfigured) {
+    return { success: false, error: 'Supabase가 설정되지 않았습니다.' };
+  }
+  try {
+    const { error } = await supabase.from('components').upsert({
+      id: c.id,
+      category: c.category,
+      name: c.name,
+      description: c.description || null,
+      base_price: typeof c.basePrice === 'number' ? c.basePrice : 0,
+      normal_price: typeof c.normalPrice === 'number' ? c.normalPrice : null,
+      is_discountable: c.isDiscountable !== false,
+      is_active: c.isActive !== false,
+      tags: Array.isArray(c.tags) ? c.tags : [],
+      created_at: c.createdAt || new Date().toISOString(),
+    });
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    console.error('[Supabase Upsert Component Error]', err);
+    return { success: false, error: err?.message || 'DIY 컴포넌트 저장 실패' };
+  }
+}
+
+export async function deleteComponentFromSupabase(id: string): Promise<{ success: boolean; error?: string }> {
+  if (!supabase || !isSupabaseConfigured) {
+    return { success: false, error: 'Supabase가 설정되지 않았습니다.' };
+  }
+  try {
+    try {
+      await supabase.from('partner_component_rules').delete().eq('component_id', id);
+    } catch {}
+    const { error } = await supabase.from('components').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    console.error('[Supabase Delete Component Error]', err);
+    return { success: false, error: err?.message || 'DIY 컴포넌트 삭제 실패' };
+  }
+}
+
 export async function upsertPartnerInSupabase(p: Partner): Promise<{ success: boolean; error?: string }> {
   if (!supabase || !isSupabaseConfigured) {
     return { success: false, error: 'Supabase가 설정되지 않았습니다.' };
@@ -1029,37 +1071,13 @@ export async function saveReservationItemsInSupabase(items: ReservationItem[]): 
     }));
 
     const { error } = await supabase.from('reservation_items').upsert(dbPayload);
-    if (!error) return true;
-
-    // Fallback to operation_notices if table does not exist
-    if (error.code === 'PGRST205' || error.message?.includes("Could not find the table") || error.message?.includes("schema cache")) {
-      const { data } = await supabase.from('operation_notices').select('content').eq('id', 'reservation_items').single();
-      let existingItems: any[] = [];
-      if (data?.content) {
-        try {
-          existingItems = JSON.parse(data.content);
-          if (!Array.isArray(existingItems)) existingItems = [];
-        } catch {}
-      }
-      
-      const itemMap = new Map<string, any>();
-      existingItems.forEach(item => itemMap.set(String(item.id), item));
-      items.forEach(item => itemMap.set(String(item.id), item));
-      const mergedList = Array.from(itemMap.values());
-
-      await supabase.from('operation_notices').upsert({
-        id: 'reservation_items',
-        category: 'RESERVATION_ITEMS',
-        title: '실시간 예약 상세 품목',
-        content: JSON.stringify(mergedList),
-        updated_at: new Date().toISOString(),
-      });
-      return true;
+    if (error) {
+      throw error;
     }
-    throw error;
+    return true;
   } catch (err) {
     console.error('[Supabase Save Reservation Items Error]', err);
-    return false;
+    throw err;
   }
 }
 

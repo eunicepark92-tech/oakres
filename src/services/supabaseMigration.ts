@@ -86,6 +86,7 @@ export async function checkExistingSupabaseData(): Promise<MigrationCheckResult>
     'operation_notices',
     'reservations',
     'audit_logs',
+    'components',
   ];
 
   const tableCounts: Record<string, number> = {};

@@ -80,6 +80,10 @@ export const SERVER_TABLE_COLUMN_WHITELISTS: Record<string, string[]> = {
   audit_logs: [
     'id', 'actor_name', 'actor_role', 'action_type', 'action_summary',
     'details', 'ip_address', 'created_at'
+  ],
+  components: [
+    'id', 'category', 'name', 'description', 'base_price', 'normal_price',
+    'is_discountable', 'is_active', 'tags', 'created_at'
   ]
 };
 

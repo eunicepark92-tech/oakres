@@ -211,11 +211,14 @@ CREATE TABLE IF NOT EXISTS components (
   name VARCHAR(250) NOT NULL,
   description TEXT,
   base_price NUMERIC NOT NULL DEFAULT 0,
+  normal_price NUMERIC, -- 정상가 (비할인가)
   is_discountable BOOLEAN DEFAULT true, -- 제휴사 기본 할인율 적용 여부
   is_active BOOLEAN DEFAULT true,
   tags JSONB DEFAULT '[]'::jsonb, -- AI 검색/추천용 메타 태그
   created_at TIMESTAMPTZ DEFAULT now()
 );
+
+GRANT ALL ON TABLE components TO anon, authenticated, service_role;
 
 -- 12. PARTNER_COMPONENT_RULES (제휴사별 컴포넌트 판매/가격/할인 규칙 매핑)
 CREATE TABLE IF NOT EXISTS partner_component_rules (
