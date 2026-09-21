@@ -107,6 +107,7 @@ export function mapReservationRowToReservation(r: any): Reservation {
   return {
     id: r.booking_no || r.id,
     pmsReservationNo: r.pms_reservation_no || r.pmsReservationNo || undefined,
+    partnerId: r.partner_id || r.partnerId || undefined,
     partnerCode: r.partner_code || r.partnerCode || '',
     partnerName: r.partner_name || r.partnerName || '',
     packageId: r.package_id || r.packageId || '',

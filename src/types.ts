@@ -151,6 +151,7 @@ export interface Reservation {
   pmsReservationNo?: string; // 관리자가 발급한 확정 예약번호 (e.g. PMS-88392)
   confirmedAt?: string;
   confirmedBy?: string;
+  partnerId?: string;
   partnerCode: string;
   partnerName: string;
   packageId: string;
