@@ -87,19 +87,20 @@ function isUuid(str: string): boolean {
 export function generateDeterministicUuid(str: string): string {
   if (!str) return '00000000-0000-0000-0000-000000000000';
   if (isUuid(str)) return str;
-  let hash1 = 0;
-  let hash2 = 0;
+  let h1 = 0xdeadbeef, h2 = 0x41c64e6d;
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash1 = (hash1 << 5) - hash1 + char;
-    hash1 |= 0;
-    hash2 = (hash2 << 7) - hash2 + char;
-    hash2 |= 0;
+    const ch = str.charCodeAt(i);
+    h1 = Math.imul(h1 ^ ch, 2654435761);
+    h2 = Math.imul(h2 ^ ch, 1597334677);
   }
-  const part1 = Math.abs(hash1).toString(16).padStart(8, '0').slice(0, 8);
-  const part2 = Math.abs(hash2).toString(16).padStart(8, '0');
-  const part3 = Math.abs(hash1 ^ hash2).toString(16).padStart(8, '0');
-  return `${part1}-${part2.slice(0, 4)}-4${part2.slice(4, 7)}-8${part3.slice(0, 3)}-${part3.slice(3, 15)}`.slice(0, 36);
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  const p1 = (h1 >>> 0).toString(16).padStart(8, '0');
+  const p2 = (h2 >>> 0).toString(16).padStart(8, '0');
+  const p3 = ((h1 ^ h2) >>> 0).toString(16).padStart(8, '0');
+  const p4 = ((h1 + h2) >>> 0).toString(16).padStart(8, '0');
+  const hex = (p1 + p2 + p3 + p4).slice(0, 32);
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-a${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
 }
 
 export function mapReservationRowToReservation(r: any): Reservation {
@@ -1056,7 +1057,6 @@ export async function saveReservationItemsInSupabase(items: ReservationItem[]): 
   if (!supabase || !isSupabaseConfigured) return false;
   try {
     const dbPayload = items.map((item) => ({
-      id: generateDeterministicUuid(String(item.id)),
       reservation_id: generateDeterministicUuid(item.reservationId),
       item_type: item.itemType,
       item_id: item.itemId,
@@ -1070,7 +1070,7 @@ export async function saveReservationItemsInSupabase(items: ReservationItem[]): 
       created_at: item.createdAt || new Date().toISOString(),
     }));
 
-    const { error } = await supabase.from('reservation_items').upsert(dbPayload);
+    const { error } = await supabase.from('reservation_items').insert(dbPayload);
     if (error) {
       throw error;
     }
