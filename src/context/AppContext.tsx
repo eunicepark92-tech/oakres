@@ -15,6 +15,8 @@ import {
   fetchAllFromSupabase,
   upsertProductInSupabase,
   deleteProductFromSupabase,
+  upsertRoomTypeInSupabase,
+  deleteRoomTypeFromSupabase,
   upsertPartnerInSupabase,
   deletePartnerFromSupabase,
   upsertDailyRateInSupabase,
@@ -1982,6 +1984,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       saveOperationNoticeInSupabase('room_types', 'ROOM_TYPES', updated, '객실 타입 목록').catch(() => {});
       return updated;
     });
+    upsertRoomTypeInSupabase(newRoom).catch(() => {});
     showToast(`신규 원천 객실 [${newRoom.name}]이(가) 등록되었습니다.`, 'success');
     return newRoom;
   };
@@ -1990,6 +1993,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setRoomTypes((prev) => {
       const updated = prev.map((r) => (r.id === id ? { ...r, ...roomData } : r));
       saveOperationNoticeInSupabase('room_types', 'ROOM_TYPES', updated, '객실 타입 목록').catch(() => {});
+      const target = updated.find((r) => r.id === id);
+      if (target) {
+        upsertRoomTypeInSupabase(target).catch(() => {});
+      }
       return updated;
     });
     showToast('원천 객실 정보가 수정되었습니다.', 'success');
@@ -2001,6 +2008,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       saveOperationNoticeInSupabase('room_types', 'ROOM_TYPES', updated, '객실 타입 목록').catch(() => {});
       return updated;
     });
+    deleteRoomTypeFromSupabase(id).catch(() => {});
     showToast('원천 객실이 삭제되었습니다.', 'info');
   };
 
@@ -2106,7 +2114,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       id: `pkg-${Date.now()}`,
     };
     setPackages((prev) => [...prev, newPkg]);
-    upsertProductInSupabase(newPkg).catch(() => {});
+    upsertProductInSupabase(newPkg, roomTypes).catch(() => {});
     showToast(`패키지 [${newPkg.name}]가 성공적으로 등록되었습니다.`, 'success');
     return newPkg;
   };
@@ -2116,7 +2124,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const updated = prev.map((p) => (p.id === packageId ? { ...p, ...pkgData } : p));
       const target = updated.find((p) => p.id === packageId);
       if (target) {
-        upsertProductInSupabase(target).catch(() => {});
+        upsertProductInSupabase(target, roomTypes).catch(() => {});
       }
       return updated;
     });

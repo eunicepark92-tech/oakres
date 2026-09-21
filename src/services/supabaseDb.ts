@@ -447,7 +447,7 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
     });
 
     // Transform Room Types
-    const roomTypes: RoomType[] = (roomTypesData || []).map((rt: any) => ({
+    let roomTypes: RoomType[] = (roomTypesData || []).map((rt: any) => ({
       id: rt.id,
       name: rt.name,
       capacity: rt.capacity || '',
@@ -525,6 +525,7 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
     let notificationEmail: string | undefined;
     let diyRoomRates: DiyRoomRate[] | undefined;
     let fallbackReservationItems: ReservationItem[] = [];
+    let fallbackRoomTypes: RoomType[] = [];
 
     (noticesData || []).forEach((n: any) => {
       let parsedPayload = n.payload;
@@ -535,7 +536,9 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
           parsedPayload = n.content;
         }
       }
-      if (n.id === 'package_categories' && Array.isArray(parsedPayload)) {
+      if (n.id === 'room_types' && Array.isArray(parsedPayload)) {
+        fallbackRoomTypes = parsedPayload;
+      } else if (n.id === 'package_categories' && Array.isArray(parsedPayload)) {
         packageCategories = parsedPayload;
       } else if (n.id === 'season_periods' && Array.isArray(parsedPayload)) {
         seasonPeriods = parsedPayload;
@@ -555,6 +558,16 @@ export async function fetchAllFromSupabase(): Promise<SupabaseFullState | null> 
         fallbackReservationItems = parsedPayload;
       }
     });
+
+    // Ensure any room types previously stored in fallback/notices are synced to room_types table
+    if (fallbackRoomTypes.length > 0) {
+      for (const frt of fallbackRoomTypes) {
+        if (!roomTypes.some((r) => r.id === frt.id)) {
+          roomTypes.push(frt);
+        }
+        upsertRoomTypeInSupabase(frt).catch(() => {});
+      }
+    }
 
     // Fetch new extensibility tables with try-catch to avoid crashes if tables do not exist or are being synchronized
     let userProfiles: UserProfile[] = [];
@@ -739,7 +752,10 @@ export async function deleteRoomTypeFromSupabase(id: string): Promise<{ success:
   }
 }
 
-export async function upsertProductInSupabase(pkg: Package): Promise<{ success: boolean; error?: string }> {
+export async function upsertProductInSupabase(
+  pkg: Package,
+  knownRoomTypes?: RoomType[]
+): Promise<{ success: boolean; error?: string }> {
   if (!supabase || !isSupabaseConfigured) {
     return { success: false, error: 'Supabase가 설정되지 않았습니다.' };
   }
@@ -768,13 +784,33 @@ export async function upsertProductInSupabase(pkg: Package): Promise<{ success: 
     const roomIds = pkg.roomTypeIds || [];
     await supabase.from('product_room_types').delete().eq('package_id', pkg.id);
     if (roomIds.length > 0) {
-      const links = roomIds.map((rtId) => ({
-        package_id: pkg.id,
-        room_type_id: rtId,
-      }));
-      const { error: linkErr } = await supabase.from('product_room_types').upsert(links);
-      if (linkErr) {
-        console.warn('[Supabase product_room_types sync warning]', linkErr.message);
+      // 1. Ensure referenced room types exist in room_types table to satisfy FK
+      if (knownRoomTypes && knownRoomTypes.length > 0) {
+        const roomsToUpsert = knownRoomTypes.filter((r) => roomIds.includes(r.id));
+        for (const r of roomsToUpsert) {
+          await upsertRoomTypeInSupabase(r);
+        }
+      }
+
+      // 2. Query existing room_types in Supabase to strictly prevent FK violation (23503)
+      const { data: validRooms } = await supabase
+        .from('room_types')
+        .select('id')
+        .in('id', roomIds);
+
+      const validRoomIdSet = new Set((validRooms || []).map((r: any) => r.id));
+      const links = roomIds
+        .filter((rtId) => validRoomIdSet.has(rtId))
+        .map((rtId) => ({
+          package_id: pkg.id,
+          room_type_id: rtId,
+        }));
+
+      if (links.length > 0) {
+        const { error: linkErr } = await supabase.from('product_room_types').upsert(links);
+        if (linkErr) {
+          console.warn('[Supabase product_room_types sync warning]', linkErr.message);
+        }
       }
     }
 
