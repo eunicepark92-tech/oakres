@@ -414,15 +414,17 @@ export const DIYSelectionView: React.FC<DIYSelectionViewProps> = ({
               </div>
             </div>
 
-            {/* Price Calculations Summary Box */}
-            <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/60 space-y-1 font-bold">
-              <span className="text-[10px] text-stone-400 uppercase tracking-wider block">
-                패키지 최종금액
-              </span>
-              <span className="text-xl text-rose-600 font-black">
-                {packageFinalTotal.toLocaleString()}원
-              </span>
-            </div>
+              {/* Price Calculations Summary Box - 추가 상품 선택 시에만 노출 */}
+              {selectedItemsDetails.length > 0 && (
+                <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200/60 space-y-1 font-bold">
+                  <span className="text-[10px] text-stone-400 uppercase tracking-wider block">
+                    패키지 정상가 합계
+                  </span>
+                  <span className="text-xl text-stone-900 font-black">
+                    {packageOriginalTotal.toLocaleString()}원
+                  </span>
+                </div>
+              )}
 
             {/* Checkout Action Button */}
             <div className="space-y-2">
